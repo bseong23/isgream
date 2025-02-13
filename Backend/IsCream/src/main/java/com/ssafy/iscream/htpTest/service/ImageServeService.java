@@ -27,7 +27,7 @@ public class ImageServeService {
         jsonObject.set("files", objectMapper.valueToTree(data));
         try {
             String response = webClient.post()
-                    .uri("/ai/predict")  // 엔드포인트 설정
+                    .uri("/htp/predict")  // 엔드포인트 설정
                     .bodyValue(jsonObject)  // JSON 데이터 전송
                     .retrieve()
                     .bodyToMono(String.class)  // 응답을 String으로 변환
