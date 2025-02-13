@@ -10,7 +10,7 @@ public class ChatbotService {
     private final WebClient webClient;
 
     public ChatbotService(WebClient.Builder webClientBuilder) {
-        this.webClient = webClientBuilder.baseUrl("http://127.0.0.1:8000/ai").build();
+        this.webClient = webClientBuilder.baseUrl("https://i12a407.p.ssafy.io/ai").build();
     }
 
     public String sendQueryData(QuestionReq req) {
