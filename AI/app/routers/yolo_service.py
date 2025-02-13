@@ -87,7 +87,3 @@ async def predict(request: PredictionRequest):
     # 진단 함수 실행
     diagnose_result = diagnose(predictions)
     return diagnose_result
-
-@router.get("/status")
-async def status():
-    return {"status": "AI service is operational"}

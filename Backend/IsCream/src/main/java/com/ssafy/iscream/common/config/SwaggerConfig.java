@@ -46,8 +46,13 @@ public class SwaggerConfig {
                 .group("all") // 그룹 이름 지정
                 .pathsToMatch( "/users/**", "/htp-tests/**", "/board/**", "/comments/**",
                         "/calendars/**", "/children/**", "/educations/**", "/pat-tests/**",
-                        "/big-five-tests/**")
+                        "/big-five-tests/**", "/chatbot/**")
                 .build();
+    }
+
+    @Bean
+    GroupedOpenApi chatbotApi() {
+        return GroupedOpenApi.builder().group("chatbot").pathsToMatch("/chatbot/**").build();
     }
 
     @Bean

@@ -15,7 +15,7 @@ load_dotenv()
 
 # OpenAI 모델 설정
 print("🚀 OpenAI 모델 초기화...")
-llm = ChatOpenAI(model="gpt-4-turbo", request_timeout=30)
+llm = ChatOpenAI(model="gpt-4-turbo")
 
 # OpenAI 임베딩 모델 설정
 print("🧠 OpenAI 임베딩 모델 로드 중...")
