@@ -1,7 +1,9 @@
 from fastapi import FastAPI
 from fastapi.middleware.cors import CORSMiddleware
 from .routers import yolo_service, chatbot_service
-import os
+from dotenv import load_dotenv
+
+load_dotenv()
 
 # FastAPI 애플리케이션 생성
 app = FastAPI(root_path="/ai")
