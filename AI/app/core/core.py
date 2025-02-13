@@ -13,6 +13,14 @@ def diagnose(predictions):
     def process_prediction(i, prediction):
         """개별 예측을 처리하는 함수"""
         header = f"검사 순서: {i+1}\n검사 시간: {prediction['time']}\n검사 유형: {prediction['type'].capitalize()}"
+
+        # 순서가 3번째일 때 (i == 2) 추가적인 분석 내용 포함
+        if i == 2:
+            if prediction["type"] == "male":
+                header += "\n👨 남성이 먼저 그려졌습니다. 이는 가족 내에서 남성이 중요한 역할을 하거나, 아이가 남성에게 더 큰 심리적 의미를 부여할 가능성을 시사합니다."
+            elif prediction["type"] == "female":
+                header += "\n👩 여성이 먼저 그려졌습니다. 이는 아이가 어머니 또는 여성 보호자에게 더 큰 애착을 가지고 있거나, 여성의 역할을 더 중요하게 생각할 가능성이 있습니다."
+
         if prediction["type"] in type_to_function:
             analysis_result = type_to_function[prediction["type"]](prediction)
             return f"{header}\n{process_predictions(analysis_result)}"

@@ -1,5 +1,4 @@
 import os
-from dotenv import load_dotenv
 from fastapi import APIRouter, HTTPException
 from pydantic import BaseModel
 from langchain_openai import ChatOpenAI
@@ -8,9 +7,11 @@ from langchain_core.output_parsers import StrOutputParser
 from langchain_core.runnables import RunnablePassthrough
 from langchain.vectorstores import Chroma
 from langchain.embeddings import OpenAIEmbeddings
+from dotenv import load_dotenv
+
+load_dotenv()
 
 # 환경 변수 로드
-load_dotenv()
 openai_api_key = os.getenv("OPENAI_API_KEY")
 
 if not openai_api_key:
