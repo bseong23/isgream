@@ -26,6 +26,4 @@ public interface MemoRepository extends JpaRepository<Memo, Integer> {
     );
 
     boolean existsByChildIdAndSelectedDate(Integer childId, LocalDate selectedDate);
-
-    Optional<Memo> findByChildIdAndSelectedDate(Integer childId, LocalDate selectedDate);
 }
