@@ -13,10 +13,20 @@ public class FileUtil {
 
     private static final List<String> ALLOWED_EXTENSIONS = Arrays.asList("jpg", "png", "jpeg", "gif", "pdf");
 
+    // ✅ 기존 파일 랜덤 이름 생성 (파일 확장자 포함)
     public static String createFileName(MultipartFile file) {
         String extension = validateExtension(file.getOriginalFilename());
+        return generateRandomFileName(extension);
+    }
 
-        return UUID.randomUUID() + "_" + System.currentTimeMillis() + (extension.isEmpty() ? "" : "." + extension);
+    // ✅ PDF 파일 랜덤 이름 생성 (고정 확장자)
+    public static String createPdfFileName() {
+        return generateRandomFileName("pdf");
+    }
+
+    // ✅ 랜덤 파일 이름 생성 로직
+    private static String generateRandomFileName(String extension) {
+        return UUID.randomUUID() + "_" + System.currentTimeMillis() + "." + extension;
     }
 
     // 파일 확장자 체크 메서드

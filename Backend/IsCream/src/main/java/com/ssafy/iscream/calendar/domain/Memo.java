@@ -10,6 +10,9 @@ import lombok.Builder;
 import lombok.Getter;
 import lombok.RequiredArgsConstructor;
 
+import java.time.LocalDate;
+import java.time.LocalDateTime;
+
 @Entity
 @Getter
 @Builder
@@ -22,6 +25,7 @@ public class Memo extends BaseTimeEntity {
     Integer userId;
     Integer childId;
     String content;
+    LocalDate selectedDate;
     public void updateContent(String content) {
         this.content = content;
     }

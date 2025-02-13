@@ -49,6 +49,30 @@ public class S3Service {
         return "";
     }
 
+    // ✅ 랜덤 파일명으로 PDF 업로드 (타임스탬프 제거)
+    public String uploadPdfFile(byte[] pdfBytes) {
+        // ✅ 랜덤한 파일명 생성 (UUID 기반)
+        String randomFileName = FileUtil.createPdfFileName(); // ex) "7d9a8f2b-4c6d-4d0e-9e2f_1707660582000.pdf"
+
+        // ✅ 최종 S3 업로드 키 설정
+        String fileKey = resultDir + randomFileName;
+
+        try {
+            // ✅ S3에 업로드
+            s3Client.putObject(
+                    PutObjectRequest.builder()
+                            .bucket(bucket)
+                            .key(fileKey)
+                            .contentType("application/pdf")
+                            .build(),
+                    RequestBody.fromBytes(pdfBytes)
+            );
+        } catch (Exception e) {
+            throw new S3UploadException(FILE_UPLOAD_FAILED);
+        }
+
+        return baseUrl + fileKey; // 업로드된 S3 파일 URL 반환
+    }
     // 단일 파일 업로드
     public String uploadImage(MultipartFile multipartFile) {
         String fileKey = imageDir + FileUtil.createFileName(multipartFile);

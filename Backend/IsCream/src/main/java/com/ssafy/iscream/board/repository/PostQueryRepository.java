@@ -22,20 +22,15 @@ public class PostQueryRepository {
     public Page<Post> searchPosts(PostReq req, Pageable pageable) {
         BooleanBuilder predicate = new BooleanBuilder();
 
-        String title = req.getTitle();
-        String content = req.getContent();
+        String keyword = req.getKeyword();
         String sort = req.getSort();
         Integer lastLikeCount = req.getLastLikeCount();
         Integer lastId = req.getLastId();
 
-        if (title != null && content != null) {
+        if (keyword != null) {
             predicate.and(
-                    post.title.contains(title).or(post.content.contains(content))
+                    post.title.contains(keyword).or(post.content.contains(keyword))
             );
-        } else if (title != null) {
-            predicate.and(post.title.contains(title));
-        } else if (content != null) {
-            predicate.and(post.content.contains(content));
         }
 
         if (lastId != null && "create".equals(sort)) {

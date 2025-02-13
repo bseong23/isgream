@@ -20,6 +20,6 @@ public class PostUpdateReq {
     private String content;
 
     @Schema(description = "삭제할 이미지 url")
-    private List<String> deleteUrls = new ArrayList<>();
+    private List<String> deleteFiles = new ArrayList<>();
 }
 

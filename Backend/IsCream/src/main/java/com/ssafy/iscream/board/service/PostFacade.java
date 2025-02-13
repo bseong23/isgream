@@ -3,6 +3,7 @@ package com.ssafy.iscream.board.service;
 import com.ssafy.iscream.board.domain.Post;
 import com.ssafy.iscream.board.dto.request.PostReq;
 import com.ssafy.iscream.board.dto.response.PostDetail;
+import com.ssafy.iscream.board.dto.response.PostInfo;
 import com.ssafy.iscream.board.dto.response.PostList;
 import com.ssafy.iscream.comment.service.CommentService;
 import com.ssafy.iscream.user.domain.User;
@@ -28,16 +29,17 @@ public class PostFacade {
     // 게시글 상세 조회
     public PostDetail getPostDetail(Integer postId, User user, HttpServletRequest request) {
         Post post = postService.getPost(postId, user, request);
+        return makePostDetail(post, user);
+    }
 
+    public PostDetail makePostDetail(Post post, User user) {
         Boolean userLiked = postService.isUserLiked(post, user);
-        Integer viewCount = postService.getViewCount(post.getPostId());
         Integer likes = postService.getPostLikes(post.getPostId());
-
+        Integer viewCount = postService.getPostViewCount(post.getPostId());
         List<String> images = postService.getPostImages(post.getPostId());
-
         UserProfile author = userService.getUserProfile(post.getUserId());
 
-        return new PostDetail(post, user, userLiked, viewCount, author, images, likes);
+        return PostDetail.of(post, user, userLiked, viewCount, images, likes, author);
     }
 
     // 게시글 목록 조회 (검색 포함)
@@ -46,61 +48,39 @@ public class PostFacade {
 
         boolean hasNext = posts.hasNext();
 
-        List<PostList.PostInfo> postList = posts.stream()
-                .map(post -> new PostList.PostInfo(
-                        post,
-                        postService.isUserLiked(post, user),
-                        postService.getPostThumbnail(post.getPostId()),
-                        userService.getUserNickname(post.getUserId()),
-                        postService.getPostLikes(post.getPostId()),
-                        postService.getViewCount(post.getPostId()),
-                        commentService.getCommentCount(post.getPostId())
-                        )
-                )
-                .toList();
+        List<PostInfo> postInfo = makePostInfo(posts.stream().toList(), user);
 
-        PostList.PostInfo lastPost = !postList.isEmpty() ? postList.get(postList.size() - 1) : null;
+        PostInfo lastPost = !postInfo.isEmpty() ? postInfo.get(postInfo.size() - 1) : null;
 
-        Integer newLastId = lastPost != null ? lastPost.postId() : null;
-        Integer newLikeCount = lastPost != null ? lastPost.likes() : null;
+        Integer newLastId = lastPost != null ? lastPost.getPostId() : null;
+        Integer newLikeCount = lastPost != null ? lastPost.getLikes() : null;
 
-        return PostList.of(newLastId, newLikeCount, postList.size(), hasNext, postList);
+        return PostList.of(newLastId, newLikeCount, postInfo.size(), hasNext, postInfo);
     }
 
     // 메인 페이지 게시글 조회
-    public Map<String, List<PostList.PostInfo>> getMainPostList(User user) {
-        List<PostList.PostInfo> hotPosts = postService.getHotPost().stream()
-                .map(post -> new PostList.PostInfo(
-                        post,
-                        postService.isUserLiked(post, user),
-                        postService.getPostThumbnail(post.getPostId()),
-                        userService.getUserNickname(post.getUserId()),
-                        postService.getPostLikes(post.getPostId()),
-                        postService.getViewCount(post.getPostId()),
-                        commentService.getCommentCount(post.getPostId())
-                        )
-                )
-                .toList();
+    public Map<String, List<PostInfo>> getMainPostList(User user) {
+        Map<String, List<PostInfo>> result = new HashMap<>();
 
-        List<PostList.PostInfo> latestPosts = postService.getLatestPost().stream()
-                .map(post -> new PostList.PostInfo(
-                        post,
-                        postService.isUserLiked(post, user),
-                        postService.getPostThumbnail(post.getPostId()),
-                        userService.getUserNickname(post.getUserId()),
-                        postService.getPostLikes(post.getPostId()),
-                        postService.getViewCount(post.getPostId()),
-                        commentService.getCommentCount(post.getPostId())
-                        )
-                )
-                .toList();
-
-        Map<String, List<PostList.PostInfo>> result = new HashMap<>();
-
-        result.put("hot", hotPosts);
-        result.put("latest", latestPosts);
+        result.put("hot", makePostInfo(postService.getHotPost(), user));
+        result.put("latest", makePostInfo(postService.getLatestPost(), user));
 
         return result;
+    }
+
+    public List<PostInfo> makePostInfo(List<Post> posts, User user) {
+        return posts.stream()
+                .map(post -> PostInfo.of(
+                        post,
+                        postService.getPostThumbnail(post.getPostId()),
+                        postService.isUserLiked(post, user),
+                        postService.getPostLikes(post.getPostId()),
+                        postService.getPostViewCount(post.getPostId()),
+                        userService.getUserNickname(post.getUserId()),
+                        commentService.getCommentCount(post.getPostId())
+                        )
+                )
+                .toList();
     }
 
 }

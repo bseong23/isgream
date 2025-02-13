@@ -66,4 +66,10 @@ public class HtpTestController {
         return ResponseUtil.success(htpTest);
     }
 
+    @GetMapping("/{htp_test_id}/pdf")
+    @Operation(summary = "특정 HTP 테스트 결과 PDF 조회", tags = "htp")
+    public ResponseEntity<?> getHtpTestPdf(@Login User user, @PathVariable("htp_test_id") Integer htpTestId) {
+        return ResponseUtil.success(htpTestService.getHtpTestPdfUrl(htpTestId));
+    }
+
 }

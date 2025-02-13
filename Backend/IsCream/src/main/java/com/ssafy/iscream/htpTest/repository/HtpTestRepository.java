@@ -26,5 +26,7 @@ public interface HtpTestRepository extends JpaRepository<HtpTest, Integer> {
 
     List<HtpTest> findByChildId(Integer childId);
 
+    HtpTest findByHtpTestId(Integer htpTestId);
+
     Optional<HtpTest> findFirstByChildIdOrderByCreatedAtDesc(Integer childId);
 }

@@ -5,6 +5,7 @@ import com.ssafy.iscream.calendar.dto.request.CalendarGetDetailReq;
 import com.ssafy.iscream.calendar.dto.request.CalendarGetReq;
 import com.ssafy.iscream.calendar.dto.response.CalendarGetDetailRes;
 import com.ssafy.iscream.calendar.dto.response.CalendarGetRes;
+import com.ssafy.iscream.children.service.ChildrenService;
 import com.ssafy.iscream.htpTest.domain.HtpTest;
 import com.ssafy.iscream.htpTest.service.HtpTestService;
 import lombok.RequiredArgsConstructor;
@@ -19,10 +20,14 @@ import java.util.Map;
 public class CalendarFacade {
     private final CalendarService calendarService;
     private final HtpTestService htpTestService;
+    private final ChildrenService childrenService;
 
     public Map<Integer, CalendarGetRes> getCalendar(Integer userId, CalendarGetReq calendarGetReq) {
         List<HtpTest> htpTests = htpTestService.getByYearMonth(userId, calendarGetReq);
         List<Integer> memoDays = calendarService.getDaysByYearMonth(userId, calendarGetReq);
+        
+        // 권한 체크
+        childrenService.checkAccess(userId, calendarGetReq.getChildId());
 
         Map<Integer, CalendarGetRes> calendarGetResMap = new HashMap<>();
         for (HtpTest htpTest : htpTests) {
