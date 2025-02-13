@@ -99,7 +99,6 @@ public class HtpTestService {
 
             result = imageServeService.sendImageData(user, files);
             htpTest.setAnalysisResult(result);
-            htpTest.setPdfUrl(pdfService.generatePdf(user, result));
         }
 
         return result;
@@ -120,7 +119,6 @@ public class HtpTestService {
 
             result = imageServeService.sendImageData(user, files);
             htpTest.setAnalysisResult(result);
-            htpTest.setPdfUrl(pdfService.generatePdf(user, result));
         }
 
         return result;
@@ -169,8 +167,9 @@ public class HtpTestService {
 
 
     // Htp Test pdf url 전송
-    public String getHtpTestPdfUrl(Integer htpTestId) {
+    public String getHtpTestPdfUrl(User user, Integer htpTestId) {
         HtpTest htpTest = htpTestRepository.findByHtpTestId(htpTestId);
+        htpTest.setPdfUrl(pdfService.generatePdf(user, htpTest.getAnalysisResult()));
 
         return htpTest.getPdfUrl();
     }

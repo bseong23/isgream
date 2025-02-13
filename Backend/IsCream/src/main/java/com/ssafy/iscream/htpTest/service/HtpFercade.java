@@ -21,7 +21,6 @@ import java.util.stream.Collectors;
 @Transactional
 public class HtpFercade {
 
-    private final S3Service s3Service; // S3 파일 업로드/다운로드 관련 서비스
     private final ChildrenService childrenService; // 사용자 자녀 정보 관련 서비스
     private final HtpSelectService htpSelectService; // HTP 테스트 조회 서비스
 
