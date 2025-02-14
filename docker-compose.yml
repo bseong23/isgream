@@ -1,6 +1,3 @@
-version: '3.9'
-
-
 services:
   nginx:
     image: nginx:latest
@@ -11,7 +8,7 @@ services:
       - "443:443"
     volumes:
       - ./nginx.conf:/etc/nginx/nginx.conf
-      - ./Frontend/IsCream/dist:/usr/share/nginx/html  # React 빌드 결과물
+      - ./Frontend/IsCream/dist:/usr/share/nginx/html  
       - /etc/letsencrypt:/etc/letsencrypt
     depends_on:
       - backend
@@ -23,11 +20,15 @@ services:
     build:
       context: ./Backend/IsCream
       dockerfile: Dockerfile
-    container_name: backend-app
-    ports:
-      - "8082:8080"  # 🔹 8082로 변경
+    restart: always
+    deploy:
+      replicas: 2 
+      restart_policy:
+        condition: on-failure
+    expose:
+      - "8080" 
     environment:
-      SPRING_PROFILES_ACTIVE: prod
+      - SPRING_PROFILES_ACTIVE=prod
     networks:
       - mynetwork
 
@@ -35,15 +36,21 @@ services:
     build:
       context: ./AI
       dockerfile: Dockerfile
-    container_name: ai-server
-    ports:
-      - "8000:8000"
+    restart: always
+    deploy:
+      replicas: 2  
+      restart_policy:
+        condition: on-failure
+    expose:
+      - "8000"  
     volumes:
       - /home/ubuntu/models:/home/ubuntu/models
+    environment:
+      - OPENAI_API_KEY=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
     networks:
       - mynetwork
 
 networks:
   mynetwork:
     driver: bridge
-    external: true 
+    external: true

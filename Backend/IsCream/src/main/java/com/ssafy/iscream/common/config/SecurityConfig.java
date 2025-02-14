@@ -100,6 +100,7 @@ public class SecurityConfig {
                         .requestMatchers(HttpMethod.GET, "/board/post/{postId}", "/board/main").permitAll()
                         .requestMatchers(HttpMethod.POST, "/board").permitAll()
                         .requestMatchers(HttpMethod.GET, "/comments/{postId}").permitAll()
+                        .requestMatchers(HttpMethod.POST, "/chatbot").permitAll()
                         .requestMatchers(CorsUtils::isPreFlightRequest).permitAll()
                         .anyRequest().authenticated());
 

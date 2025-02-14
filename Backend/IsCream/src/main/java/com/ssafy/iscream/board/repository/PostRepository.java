@@ -8,5 +8,5 @@ import java.util.List;
 
 @Repository
 public interface PostRepository extends JpaRepository<Post, Integer> {
-    List<Post> findTop5ByOrderByCreatedAtDesc();
+    List<Post> findTop5ByOrderByCreatedAtDescPostIdDesc();
 }
