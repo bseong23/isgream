@@ -1,38 +1,37 @@
 package com.ssafy.iscream.board.service;
 
+import com.ssafy.iscream.board.domain.Post;
 import com.ssafy.iscream.board.repository.PostLikeRepository;
+import com.ssafy.iscream.board.repository.PostRepository;
 import lombok.RequiredArgsConstructor;
 import org.springframework.data.redis.core.RedisTemplate;
 import org.springframework.scheduling.annotation.Scheduled;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
-import java.util.*;
-import java.util.stream.Collectors;
+import java.util.Objects;
+import java.util.Optional;
+import java.util.Set;
 
 @Service
 @RequiredArgsConstructor
 public class PostLikeService {
 
     private final RedisTemplate<String, Object> redisTemplate;
+
     private final PostLikeRepository postLikeRepository;
+    private final PostRepository postRepository;
 
     private String getLikeKey(Integer postId) {
         return "post:" + postId + ":likes";
     }
 
     private String getLikesCountKey(Integer postId) {
-        return "post:like" + postId + ":likesCount";
-    }
-
-    // 게시글 작성 시에 사용
-    public void initLikeCount(Integer postId) {
-        redisTemplate.opsForZSet().add("likes:posts", postId.toString(), 0);
+        return "post:like:" + postId + ":likeCount";
     }
 
     // 게시글 삭제 시 Redis에 저장된 좋아요 정보 삭제
     public void removeLikeCount(Integer postId) {
-        redisTemplate.opsForZSet().remove("likes:posts", postId.toString());
         redisTemplate.delete(getLikesCountKey(postId));
         redisTemplate.opsForSet().remove(getLikeKey(postId));
     }
@@ -42,21 +41,13 @@ public class PostLikeService {
         String countKey = getLikesCountKey(postId);
         Integer count = (Integer) redisTemplate.opsForValue().get(countKey);
 
-        if (count == null) {
-            count = postLikeRepository.countById_PostId(postId);
-            redisTemplate.opsForValue().set(countKey, count);
-        }
-
-        return count;
+        return Objects.requireNonNullElse(count, 0);
     }
 
     // 게시글 좋아요
     public void addPostLike(Integer postId, Integer userId) {
-        String likeKey = getLikeKey(postId);
-
         if (!isUserLiked(postId, userId)) {
-            redisTemplate.opsForZSet().incrementScore("likes:posts", postId.toString(), 1);
-            redisTemplate.opsForSet().add(likeKey, userId.toString());
+            redisTemplate.opsForSet().add(getLikeKey(postId), userId.toString());
             redisTemplate.opsForValue().increment(getLikesCountKey(postId));
         }
     }
@@ -64,11 +55,8 @@ public class PostLikeService {
     // 게시글 좋아요 취소
     @Transactional
     public void deletePostLike(Integer postId, Integer userId) {
-        String likeKey = getLikeKey(postId);
-
         if (isUserLiked(postId, userId)) {
-            redisTemplate.opsForZSet().incrementScore("likes:posts", postId.toString(), -1);
-            redisTemplate.opsForSet().remove(likeKey, userId.toString());
+            redisTemplate.opsForSet().remove(getLikeKey(postId), userId.toString());
             redisTemplate.opsForValue().decrement(getLikesCountKey(postId));
 
             postLikeRepository.deleteById_PostIdAndId_UserId(postId, userId);
@@ -119,51 +107,23 @@ public class PostLikeService {
         }
     }
 
-    public List<Integer> getTop5LikePostId() {
-        Set<Object> result = redisTemplate.opsForZSet().reverseRange("likes:posts", 0, 4);
-        return Objects.requireNonNull(result).stream()
-                .map(obj -> Integer.parseInt(obj.toString())).collect(Collectors.toList());
-    }
+    @Transactional
+    public void updatePostLikeCount() {
+        Set<String> keys = redisTemplate.keys("post:like:*:likeCount");
 
-    public List<Integer> getLikePost(Integer lastLikeCount, Integer lastId, Integer size) {
-        Set<Object> result;
+        for (String key : keys) {
+            Integer postId = Integer.parseInt(key.split(":")[2]);
 
-        if (lastLikeCount == null) {
-            result = redisTemplate.opsForZSet().reverseRange("likes:posts", 0, -1);
-
-//            System.out.println(result.toString());
-
-            return Objects.requireNonNull(result).stream()
-                .map(obj -> Integer.parseInt(obj.toString())).collect(Collectors.toList());
-        } else {
-//            result = redisTemplate.opsForZSet().reverseRangeByScore(
-//                    "likes:posts", Double.MIN_VALUE, lastLikeCount);
-
-            if (lastLikeCount == 0) {
-                result = redisTemplate.opsForZSet().reverseRangeByScore("likes:posts", 0, 0);
-            } else {
-                result = redisTemplate.opsForZSet().reverseRangeByScore("likes:posts", Double.MIN_VALUE, lastLikeCount);
+            Object likeCount = redisTemplate.opsForValue().get(key);
+            if (likeCount == null) {
+                likeCount = 0;
             }
 
-            return Objects.requireNonNull(result).stream()
-                    .map(obj -> Integer.parseInt(obj.toString())).collect(Collectors.toList());
+            Optional<Post> post = postRepository.findById(postId);
 
-//            return Objects.requireNonNull(result).stream()
-//                    .map(obj -> Integer.parseInt(obj.toString()))  // Redis 결과를 Integer로 변환
-////                    .filter(postId -> postId < lastId)  // lastId보다 작은 게시글만 필터링
-//                    .sorted((postId1, postId2) -> {
-//                        // 좋아요 수 기준 내림차순
-//                        int likeComparison = Integer.compare(getPostLikes(postId2), getPostLikes(postId1));
-//
-//                        // 좋아요 수가 같으면 postId 기준 내림차순
-//                        if (likeComparison == 0) {
-//                            return Integer.compare(postId2, postId1);  // postId 기준 내림차순
-//                        }
-//
-//                        return likeComparison;  // 좋아요 수 기준으로 비교
-//                    })
-//                    .limit(size)
-//                    .collect(Collectors.toList());
+            if (post.isPresent()) {
+                post.get().updateLikeCount(Integer.parseInt(likeCount.toString()));
+            }
         }
     }
 
