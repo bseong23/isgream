@@ -1,7 +1,7 @@
 package com.ssafy.iscream.s3.service;
 
 import com.ssafy.iscream.common.util.FileUtil;
-import com.ssafy.iscream.s3.exception.S3Exception.*;
+import com.ssafy.iscream.s3.exception.S3Exception.S3UploadException;
 import io.awspring.cloud.s3.S3Exception;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
@@ -11,10 +11,7 @@ import org.springframework.web.multipart.MultipartFile;
 import software.amazon.awssdk.core.exception.SdkClientException;
 import software.amazon.awssdk.core.sync.RequestBody;
 import software.amazon.awssdk.services.s3.S3Client;
-import software.amazon.awssdk.services.s3.model.DeleteObjectRequest;
-import software.amazon.awssdk.services.s3.model.HeadObjectRequest;
-import software.amazon.awssdk.services.s3.model.NoSuchKeyException;
-import software.amazon.awssdk.services.s3.model.PutObjectRequest;
+import software.amazon.awssdk.services.s3.model.*;
 
 import java.io.File;
 import java.io.IOException;
@@ -136,10 +133,43 @@ public class S3Service {
     }
 
     public void deleteFile(List<String> fileUrls) {
-        for (String fileUrl : fileUrls) {
-            deleteFile(fileUrl);
+        if (fileUrls == null || fileUrls.isEmpty()) {
+            return;
+        }
+
+        try {
+            List<ObjectIdentifier> keysToDelete = fileUrls.stream()
+                    .map(this::extractFileKeyFromUrl)
+                    .filter(this::fileExists)
+                    .map(key -> ObjectIdentifier.builder().key(key).build())
+                    .toList();
+
+            if (!keysToDelete.isEmpty()) {
+                DeleteObjectsRequest deleteRequest = DeleteObjectsRequest.builder()
+                        .bucket(bucket)
+                        .delete(Delete.builder().objects(keysToDelete).build())
+                        .build();
+
+                s3Client.deleteObjects(deleteRequest);
+                log.info("파일들이 성공적으로 삭제되었습니다: {}", keysToDelete);
+            } else {
+                throw new S3UploadException(FILE_DOES_NOT_EXIST);
+            }
+        } catch (SdkClientException e) {
+            log.error("AWS SDK client error : {}", e.getMessage());
+            throw new S3UploadException(INVALID_FILE_REQUEST);
+        } catch (S3Exception e) {
+            log.error("파일 삭제 실패: {}", e.getMessage());
+            throw new S3UploadException(FILE_DELETE_IS_FAILED);
         }
     }
+
+
+//    public void deleteFile(List<String> fileUrls) {
+//        for (String fileUrl : fileUrls) {
+//            deleteFile(fileUrl);
+//        }
+//    }
 
     // 파일 존재 여부 확인
     public boolean fileExists(String fileKey) {
