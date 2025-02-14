@@ -23,6 +23,9 @@ public interface MemoRepository extends JpaRepository<Memo, Integer> {
     Optional<Memo> findByChildIdAndDate(
             @Param("childId") Integer childId,
             @Param("selectedDate") LocalDate selectedDate
-    );//여기밑
+    );
 
+    boolean existsByChildIdAndSelectedDate(Integer childId, LocalDate selectedDate);
+
+    Optional<Memo> findByChildIdAndSelectedDate(Integer childId, LocalDate selectedDate);
 }
