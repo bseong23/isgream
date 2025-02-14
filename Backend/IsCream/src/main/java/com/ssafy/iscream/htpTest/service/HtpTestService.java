@@ -1,14 +1,13 @@
 package com.ssafy.iscream.htpTest.service;
 
 import com.ssafy.iscream.calendar.dto.request.CalendarGetReq;
-import com.ssafy.iscream.common.exception.ErrorCode;
-import com.ssafy.iscream.common.exception.UnauthorizedException;
-import com.ssafy.iscream.common.response.ResponseData;
+import com.ssafy.iscream.children.domain.Child;
+import com.ssafy.iscream.children.service.ChildrenService;
 import com.ssafy.iscream.htpTest.domain.HtpTest;
 import com.ssafy.iscream.htpTest.dto.request.HtpTestDiagnosisReq;
 import com.ssafy.iscream.htpTest.dto.request.HtpTestReq;
 import com.ssafy.iscream.htpTest.repository.HtpTestRepository;
-import com.ssafy.iscream.pdf.service.PdfService;
+import com.ssafy.iscream.pdf.service.HtpTestPdfService;
 import com.ssafy.iscream.s3.service.S3Service;
 import com.ssafy.iscream.user.domain.User;
 import lombok.RequiredArgsConstructor;
@@ -31,7 +30,8 @@ import java.util.concurrent.ConcurrentHashMap;
 public class HtpTestService {
     private final HtpTestRepository htpTestRepository;
     private final S3Service s3Service;
-    private final PdfService pdfService;
+    private final HtpTestPdfService pdfService;
+    private final ChildrenService childrenService;
 
     private Map<Integer, Map<String, HtpTestDiagnosisReq>> imageMap = new ConcurrentHashMap<>();
 
@@ -181,11 +181,11 @@ public class HtpTestService {
         return htpTestRepository.findFirstByChildIdOrderByCreatedAtDesc(childId).orElse(null);
     }
 
-
     // Htp Test pdf url 전송
     public String getHtpTestPdfUrl(User user, Integer htpTestId) {
         HtpTest htpTest = htpTestRepository.findByHtpTestId(htpTestId);
-        htpTest.setPdfUrl(pdfService.generatePdf(user, htpTest.getAnalysisResult()));
+        Child child = childrenService.getById(htpTest.getChildId());
+        htpTest.setPdfUrl(pdfService.generatePdf(user, child, htpTest.getAnalysisResult(), htpTest));
 
         return htpTest.getPdfUrl();
     }

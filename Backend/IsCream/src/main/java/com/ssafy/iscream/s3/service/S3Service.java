@@ -113,6 +113,10 @@ public class S3Service {
 
     // 파일 삭제
     public void deleteFile(String fileUrl) {
+        if (fileUrl == null) {
+            return;
+        }
+
         try {
             String fileKey = extractFileKeyFromUrl(fileUrl);
 

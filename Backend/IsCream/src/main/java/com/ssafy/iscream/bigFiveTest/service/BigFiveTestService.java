@@ -4,14 +4,16 @@ import com.ssafy.iscream.bigFiveTest.domain.BigFiveQuestion;
 import com.ssafy.iscream.bigFiveTest.domain.BigFiveScore;
 import com.ssafy.iscream.bigFiveTest.domain.BigFiveTest;
 import com.ssafy.iscream.bigFiveTest.dto.request.BigFiveTestCreateReq;
-import com.ssafy.iscream.bigFiveTest.dto.response.BigFiveTestListRes;
 import com.ssafy.iscream.bigFiveTest.dto.response.BigFiveTestQuestionRes;
 import com.ssafy.iscream.bigFiveTest.dto.response.BigFiveTestRes;
 import com.ssafy.iscream.bigFiveTest.repository.BigFiveQuestionRepository;
 import com.ssafy.iscream.bigFiveTest.repository.BigFiveScoreRepository;
 import com.ssafy.iscream.bigFiveTest.repository.BigFiveTestRepository;
+import com.ssafy.iscream.children.domain.Child;
+import com.ssafy.iscream.children.service.ChildrenService;
 import com.ssafy.iscream.common.exception.ErrorCode;
-import com.ssafy.iscream.common.exception.MinorException.*;
+import com.ssafy.iscream.common.exception.MinorException.DataException;
+import com.ssafy.iscream.pdf.service.BigFiveTestPdfService;
 import com.ssafy.iscream.user.domain.User;
 import lombok.RequiredArgsConstructor;
 import org.springframework.stereotype.Service;
@@ -29,9 +31,11 @@ public class BigFiveTestService {
     private final BigFiveQuestionRepository bigFiveQuestionRepository;
     private final BigFiveTestRepository bigFiveTestRepository;
     private final BigFiveScoreRepository bigFiveScoreRepository;
+    private final BigFiveTestPdfService bigFiveTestPdfService;
+    private final ChildrenService childrenService;
 
     // 성격 5요인 질문 목록 조회
-    public List<BigFiveTestQuestionRes> getBigFiveTestList(User user) {
+    public List<BigFiveTestQuestionRes> getBigFiveTestList() {
         List<BigFiveQuestion> questions = bigFiveQuestionRepository.findAll();
         return questions.stream()
                 .map(q -> new BigFiveTestQuestionRes(
@@ -54,12 +58,13 @@ public class BigFiveTestService {
 
         BigFiveTest bigFiveTest = BigFiveTest.builder()
                 .userId(user.getUserId())
+                .childId(bigFiveTestCreateReq.getChildId())
                 .date(LocalDate.now().toString())
-                .conscientiousness(bigFiveTestCreateReq.getConscientiousness()-consAvg)
-                .agreeableness(bigFiveTestCreateReq.getAgreeableness()-agreeAvg)
-                .emotionalStability(bigFiveTestCreateReq.getEmotionalStability()-emoAvg)
-                .extraversion(bigFiveTestCreateReq.getExtraversion()-extraAvg)
-                .openness(bigFiveTestCreateReq.getOpenness()-openAvg)
+                .conscientiousness(bigFiveTestCreateReq.getConscientiousness() - consAvg)
+                .agreeableness(bigFiveTestCreateReq.getAgreeableness() - agreeAvg)
+                .emotionalStability(bigFiveTestCreateReq.getEmotionalStability() - emoAvg)
+                .extraversion(bigFiveTestCreateReq.getExtraversion() - extraAvg)
+                .openness(bigFiveTestCreateReq.getOpenness() - openAvg)
                 .build();
 
         bigFiveTestRepository.save(bigFiveTest);
@@ -76,8 +81,8 @@ public class BigFiveTestService {
 
 
     // 성격 5요인 테스트 최근 결과 조회
-    public BigFiveTestRes getBigFiveTestResult(User user) {
-        BigFiveTest bigFiveTest = bigFiveTestRepository.findFirstByUserIdOrderByTestDateDesc(user.getUserId());
+    public BigFiveTestRes getBigFiveTestResult(Integer childId) {
+        BigFiveTest bigFiveTest = bigFiveTestRepository.findFirstByChildIdOrderByTestDateDesc(childId);
         if (bigFiveTest == null) {
             throw new DataException(ErrorCode.DATA_NOT_FOUND);
         }
@@ -92,34 +97,26 @@ public class BigFiveTestService {
         );
     }
 
-    // 성격 5요인 테스트 결과 목록 조회
-    public List<BigFiveTestListRes> getBigFiveTestListResult(User user) {  // 반환 타입 수정
-        List<BigFiveTest> bigFiveTestList = bigFiveTestRepository.findByUserId(user.getUserId());
-        if (bigFiveTestList.isEmpty()) {
-            throw new DataException(ErrorCode.DATA_NOT_FOUND);
-        }
 
-        List<BigFiveTestListRes> bigFiveTestListRes = bigFiveTestList.stream()
-                .map(t -> new BigFiveTestListRes(
-                        t.getTestId(),
-                        "Big-Five",
-                        t.getDate()
-                ))
-                .collect(Collectors.toList());
-
-        return bigFiveTestListRes;
+    @Transactional
+    public String getBigFivePdfUrl(User user, Integer bigFiveTestId) {
+        BigFiveTest bigFiveTest = bigFiveTestRepository.findById(bigFiveTestId).get();
+        Child child = childrenService.getById(bigFiveTest.getChildId());
+        bigFiveTest.setPdfUrl(bigFiveTestPdfService.generatePdf(user, child, bigFiveTest));
+        return bigFiveTest.getPdfUrl();
     }
+
 
     private double updateBigFiveScore(String type, double score) {
         BigFiveScore bigFiveScore = bigFiveScoreRepository.findByBigFiveType(type);
 
-        if(bigFiveScore == null){
+        if (bigFiveScore == null) {
             bigFiveScore = BigFiveScore.builder()
-                .bigFiveType(type)
-                .totalUsers(0)
-                .totalScore(0.0)
-                .averageScore(0.0)
-                .build();
+                    .bigFiveType(type)
+                    .totalUsers(0)
+                    .totalScore(0.0)
+                    .averageScore(0.0)
+                    .build();
         }
 
         bigFiveScore.setTotalUsers(bigFiveScore.getTotalUsers() + 1);
@@ -128,6 +125,11 @@ public class BigFiveTestService {
 
         bigFiveScoreRepository.save(bigFiveScore);
         return bigFiveScore.getAverageScore();
+    }
+
+    // childId에 해당하는 결과 목록 조회
+    public List<BigFiveTest> getBigFiveTestListByChildId(Integer childId) {
+        return bigFiveTestRepository.findByChildId(childId);
     }
 }
 
