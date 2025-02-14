@@ -9,5 +9,5 @@ import java.util.List;
 public interface ChildRepository extends JpaRepository<Child, Integer> {
     List<Child> findAllByUserIdAndStatus(Integer userId, Status status);
 
-    Child findByChildId(Integer childId);
+    List<Child> findByStatus(Status status);
 }
