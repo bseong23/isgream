@@ -12,7 +12,7 @@ import com.ssafy.iscream.children.repository.ChildRepository;
 import com.ssafy.iscream.common.exception.ErrorCode;
 import com.ssafy.iscream.common.exception.MinorException.DataException;
 import com.ssafy.iscream.htpTest.domain.HtpTest;
-import com.ssafy.iscream.htpTest.service.HtpSelectService;
+import com.ssafy.iscream.htpTest.repository.HtpTestRepository;
 import com.ssafy.iscream.s3.service.S3Service;
 import lombok.RequiredArgsConstructor;
 import org.springframework.scheduling.annotation.Scheduled;
@@ -89,21 +89,19 @@ public class ChildrenService {
     }
 
     private final S3Service s3Service;
-    private final HtpSelectService htpSelectService;
+    private final HtpTestRepository htpTestRepository;
     private final BigFiveTestRepository bigFiveTestRepository;
 
     // 자녀와 관련된 정보 일괄 삭제
-    // htp/big5 pdf, image url 삭제 및 s3에 업로드 된 파일 삭제
-    // TODO: 수정 필요
     @Scheduled(cron = "0 */30 * * * ?")
     @Transactional
     public void deleteChildrenFile() {
-        List<Child> children = childRepository.findAll();
+        List<Child> children = childRepository.findByStatus(Status.DELETED);
 
         for (Child child : children) {
             Integer childId = child.getChildId();
 
-            List<HtpTest> htpTestList = htpSelectService.getHtpTestList(childId);
+            List<HtpTest> htpTestList = htpTestRepository.findByChildId(childId);
 
             for (HtpTest htpTest : htpTestList) {
                 s3Service.deleteFile(htpTest.getPdfUrl());
@@ -113,7 +111,6 @@ public class ChildrenService {
                 s3Service.deleteFile(htpTest.getFemaleDrawingUrl());
             }
 
-            // big five 검사 내역 조회 -> pdf 삭제
             List<BigFiveTest> bigFiveTestList = bigFiveTestRepository.findByChildId(childId);
 
             for (BigFiveTest bigFiveTest : bigFiveTestList) {
