@@ -3,6 +3,8 @@ package com.ssafy.iscream.children.service;
 import com.ssafy.iscream.bigFiveTest.domain.BigFiveTest;
 import com.ssafy.iscream.bigFiveTest.repository.BigFiveTestRepository;
 import com.ssafy.iscream.children.domain.Child;
+import com.ssafy.iscream.children.domain.Gender;
+import com.ssafy.iscream.children.domain.Status;
 import com.ssafy.iscream.children.dto.req.ChildrenCreateReq;
 import com.ssafy.iscream.children.dto.req.ChildrenUpdateReq;
 import com.ssafy.iscream.children.dto.res.ChildrenGetRes;
@@ -27,7 +29,8 @@ public class ChildrenService {
     private final ChildRepository childRepository;
 
     public List<ChildrenGetRes> getChildren(Integer userId) {
-        List<Child> children = childRepository.findAllByUserId(userId);
+        // 삭제되지 않은 자녀 정보만 가져오기
+        List<Child> children = childRepository.findAllByUserIdAndStatus(userId, Status.USED);
 
         List<ChildrenGetRes> childrenGetResList = new ArrayList<>();
         for (Child child : children) {
@@ -43,19 +46,18 @@ public class ChildrenService {
         return childrenGetResList;
     }
 
-
-
     public void createChildren(Integer userId, ChildrenCreateReq childrenCreateReq) {
         Child child = Child.builder()
                 .userId(userId)
                 .nickname(childrenCreateReq.getNickname())
                 .birthDate(childrenCreateReq.getBirthDate())
-                .gender(childrenCreateReq.getGender())
+                .gender(Gender.valueOf(childrenCreateReq.getGender()))
                 .build();
+
         childRepository.save(child);
     }
 
-
+    @Transactional
     public void updateChildren(Integer userId, ChildrenUpdateReq childrenUpdateReq) {
         Child childOriginal = childRepository.findById(childrenUpdateReq.getChildId())
                 .orElseThrow(() -> new DataException(ErrorCode.DATA_NOT_FOUND));
@@ -64,13 +66,13 @@ public class ChildrenService {
             throw new DataException(ErrorCode.DATA_FORBIDDEN_ACCESS);
         }
 
-        childOriginal.updateChild(childrenUpdateReq.getNickname(), childrenUpdateReq.getBirthDate(), childrenUpdateReq.getGender());
-        childRepository.save(childOriginal);
+        childOriginal.updateChild(childrenUpdateReq.getNickname(), childrenUpdateReq.getBirthDate(),
+                Gender.valueOf(childrenUpdateReq.getGender()));
 
+//        childRepository.save(childOriginal);
     }
 
-
-
+    @Transactional
     public void deleteChildren(Integer userId, Integer childrenId) {
         Child childOriginal = childRepository.findById(childrenId)
                 .orElseThrow(() -> new DataException(ErrorCode.DATA_NOT_FOUND));
@@ -79,7 +81,7 @@ public class ChildrenService {
             throw new DataException(ErrorCode.DATA_FORBIDDEN_ACCESS);
         }
 
-        childRepository.delete(childOriginal);
+        childOriginal.deleteChild(); // 자녀 정보 삭제 (삭제 상태로 변경)
     }
 
     public Child getById(Integer childId) {

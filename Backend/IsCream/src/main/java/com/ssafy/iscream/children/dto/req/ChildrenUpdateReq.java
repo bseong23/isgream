@@ -1,6 +1,5 @@
 package com.ssafy.iscream.children.dto.req;
 
-import com.ssafy.iscream.children.domain.Gender;
 import lombok.Data;
 
 import java.time.LocalDate;
@@ -10,5 +9,5 @@ public class ChildrenUpdateReq {
     Integer childId;
     LocalDate birthDate;
     String nickname;
-    Gender gender;
+    String gender;
 }

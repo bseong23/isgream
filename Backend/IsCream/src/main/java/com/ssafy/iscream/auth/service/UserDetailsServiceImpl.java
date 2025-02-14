@@ -1,11 +1,10 @@
 package com.ssafy.iscream.auth.service;
 
-import com.ssafy.iscream.auth.exception.AuthException.*;
 import com.ssafy.iscream.auth.user.AuthUserDetails;
 import com.ssafy.iscream.common.exception.ErrorCode;
 import com.ssafy.iscream.user.domain.Status;
 import com.ssafy.iscream.user.domain.User;
-import com.ssafy.iscream.user.domain.UserRepository;
+import com.ssafy.iscream.user.repository.UserRepository;
 import lombok.RequiredArgsConstructor;
 import org.springframework.security.core.AuthenticationException;
 import org.springframework.security.core.userdetails.UserDetails;
