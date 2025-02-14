@@ -1,0 +1,16 @@
+@import "tailwindcss";
+
+@font-face {
+  font-family: "MyFont";
+  src: url("./assets/fonts/MyFont.ttf") format("truetype");
+}
+
+@layer base {
+  html {
+    font-family: "MyFont", sans-serif;
+  }
+}
+
+body {
+  background-color: #fafafa;
+}
