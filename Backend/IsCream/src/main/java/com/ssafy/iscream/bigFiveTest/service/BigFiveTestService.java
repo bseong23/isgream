@@ -127,9 +127,9 @@ public class BigFiveTestService {
         return bigFiveScore.getAverageScore();
     }
 
-    // childId에 해당하는 결과 목록 조회
-    public List<BigFiveTest> getBigFiveTestListByChildId(Integer childId) {
-        return bigFiveTestRepository.findByChildId(childId);
+    // childIds 해당하는 pdf url 목록 조회
+    public List<String> getBigFiveTestPdfUrl(List<Integer> childIds) {
+        return bigFiveTestRepository.findPdfUrlByChildIdIn(childIds);
     }
 }
 
