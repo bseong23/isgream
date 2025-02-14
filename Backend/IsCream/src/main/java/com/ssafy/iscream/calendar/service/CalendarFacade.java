@@ -34,7 +34,7 @@ public class CalendarFacade {
 
             CalendarGetRes calendarGetRes = CalendarGetRes.builder()
                     .emoji(htpTest.getEmoji())
-                    .isHtp(true)
+                    .isHtp(true)//여기밑
                     .build();
             calendarGetResMap.put(htpTest.getCreatedAt().getDayOfMonth(), calendarGetRes);
         }
