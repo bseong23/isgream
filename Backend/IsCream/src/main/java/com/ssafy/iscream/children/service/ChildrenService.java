@@ -9,7 +9,6 @@ import com.ssafy.iscream.children.dto.res.ChildrenGetRes;
 import com.ssafy.iscream.children.repository.ChildRepository;
 import com.ssafy.iscream.common.exception.ErrorCode;
 import com.ssafy.iscream.common.exception.MinorException.DataException;
-import com.ssafy.iscream.htpTest.repository.HtpTestRepository;
 import lombok.RequiredArgsConstructor;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
@@ -22,17 +21,8 @@ import java.util.List;
 public class ChildrenService {
 
     private final ChildRepository childRepository;
-    private final HtpTestRepository htpTestRepository;
 
     public List<ChildrenGetRes> getChildren(Integer userId) {
-        List<String> list = htpTestRepository.findHtpFileUrlsByChildIds(List.of(7));
-
-        System.out.println(list.size());
-
-        for (String url : list) {
-            System.out.println(url);
-        }
-
         // 삭제되지 않은 자녀 정보만 가져오기
         List<Child> children = childRepository.findAllByUserIdAndStatus(userId, Status.USED);
 
@@ -42,8 +32,9 @@ public class ChildrenService {
                     .childId(child.getChildId())
                     .nickname(child.getNickname())
                     .birthDate(child.getBirthDate())
-                    .gender(child.getGender())
+                    .gender(child.getGender().name())
                     .build();
+
             childrenGetResList.add(childrenGetRes);
         }
 
