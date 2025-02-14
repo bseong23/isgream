@@ -30,6 +30,9 @@ public class Post extends BaseTimeEntity {
     @Column
     private Integer viewCount = 0;
 
+    @Column
+    private Integer likeCount = 0;
+
     public void updatePost(String title, String content) {
         this.title = title;
         this.content = content;
@@ -37,6 +40,10 @@ public class Post extends BaseTimeEntity {
 
     public void updateViewCount(int views) {
         this.viewCount = views;
+    }
+
+    public void updateLikeCount(int likes) {
+        this.likeCount = likes;
     }
 
 }

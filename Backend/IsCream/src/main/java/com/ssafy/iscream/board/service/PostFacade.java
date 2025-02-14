@@ -42,8 +42,6 @@ public class PostFacade {
         return PostDetail.of(post, user, userLiked, viewCount, images, likes, author);
     }
 
-    private final PostLikeService postLikeService;
-
     // 게시글 목록 조회 (검색 포함)
     public PostList getPostList(User user, PostReq req) {
         Page<Post> posts = postService.getPostPage(req);
