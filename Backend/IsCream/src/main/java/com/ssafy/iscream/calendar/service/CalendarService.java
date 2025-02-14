@@ -89,7 +89,10 @@ public class CalendarService {
         LocalDateTime endDate = startDate.plusMonths(1); // 다음 달 1일 (해당 월의 끝까지 포함)
 
         List<Memo> memos = memoRepository.findByChildIdAndCreatedAtBetween(calendarGetReq.getChildId(), startDate, endDate);
-        List<Integer> days = new ArrayList<>();//여기밑
+        List<Integer> days = new ArrayList<>();
+        for (Memo memo : memos) {
+            days.add(memo.getSelectedDate().getDayOfMonth());
+        }
 
         // 권한 없는 경우
         if (!memos.isEmpty() && !memos.get(0).getUserId().equals(userId)) {
@@ -101,7 +104,10 @@ public class CalendarService {
     }
 
     public Memo getByChildIdDate(Integer userId, Integer childId, LocalDate selectedDate) {
-    //여기
+        Memo memo = memoRepository.findByChildIdAndSelectedDate(childId, selectedDate).orElse(null);
+        if(memo != null && !memo.getUserId().equals(userId)) {
+            throw new UnauthorizedException(new ResponseData<>(ErrorCode.DATA_FORBIDDEN_ACCESS.getCode(), ErrorCode.DATA_FORBIDDEN_ACCESS.getMessage(), null));
+        }
 
         return memo;
     }
