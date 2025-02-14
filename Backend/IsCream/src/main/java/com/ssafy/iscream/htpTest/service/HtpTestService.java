@@ -118,7 +118,7 @@ public class HtpTestService {
         String result = imageServeService.sendImageData(user, files);
         htpTest.setAnalysisResult(result);
 
-        redisService.deleteImageMap(childId); // AI 분석 완료 후 Redis 데이터 삭제
+        //redisService.deleteImageMap(childId); // AI 분석 완료 후 Redis 데이터 삭제
         return result;
     }
 
