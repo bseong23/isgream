@@ -21,5 +21,8 @@ public class BigFiveTestListRes {
 
     @Schema(description = "검사 날짜", example = "2025-02-11")
     private String date;
+    
+    @Schema(description = "아이 이름", example = "철수")
+    private String childName;
 
 }

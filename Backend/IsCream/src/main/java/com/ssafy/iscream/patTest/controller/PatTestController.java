@@ -45,4 +45,11 @@ public class PatTestController {
         return ResponseUtil.success(patTestService.getPatTestResultList(user));
     }
 
+    @Operation(summary = "PAT 검사 결과 PDF 조회", tags = "pat")
+    @GetMapping("/{pat_test_id}/pdf")
+    public ResponseEntity<?> getPatTestPdf(@Login User user, @PathVariable("pat_test_id") Integer patTestId) {
+        String url = patTestService.getPatTestPdfUrl(user, patTestId);
+        return ResponseUtil.success(url);
+    }
+
 }

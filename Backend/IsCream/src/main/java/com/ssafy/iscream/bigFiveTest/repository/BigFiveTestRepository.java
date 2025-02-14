@@ -14,9 +14,11 @@ import java.util.List;
 import java.util.Optional;
 
 @Repository
-public interface BigFiveTestRepository extends JpaRepository<BigFiveTest, Double> {
-    @Query("SELECT b FROM BigFiveTest b WHERE b.userId = :userId ORDER BY b.date DESC LIMIT 1")
-    BigFiveTest findFirstByUserIdOrderByTestDateDesc(@Param("userId") Integer userId);
+public interface BigFiveTestRepository extends JpaRepository<BigFiveTest, Integer> {
+    @Query("SELECT b FROM BigFiveTest b WHERE b.childId = :childId ORDER BY b.date DESC LIMIT 1")
+    BigFiveTest findFirstByChildIdOrderByTestDateDesc(@Param("childId") Integer childId);
+
+    List<BigFiveTest> findByChildId(Integer childId);
 
     List<BigFiveTest> findByUserId(Integer userId);
 }

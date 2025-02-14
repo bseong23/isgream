@@ -4,7 +4,6 @@ import com.ssafy.iscream.children.dto.res.ChildrenGetRes;
 import com.ssafy.iscream.children.service.ChildrenService;
 import com.ssafy.iscream.htpTest.domain.HtpTest;
 import com.ssafy.iscream.htpTest.dto.response.HtpTestResponseDto;
-import com.ssafy.iscream.s3.service.S3Service;
 import com.ssafy.iscream.user.domain.User;
 import lombok.RequiredArgsConstructor;
 import org.springframework.stereotype.Service;
@@ -19,7 +18,7 @@ import java.util.stream.Collectors;
 @Service
 @RequiredArgsConstructor
 @Transactional
-public class HtpFercade {
+public class HtpFacade {
 
     private final ChildrenService childrenService; // 사용자 자녀 정보 관련 서비스
     private final HtpSelectService htpSelectService; // HTP 테스트 조회 서비스

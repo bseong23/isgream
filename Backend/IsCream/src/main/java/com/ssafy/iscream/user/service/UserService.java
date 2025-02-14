@@ -14,7 +14,7 @@ import com.ssafy.iscream.user.dto.response.UserInfo;
 import com.ssafy.iscream.user.dto.response.UserProfile;
 import com.ssafy.iscream.user.exception.UserException.*;
 import com.ssafy.iscream.auth.exception.AuthException.*;
-import com.ssafy.iscream.user.domain.UserRepository;
+import com.ssafy.iscream.user.repository.UserRepository;
 import jakarta.servlet.http.HttpServletRequest;
 import jakarta.servlet.http.HttpServletResponse;
 import lombok.RequiredArgsConstructor;
