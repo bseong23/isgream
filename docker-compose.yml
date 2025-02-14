@@ -15,6 +15,8 @@ services:
       - ai-server
     networks:
       - mynetwork
+    env_file:
+      - /home/ubuntu/.env  # 절대 경로 지정
 
   backend:
     build:
@@ -27,10 +29,10 @@ services:
         condition: on-failure
     expose:
       - "8080" 
-    environment:
-      - SPRING_PROFILES_ACTIVE=prod
     networks:
       - mynetwork
+    env_file:
+      - /home/ubuntu/.env  # 절대 경로 지정
 
   ai-server:
     build:
@@ -45,10 +47,10 @@ services:
       - "8000"  
     volumes:
       - /home/ubuntu/models:/home/ubuntu/models
-    environment:
-      - OPENAI_API_KEY=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
     networks:
       - mynetwork
+    env_file:
+      - /home/ubuntu/.env  # 절대 경로 지정
 
 networks:
   mynetwork:
