@@ -32,10 +32,10 @@ public class PostImageService {
     }
 
     // 게시글 이미지 수정
-    public void updateImages(Post post, List<String> deleteUrls, List<MultipartFile> files) {
-        if (!deleteUrls.isEmpty()) {
-            s3Service.deleteFile(deleteUrls);
-            postImageRepository.deleteByImageUrlIn(deleteUrls);
+    public void updateImages(Post post, List<String> deleteFiles, List<MultipartFile> files) {
+        if (!deleteFiles.isEmpty()) {
+            s3Service.deleteFile(deleteFiles);
+            postImageRepository.deleteByImageUrlIn(deleteFiles);
         }
 
         saveImages(post, files);

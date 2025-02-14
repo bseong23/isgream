@@ -10,6 +10,9 @@ import lombok.NoArgsConstructor;
 @AllArgsConstructor
 public class BigFiveTestCreateReq {
 
+    @Schema(description = "아이 PK")
+    private Integer childId;
+
     @Schema(description = "성실성", example = "5")
     private Double conscientiousness;
 
@@ -24,4 +27,5 @@ public class BigFiveTestCreateReq {
 
     @Schema(description = "개방성", example = "7")
     private Double openness;
+
 }

@@ -1,7 +1,9 @@
 package com.ssafy.iscream.patTest.service;
 
+import com.ssafy.iscream.children.domain.Child;
 import com.ssafy.iscream.common.exception.ErrorCode;
 import com.ssafy.iscream.common.exception.MinorException.*;
+import com.ssafy.iscream.htpTest.domain.HtpTest;
 import com.ssafy.iscream.patTest.domain.PatQuestion;
 import com.ssafy.iscream.patTest.domain.PatTest;
 import com.ssafy.iscream.patTest.dto.request.PatTestCreateReq;
@@ -10,6 +12,7 @@ import com.ssafy.iscream.patTest.dto.response.PatTestRes;
 import com.ssafy.iscream.patTest.repository.PatQuestionRepository;
 import com.ssafy.iscream.patTest.repository.PatTestListRepository;
 import com.ssafy.iscream.patTest.repository.PatTestRepository;
+import com.ssafy.iscream.pdf.service.PatTestPdfService;
 import com.ssafy.iscream.user.domain.User;
 import lombok.AllArgsConstructor;
 import lombok.RequiredArgsConstructor;
@@ -18,6 +21,7 @@ import org.springframework.transaction.annotation.Transactional;
 
 import java.time.LocalDate;
 import java.util.List;
+import java.util.Optional;
 import java.util.stream.Collectors;
 
 @Service
@@ -27,6 +31,7 @@ public class PatTestService {
     private final PatQuestionRepository patQuestionRepository;
     private final PatTestRepository patTestRepository;
     private final PatTestListRepository patTestListRepository;
+    private final PatTestPdfService patTestPdfService;
 
     // PAT 검사 질문 조회
     public List<PatTestQuestionRes> getPatTestList(User user) {
@@ -91,10 +96,21 @@ public class PatTestService {
                 .collect(Collectors.toList());
     }
 
+    // PAT 검사 결과 PDF 조회
+    @Transactional
+    public String getPatTestPdfUrl(User user, Integer patTestId) {
+        PatTest patTest = patTestRepository.findById(patTestId).orElseThrow();
+        patTest.setPdfUrl(patTestPdfService.generatePdf(user, patTest));
+        return patTest.getPdfUrl();
+    }
+
+
     private PatTest.ResultType calculateResult(int scoreA, int scoreB, int scoreC){
         int maxScore = Math.max(Math.max(scoreA, scoreB), scoreC);
         if (maxScore == scoreA) return PatTest.ResultType.A;
         if (maxScore == scoreB) return PatTest.ResultType.B;
         return PatTest.ResultType.C;
     }
+    
+    
 }

@@ -2,8 +2,6 @@ package com.ssafy.iscream.board.service;
 
 import com.ssafy.iscream.board.domain.Post;
 import com.ssafy.iscream.board.repository.PostRepository;
-import com.ssafy.iscream.common.exception.ErrorCode;
-import com.ssafy.iscream.common.exception.MinorException.DataException;
 import com.ssafy.iscream.user.domain.User;
 import jakarta.servlet.http.HttpServletRequest;
 import lombok.RequiredArgsConstructor;
@@ -13,6 +11,7 @@ import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
 import java.time.Duration;
+import java.util.Optional;
 import java.util.Set;
 
 @Service
@@ -97,14 +96,15 @@ public class PostViewService {
             Integer viewCount = (Integer) redisTemplate.opsForValue().get(key);
 
             if (viewCount != null) {
-                Post post = postRepository.findById(postId)
-                        .orElseThrow(() -> new DataException(ErrorCode.DATA_NOT_FOUND));
+                Optional<Post> post = postRepository.findById(postId);
 
-                Integer dbViewCount = post.getViewCount();
+                if (post.isPresent()) {
+                    Integer dbViewCount = post.get().getViewCount();
 
-                // Redis 조회수와 DB와 일치하지 않을 경우에만 업데이트
-                if (!viewCount.equals(dbViewCount)) {
-                    post.updateViewCount(viewCount);
+                    // Redis 조회수와 DB와 일치하지 않을 경우에만 업데이트
+                    if (!viewCount.equals(dbViewCount)) {
+                        post.get().updateViewCount(viewCount);
+                    }
                 }
             }
         }

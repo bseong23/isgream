@@ -1,6 +1,5 @@
 package com.ssafy.iscream.bigFiveTest.domain;
 
-import com.ssafy.iscream.user.domain.User;
 import jakarta.persistence.*;
 import lombok.*;
 
@@ -17,6 +16,9 @@ public class BigFiveTest {
     @GeneratedValue(strategy = GenerationType.IDENTITY)
     @Column(name = "big_five_test_id")
     private Integer testId;
+
+    @Column(nullable = false)
+    private Integer childId;
 
     @Column(nullable = false)
     private Integer userId;

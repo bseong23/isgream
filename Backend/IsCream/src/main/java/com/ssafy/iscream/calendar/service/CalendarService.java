@@ -9,6 +9,7 @@ import com.ssafy.iscream.calendar.dto.response.CalendarGetDetailRes;
 import com.ssafy.iscream.calendar.dto.response.CalendarGetRes;
 import com.ssafy.iscream.calendar.repository.MemoRepository;
 import com.ssafy.iscream.children.domain.Child;
+import com.ssafy.iscream.common.exception.BadRequestException;
 import com.ssafy.iscream.common.exception.ErrorCode;
 import com.ssafy.iscream.common.exception.NotFoundException;
 import com.ssafy.iscream.common.exception.UnauthorizedException;
@@ -27,11 +28,20 @@ public class CalendarService {
     private final MemoRepository memoRepository;
 
     public void createMemo(Integer userId, MemoCreateReq memoCreateReq) {
+        // 메모길이 0일때 아무것도 안함
+        if(memoCreateReq.getMemo().isEmpty())
+            return;
+
+        if (memoRepository.existsByChildIdAndSelectedDate(memoCreateReq.getChildId(), memoCreateReq.getSelectedDate()))
+            throw new BadRequestException(new ResponseData<>(ErrorCode.DATA_SAVE_FAILED.getCode(), ErrorCode.DATA_SAVE_FAILED.getMessage(),null));
+
+
 
         Memo memo = Memo.builder()
                 .userId(userId)
                 .childId(memoCreateReq.getChildId())
                 .content(memoCreateReq.getMemo())
+                .selectedDate(memoCreateReq.getSelectedDate())
                 .build();
         memoRepository.save(memo);
     }
@@ -42,9 +52,18 @@ public class CalendarService {
                 .orElseThrow(() -> new NotFoundException(
                         new ResponseData<>(ErrorCode.DATA_NOT_FOUND.getCode(), ErrorCode.DATA_NOT_FOUND.getMessage(), null)));
 
+
+
+
         // 권한 없는 경우
         if (!memo.getUserId().equals(userId)) {
             throw new UnauthorizedException(new ResponseData<>(ErrorCode.DATA_FORBIDDEN_ACCESS.getCode(), ErrorCode.DATA_FORBIDDEN_ACCESS.getMessage(), null));
+        }
+
+        // 길이 0일 때 삭제 해줌
+        if(memoUpdateReq.getMemo().isEmpty()){
+            memoRepository.deleteById(memoUpdateReq.getMemoId());
+            return;
         }
 
         memo.updateContent(memoUpdateReq.getMemo());
@@ -72,7 +91,7 @@ public class CalendarService {
         List<Memo> memos = memoRepository.findByChildIdAndCreatedAtBetween(calendarGetReq.getChildId(), startDate, endDate);
         List<Integer> days = new ArrayList<>();
         for (Memo memo : memos) {
-            days.add(memo.getCreatedAt().getDayOfMonth());
+            days.add(memo.getSelectedDate().getDayOfMonth());
         }
 
         // 권한 없는 경우
@@ -85,7 +104,7 @@ public class CalendarService {
     }
 
     public Memo getByChildIdDate(Integer userId, Integer childId, LocalDate selectedDate) {
-        Memo memo = memoRepository.findByChildIdAndDate(childId, selectedDate).orElse(null);
+        Memo memo = memoRepository.findByChildIdAndSelectedDate(childId, selectedDate).orElse(null);
         if(memo != null && !memo.getUserId().equals(userId)) {
             throw new UnauthorizedException(new ResponseData<>(ErrorCode.DATA_FORBIDDEN_ACCESS.getCode(), ErrorCode.DATA_FORBIDDEN_ACCESS.getMessage(), null));
         }

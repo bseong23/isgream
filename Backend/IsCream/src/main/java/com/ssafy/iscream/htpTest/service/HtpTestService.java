@@ -1,15 +1,13 @@
 package com.ssafy.iscream.htpTest.service;
 
 import com.ssafy.iscream.calendar.dto.request.CalendarGetReq;
-import com.ssafy.iscream.children.repository.ChildRepository;
-import com.ssafy.iscream.common.exception.ErrorCode;
-import com.ssafy.iscream.common.exception.UnauthorizedException;
-import com.ssafy.iscream.common.response.ResponseData;
+import com.ssafy.iscream.children.domain.Child;
+import com.ssafy.iscream.children.service.ChildrenService;
 import com.ssafy.iscream.htpTest.domain.HtpTest;
 import com.ssafy.iscream.htpTest.dto.request.HtpTestDiagnosisReq;
 import com.ssafy.iscream.htpTest.dto.request.HtpTestReq;
 import com.ssafy.iscream.htpTest.repository.HtpTestRepository;
-import com.ssafy.iscream.pdf.service.PdfService;
+import com.ssafy.iscream.pdf.service.HtpTestPdfService;
 import com.ssafy.iscream.s3.service.S3Service;
 import com.ssafy.iscream.user.domain.User;
 import lombok.RequiredArgsConstructor;
@@ -30,9 +28,9 @@ import java.util.concurrent.ConcurrentHashMap;
 @Transactional
 public class HtpTestService {
     private final HtpTestRepository htpTestRepository;
-    private final ChildRepository childRepository;
     private final S3Service s3Service;
-    private final PdfService pdfService;
+    private final HtpTestPdfService pdfService;
+    private final ChildrenService childrenService;
 
     private Map<Integer, ArrayList<HtpTestDiagnosisReq>> imageMap = new ConcurrentHashMap<>();
 
@@ -42,13 +40,7 @@ public class HtpTestService {
         LocalDateTime startDate = LocalDateTime.of(calendarGetReq.getYear(), calendarGetReq.getMonth(), 1, 0, 0);
         LocalDateTime endDate = startDate.plusMonths(1); // 다음 달 1일 (해당 월의 끝까지 포함)
 
-        // 권한 없는 경우
-        List<HtpTest> htpTests = htpTestRepository.findByChildIdAndCreatedAtBetween( calendarGetReq.getChildId(), startDate, endDate);
-        if (!htpTests.isEmpty() && !userId.equals(htpTests.get(0).getChildId())) {
-            throw new UnauthorizedException(new ResponseData<>(ErrorCode.DATA_FORBIDDEN_ACCESS.getCode(), ErrorCode.DATA_FORBIDDEN_ACCESS.getMessage(), null));
-        }
-
-        return htpTests;
+        return htpTestRepository.findByChildIdAndCreatedAtBetween( calendarGetReq.getChildId(), startDate, endDate);
     }
 
     // house, tree, male, female
@@ -107,7 +99,6 @@ public class HtpTestService {
 
             result = imageServeService.sendImageData(user, files);
             htpTest.setAnalysisResult(result);
-            htpTest.setPdfUrl(pdfService.generatePdf(user,childRepository.findByChildId(req.getChildId()) ,result, htpTest));
         }
 
         return result;
@@ -128,7 +119,6 @@ public class HtpTestService {
 
             result = imageServeService.sendImageData(user, files);
             htpTest.setAnalysisResult(result);
-            htpTest.setPdfUrl(pdfService.generatePdf(user,childRepository.findByChildId(req.getChildId()) ,result, htpTest));
         }
 
         return result;
@@ -175,10 +165,11 @@ public class HtpTestService {
         return htpTestRepository.findFirstByChildIdOrderByCreatedAtDesc(childId).orElse(null);
     }
 
-
     // Htp Test pdf url 전송
-    public String getHtpTestPdfUrl(Integer htpTestId) {
+    public String getHtpTestPdfUrl(User user, Integer htpTestId) {
         HtpTest htpTest = htpTestRepository.findByHtpTestId(htpTestId);
+        Child child = childrenService.getById(htpTest.getChildId());
+        htpTest.setPdfUrl(pdfService.generatePdf(user, child, htpTest.getAnalysisResult(), htpTest));
 
         return htpTest.getPdfUrl();
     }

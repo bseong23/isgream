@@ -6,7 +6,7 @@ import com.ssafy.iscream.htpTest.dto.request.HtpTestCreateReq;
 import com.ssafy.iscream.htpTest.dto.request.HtpTestReq;
 import com.ssafy.iscream.htpTest.dto.response.HtpTestDetailDto;
 import com.ssafy.iscream.htpTest.dto.response.HtpTestResponseDto;
-import com.ssafy.iscream.htpTest.service.HtpFercade;
+import com.ssafy.iscream.htpTest.service.HtpFacade;
 import com.ssafy.iscream.htpTest.service.HtpSelectService;
 import com.ssafy.iscream.htpTest.service.HtpTestService;
 import com.ssafy.iscream.user.domain.User;
@@ -26,7 +26,7 @@ import java.util.List;
 public class HtpTestController {
     private final HtpTestService htpTestService;
     private final HtpSelectService htpSelectService;
-    private final HtpFercade htpFercade;
+    private final HtpFacade htpFercade;
 
     /**
      * HTP 테스트 수행 (총 4번 진행해야 함)
@@ -69,7 +69,7 @@ public class HtpTestController {
     @GetMapping("/{htp_test_id}/pdf")
     @Operation(summary = "특정 HTP 테스트 결과 PDF 조회", tags = "htp")
     public ResponseEntity<?> getHtpTestPdf(@Login User user, @PathVariable("htp_test_id") Integer htpTestId) {
-        return ResponseUtil.success(htpTestService.getHtpTestPdfUrl(htpTestId));
+        return ResponseUtil.success(htpTestService.getHtpTestPdfUrl(user, htpTestId));
     }
 
 }
