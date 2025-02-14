@@ -20,6 +20,7 @@ import java.time.LocalDateTime;
 
 import java.time.LocalTime;
 import java.util.ArrayList;
+import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
 import java.util.concurrent.ConcurrentHashMap;
@@ -32,7 +33,7 @@ public class HtpTestService {
     private final S3Service s3Service;
     private final PdfService pdfService;
 
-    private Map<Integer, ArrayList<HtpTestDiagnosisReq>> imageMap = new ConcurrentHashMap<>();
+    private Map<Integer, Map<String, HtpTestDiagnosisReq>> imageMap = new ConcurrentHashMap<>();
 
     private final ImageServeService imageServeService;
 
@@ -40,7 +41,7 @@ public class HtpTestService {
         LocalDateTime startDate = LocalDateTime.of(calendarGetReq.getYear(), calendarGetReq.getMonth(), 1, 0, 0);
         LocalDateTime endDate = startDate.plusMonths(1); // 다음 달 1일 (해당 월의 끝까지 포함)
 
-        return htpTestRepository.findByChildIdAndCreatedAtBetween( calendarGetReq.getChildId(), startDate, endDate);
+        return htpTestRepository.findByChildIdAndCreatedAtBetween(calendarGetReq.getChildId(), startDate, endDate);
     }
 
     // house, tree, male, female
@@ -72,7 +73,7 @@ public class HtpTestService {
 
         htpTest.setHouseDrawingUrl(url);
 
-        imageMap.get(user.getUserId()).add(new HtpTestDiagnosisReq(req.getTime(), req.getType(), htpTest.getHouseDrawingUrl()));
+        imageMap.get(req.getChildId()).put("house", new HtpTestDiagnosisReq(req.getTime(), req.getType(), htpTest.getHouseDrawingUrl()));
     }
 
     private void testTree(User user, HtpTestReq req) {
@@ -81,7 +82,7 @@ public class HtpTestService {
 
         htpTest.setTreeDrawingUrl(url);
 
-        imageMap.get(user.getUserId()).add(new HtpTestDiagnosisReq(req.getTime(), req.getType(), htpTest.getTreeDrawingUrl()));
+        imageMap.get(req.getChildId()).put("tree", new HtpTestDiagnosisReq(req.getTime(), req.getType(), htpTest.getTreeDrawingUrl()));
     }
 
     private String testMale(User user, HtpTestReq req) {
@@ -90,12 +91,16 @@ public class HtpTestService {
 
         htpTest.setMaleDrawingUrl(url);
 
-        imageMap.get(user.getUserId()).add(new HtpTestDiagnosisReq(req.getTime(), req.getType(), htpTest.getMaleDrawingUrl()));
+        imageMap.get(req.getChildId()).put("male", new HtpTestDiagnosisReq(req.getTime(), req.getType(), htpTest.getMaleDrawingUrl()));
 
         String result = "";
 
         if (req.getIndex().equals(4)) {
-            ArrayList<HtpTestDiagnosisReq> files = imageMap.get(user.getUserId());
+            ArrayList<HtpTestDiagnosisReq> files = new ArrayList<>();
+            files.add(imageMap.get(req.getChildId()).get("house"));
+            files.add(imageMap.get(req.getChildId()).get("tree"));
+            files.add(imageMap.get(req.getChildId()).get("male"));
+            files.add(imageMap.get(req.getChildId()).get("female"));
 
             result = imageServeService.sendImageData(user, files);
             htpTest.setAnalysisResult(result);
@@ -110,12 +115,16 @@ public class HtpTestService {
 
         htpTest.setFemaleDrawingUrl(url);
 
-        imageMap.get(user.getUserId()).add(new HtpTestDiagnosisReq(req.getTime(), req.getType(), htpTest.getFemaleDrawingUrl()));
-        
+        imageMap.get(req.getChildId()).put("female", new HtpTestDiagnosisReq(req.getTime(), req.getType(), htpTest.getFemaleDrawingUrl()));
+
         String result = "";
 
         if (req.getIndex().equals(4)) {
-            ArrayList<HtpTestDiagnosisReq> files = imageMap.get(user.getUserId());
+            ArrayList<HtpTestDiagnosisReq> files = new ArrayList<>();
+            files.add(imageMap.get(req.getChildId()).get("house"));
+            files.add(imageMap.get(req.getChildId()).get("tree"));
+            files.add(imageMap.get(req.getChildId()).get("male"));
+            files.add(imageMap.get(req.getChildId()).get("female"));
 
             result = imageServeService.sendImageData(user, files);
             htpTest.setAnalysisResult(result);
@@ -131,10 +140,18 @@ public class HtpTestService {
 
         htpTestRepository.save(htpTest);
 
-        if (imageMap.containsKey(user.getUserId())) {
-            imageMap.get(user.getUserId()).clear();
+        if (imageMap.containsKey(req.getChildId())) {
+            imageMap.get(req.getChildId()).put("house", null);
+            imageMap.get(req.getChildId()).put("tree", null);
+            imageMap.get(req.getChildId()).put("male", null);
+            imageMap.get(req.getChildId()).put("female", null);
         } else {
-            imageMap.put(user.getUserId(), new ArrayList<>());
+            Map<String, HtpTestDiagnosisReq> map = new HashMap<>();
+            map.put("house", null);
+            map.put("tree", null);
+            map.put("male", null);
+            map.put("female", null);
+            imageMap.put(req.getChildId(), map);
         }
     }
 
@@ -142,8 +159,7 @@ public class HtpTestService {
         List<HtpTest> htpTest = getHtpTestByChildIdAndDate(childId);
 
         if (!htpTest.isEmpty()) {
-            HtpTest todayHtpTest = htpTest.get(0);
-            htpTestRepository.delete(todayHtpTest);
+            htpTestRepository.deleteAll(htpTest);
         }
     }
 
