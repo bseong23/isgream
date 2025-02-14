@@ -54,10 +54,12 @@ pipeline {
             steps {
                 script {
                     sh '''
-                        docker ps -q --filter "name=backend-app" | xargs -r docker stop
-                        docker ps -aq --filter "name=backend-app" | xargs -r docker rm
-                        docker ps -q --filter "name=frontend-app" | xargs -r docker stop
-                        docker ps -aq --filter "name=frontend-app" | xargs -r docker rm
+                        docker ps -q --filter "name=nginx" | xargs -r docker stop
+                        docker ps -aq --filter "name=nginx" | xargs -r docker rm
+                        
+                        docker ps -q --filter "name=backend" | xargs -r docker stop
+                        docker ps -aq --filter "name=backend" | xargs -r docker rm
+                        
                         docker ps -q --filter "name=ai-server" | xargs -r docker stop
                         docker ps -aq --filter "name=ai-server" | xargs -r docker rm
                     '''

@@ -1,4 +1,4 @@
-import torch
+from ultralytics import YOLO
 from pathlib import Path
 import platform
 
@@ -12,7 +12,8 @@ def load_model(model_name):
     model_path = LOCAL_MODEL_DIR / f"{model_name}.pt"
     if not model_path.exists():
         raise FileNotFoundError(f"Model file not found at {model_path}")
-    return torch.hub.load('ultralytics/yolov5', 'custom', path=str(model_path), force_reload=True, trust_repo=True)
+    return YOLO(str(model_path))  # YOLOv8 모델 로드
+
 
 # 모델 로드
 house_model = load_model("house")
