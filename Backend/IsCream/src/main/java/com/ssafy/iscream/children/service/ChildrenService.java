@@ -111,11 +111,10 @@ public class ChildrenService {
     }
 
     public void checkAccess(Integer userId, Integer childId) {
-        Child child = childRepository.findById(childId).orElseThrow(() -> new NotFoundException(
-                new ResponseData<>(ErrorCode.DATA_NOT_FOUND.getCode(), ErrorCode.DATA_NOT_FOUND.getMessage(), null)));
+        Child child = childRepository.findById(childId).orElseThrow(() -> new DataException(ErrorCode.DATA_NOT_FOUND));
 
         if (!child.getUserId().equals(userId)) {
-            throw new UnauthorizedException(new ResponseData<>(ErrorCode.DATA_FORBIDDEN_ACCESS.getCode(), ErrorCode.DATA_FORBIDDEN_ACCESS.getMessage(), null));
+            throw new DataException(ErrorCode.DATA_NOT_FOUND);
         }
     }
 }
