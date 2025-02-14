@@ -18,7 +18,11 @@ import org.springframework.transaction.annotation.Transactional;
 import java.time.LocalDate;
 import java.time.LocalDateTime;
 import java.time.LocalTime;
-import java.util.*;
+import java.util.ArrayList;
+import java.util.List;
+import java.util.Map;
+import java.util.Objects;
+import java.util.stream.Stream;
 
 @Service
 @RequiredArgsConstructor
@@ -114,16 +118,33 @@ public class HtpTestService {
         String result = imageServeService.sendImageData(user, files);
         htpTest.setAnalysisResult(result);
 
-        redisService.deleteImageMap(childId); // AI 분석 완료 후 Redis 데이터 삭제
+        //redisService.deleteImageMap(childId); // AI 분석 완료 후 Redis 데이터 삭제
         return result;
     }
 
     // ✅ 오늘의 HTP 테스트 데이터 확인 후 삭제
     private void checkTodayHtpTest(Integer childId) {
         List<HtpTest> htpTests = getHtpTestByChildIdAndDate(childId);
-        if (!htpTests.isEmpty()) {
-            htpTestRepository.deleteAll(htpTests);
+
+        if (htpTests.isEmpty()) {
+            return;
         }
+
+        // htpTests의 파일들 조회하고 S3에서 삭제
+        List<String> htpFiles = htpTests.stream()
+                .flatMap(htpTest -> Stream.of(
+                        htpTest.getPdfUrl(),
+                        htpTest.getHouseDrawingUrl(),
+                        htpTest.getTreeDrawingUrl(),
+                        htpTest.getMaleDrawingUrl(),
+                        htpTest.getFemaleDrawingUrl()
+                ))
+                .filter(Objects::nonNull)
+                .toList();
+
+        s3Service.deleteFile(htpFiles);
+
+        htpTestRepository.deleteAll(htpTests);
     }
 
     // ✅ 특정 Child의 오늘 날짜 데이터 조회

@@ -1,7 +1,5 @@
 package com.ssafy.iscream.children.service;
 
-import com.ssafy.iscream.bigFiveTest.domain.BigFiveTest;
-import com.ssafy.iscream.bigFiveTest.repository.BigFiveTestRepository;
 import com.ssafy.iscream.children.domain.Child;
 import com.ssafy.iscream.children.domain.Gender;
 import com.ssafy.iscream.children.domain.Status;
@@ -11,11 +9,7 @@ import com.ssafy.iscream.children.dto.res.ChildrenGetRes;
 import com.ssafy.iscream.children.repository.ChildRepository;
 import com.ssafy.iscream.common.exception.ErrorCode;
 import com.ssafy.iscream.common.exception.MinorException.DataException;
-import com.ssafy.iscream.htpTest.domain.HtpTest;
-import com.ssafy.iscream.htpTest.repository.HtpTestRepository;
-import com.ssafy.iscream.s3.service.S3Service;
 import lombok.RequiredArgsConstructor;
-import org.springframework.scheduling.annotation.Scheduled;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
@@ -38,8 +32,9 @@ public class ChildrenService {
                     .childId(child.getChildId())
                     .nickname(child.getNickname())
                     .birthDate(child.getBirthDate())
-                    .gender(child.getGender())
+                    .gender(child.getGender().name())
                     .build();
+
             childrenGetResList.add(childrenGetRes);
         }
 
@@ -88,44 +83,21 @@ public class ChildrenService {
         return childRepository.findById(childId).orElseThrow(() -> new DataException(ErrorCode.DATA_NOT_FOUND));
     }
 
-    private final S3Service s3Service;
-    private final HtpTestRepository htpTestRepository;
-    private final BigFiveTestRepository bigFiveTestRepository;
-
-    // 자녀와 관련된 정보 일괄 삭제
-    @Scheduled(cron = "0 */30 * * * ?")
-    @Transactional
-    public void deleteChildrenFile() {
-        List<Child> children = childRepository.findByStatus(Status.DELETED);
-
-        for (Child child : children) {
-            Integer childId = child.getChildId();
-
-            List<HtpTest> htpTestList = htpTestRepository.findByChildId(childId);
-
-            for (HtpTest htpTest : htpTestList) {
-                s3Service.deleteFile(htpTest.getPdfUrl());
-                s3Service.deleteFile(htpTest.getHouseDrawingUrl());
-                s3Service.deleteFile(htpTest.getTreeDrawingUrl());
-                s3Service.deleteFile(htpTest.getMaleDrawingUrl());
-                s3Service.deleteFile(htpTest.getFemaleDrawingUrl());
-            }
-
-            List<BigFiveTest> bigFiveTestList = bigFiveTestRepository.findByChildId(childId);
-
-            for (BigFiveTest bigFiveTest : bigFiveTestList) {
-                s3Service.deleteFile(bigFiveTest.getPdfUrl());
-            }
-
-            childRepository.deleteById(childId);
-        }
-    }
-
     public void checkAccess(Integer userId, Integer childId) {
         Child child = childRepository.findById(childId).orElseThrow(() -> new DataException(ErrorCode.DATA_NOT_FOUND));
 
         if (!child.getUserId().equals(userId)) {
             throw new DataException(ErrorCode.DATA_FORBIDDEN_ACCESS);
         }
+    }
+
+    // 자녀 삭제
+    public void deleteChild(List<Integer> childIds) {
+        childRepository.deleteAllById(childIds);
+    }
+
+    // 삭제할 자녀 리스트 가져오기
+    public List<Integer> getDeleteChildId() {
+        return childRepository.findChildIdsByStatus(Status.DELETED);
     }
 }
