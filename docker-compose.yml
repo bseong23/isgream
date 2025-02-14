@@ -16,7 +16,7 @@ services:
     networks:
       - mynetwork
     env_file:
-      - /home/ubuntu/.env  # 절대 경로 지정
+      - /home/ubuntu/.env  
 
   backend:
     build:
@@ -32,7 +32,7 @@ services:
     networks:
       - mynetwork
     env_file:
-      - /home/ubuntu/.env  # 절대 경로 지정
+      - /home/ubuntu/.env 
 
   ai-server:
     build:
@@ -50,7 +50,7 @@ services:
     networks:
       - mynetwork
     env_file:
-      - /home/ubuntu/.env  # 절대 경로 지정
+      - /home/ubuntu/.env  
 
 networks:
   mynetwork:
