@@ -30,8 +30,6 @@ public interface HtpTestRepository extends JpaRepository<HtpTest, Integer> {
 
     Optional<HtpTest> findFirstByChildIdOrderByCreatedAtDesc(Integer childId);
 
-    List<HtpTest> findByChildIdIn(List<Integer> childIds);
-
     @Query(value = "SELECT h.pdf_url FROM htp_test h WHERE h.child_id IN :childIds AND h.pdf_url IS NOT NULL " +
             "UNION " +
             "SELECT h.house_drawing_url FROM htp_test h WHERE h.child_id IN :childIds AND h.house_drawing_url IS NOT NULL " +
