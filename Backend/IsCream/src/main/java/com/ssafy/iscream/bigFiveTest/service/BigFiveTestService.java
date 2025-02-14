@@ -4,7 +4,6 @@ import com.ssafy.iscream.bigFiveTest.domain.BigFiveQuestion;
 import com.ssafy.iscream.bigFiveTest.domain.BigFiveScore;
 import com.ssafy.iscream.bigFiveTest.domain.BigFiveTest;
 import com.ssafy.iscream.bigFiveTest.dto.request.BigFiveTestCreateReq;
-import com.ssafy.iscream.bigFiveTest.dto.response.BigFiveTestListRes;
 import com.ssafy.iscream.bigFiveTest.dto.response.BigFiveTestQuestionRes;
 import com.ssafy.iscream.bigFiveTest.dto.response.BigFiveTestRes;
 import com.ssafy.iscream.bigFiveTest.repository.BigFiveQuestionRepository;
@@ -13,8 +12,7 @@ import com.ssafy.iscream.bigFiveTest.repository.BigFiveTestRepository;
 import com.ssafy.iscream.children.domain.Child;
 import com.ssafy.iscream.children.service.ChildrenService;
 import com.ssafy.iscream.common.exception.ErrorCode;
-import com.ssafy.iscream.common.exception.MinorException.*;
-import com.ssafy.iscream.htpTest.domain.HtpTest;
+import com.ssafy.iscream.common.exception.MinorException.DataException;
 import com.ssafy.iscream.pdf.service.BigFiveTestPdfService;
 import com.ssafy.iscream.user.domain.User;
 import lombok.RequiredArgsConstructor;
@@ -99,8 +97,6 @@ public class BigFiveTestService {
         );
     }
 
-    // 성격 5요인 테스트 결과 목록 조회
-
 
     @Transactional
     public String getBigFivePdfUrl(User user, Integer bigFiveTestId) {
@@ -129,6 +125,11 @@ public class BigFiveTestService {
 
         bigFiveScoreRepository.save(bigFiveScore);
         return bigFiveScore.getAverageScore();
+    }
+
+    // childId에 해당하는 결과 목록 조회
+    public List<BigFiveTest> getBigFiveTestListByChildId(Integer childId) {
+        return bigFiveTestRepository.findByChildId(childId);
     }
 }
 

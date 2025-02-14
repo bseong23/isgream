@@ -1,21 +1,25 @@
 package com.ssafy.iscream.children.service;
 
+import com.ssafy.iscream.bigFiveTest.domain.BigFiveTest;
+import com.ssafy.iscream.bigFiveTest.repository.BigFiveTestRepository;
 import com.ssafy.iscream.children.domain.Child;
 import com.ssafy.iscream.children.dto.req.ChildrenCreateReq;
 import com.ssafy.iscream.children.dto.req.ChildrenUpdateReq;
 import com.ssafy.iscream.children.dto.res.ChildrenGetRes;
 import com.ssafy.iscream.children.repository.ChildRepository;
 import com.ssafy.iscream.common.exception.ErrorCode;
-import com.ssafy.iscream.common.exception.NotFoundException;
-import com.ssafy.iscream.common.exception.UnauthorizedException;
-import com.ssafy.iscream.common.response.ResponseData;
+import com.ssafy.iscream.common.exception.MinorException.DataException;
+import com.ssafy.iscream.htpTest.domain.HtpTest;
+import com.ssafy.iscream.htpTest.service.HtpSelectService;
+import com.ssafy.iscream.s3.service.S3Service;
 import lombok.RequiredArgsConstructor;
+import org.springframework.scheduling.annotation.Scheduled;
 import org.springframework.stereotype.Service;
+import org.springframework.transaction.annotation.Transactional;
 
 import java.util.ArrayList;
 import java.util.List;
 
-// TODO: 기능 완성 후 에러 처리 다룰 예정
 @Service
 @RequiredArgsConstructor
 public class ChildrenService {
@@ -54,10 +58,10 @@ public class ChildrenService {
 
     public void updateChildren(Integer userId, ChildrenUpdateReq childrenUpdateReq) {
         Child childOriginal = childRepository.findById(childrenUpdateReq.getChildId())
-                .orElseThrow(() -> new NotFoundException(new ResponseData<>(ErrorCode.DATA_NOT_FOUND.getCode(), ErrorCode.DATA_NOT_FOUND.getMessage(), null)));
+                .orElseThrow(() -> new DataException(ErrorCode.DATA_NOT_FOUND));
 
         if (!userId.equals(childOriginal.getUserId())) {
-            throw new UnauthorizedException(new ResponseData<>((ErrorCode.DATA_FORBIDDEN_ACCESS.getCode()),ErrorCode.DATA_FORBIDDEN_ACCESS.getMessage(), null));
+            throw new DataException(ErrorCode.DATA_FORBIDDEN_ACCESS);
         }
 
         childOriginal.updateChild(childrenUpdateReq.getNickname(), childrenUpdateReq.getBirthDate(), childrenUpdateReq.getGender());
@@ -69,28 +73,60 @@ public class ChildrenService {
 
     public void deleteChildren(Integer userId, Integer childrenId) {
         Child childOriginal = childRepository.findById(childrenId)
-                .orElseThrow(() -> new NotFoundException(
-                        new ResponseData<>(ErrorCode.DATA_NOT_FOUND.getCode(), ErrorCode.DATA_NOT_FOUND.getMessage(), null)));
+                .orElseThrow(() -> new DataException(ErrorCode.DATA_NOT_FOUND));
 
         if (!userId.equals(childOriginal.getUserId())) {
-            throw new UnauthorizedException(
-                    new ResponseData<>(ErrorCode.DATA_FORBIDDEN_ACCESS.getCode(), ErrorCode.DATA_FORBIDDEN_ACCESS.getMessage(), null));
+            throw new DataException(ErrorCode.DATA_FORBIDDEN_ACCESS);
         }
 
         childRepository.delete(childOriginal);
     }
 
     public Child getById(Integer childId) {
-        return childRepository.findById(childId).orElseThrow(() -> new NotFoundException(
-                new ResponseData<>(ErrorCode.DATA_NOT_FOUND.getCode(), ErrorCode.DATA_NOT_FOUND.getMessage(), null)));
+        return childRepository.findById(childId).orElseThrow(() -> new DataException(ErrorCode.DATA_NOT_FOUND));
+    }
+
+    private final S3Service s3Service;
+    private final HtpSelectService htpSelectService;
+    private final BigFiveTestRepository bigFiveTestRepository;
+
+    // 자녀와 관련된 정보 일괄 삭제
+    // htp/big5 pdf, image url 삭제 및 s3에 업로드 된 파일 삭제
+    // TODO: 수정 필요
+    @Scheduled(cron = "0 */30 * * * ?")
+    @Transactional
+    public void deleteChildrenFile() {
+        List<Child> children = childRepository.findAll();
+
+        for (Child child : children) {
+            Integer childId = child.getChildId();
+
+            List<HtpTest> htpTestList = htpSelectService.getHtpTestList(childId);
+
+            for (HtpTest htpTest : htpTestList) {
+                s3Service.deleteFile(htpTest.getPdfUrl());
+                s3Service.deleteFile(htpTest.getHouseDrawingUrl());
+                s3Service.deleteFile(htpTest.getTreeDrawingUrl());
+                s3Service.deleteFile(htpTest.getMaleDrawingUrl());
+                s3Service.deleteFile(htpTest.getFemaleDrawingUrl());
+            }
+
+            // big five 검사 내역 조회 -> pdf 삭제
+            List<BigFiveTest> bigFiveTestList = bigFiveTestRepository.findByChildId(childId);
+
+            for (BigFiveTest bigFiveTest : bigFiveTestList) {
+                s3Service.deleteFile(bigFiveTest.getPdfUrl());
+            }
+
+            childRepository.deleteById(childId);
+        }
     }
 
     public void checkAccess(Integer userId, Integer childId) {
-        Child child = childRepository.findById(childId).orElseThrow(() -> new NotFoundException(
-                new ResponseData<>(ErrorCode.DATA_NOT_FOUND.getCode(), ErrorCode.DATA_NOT_FOUND.getMessage(), null)));
+        Child child = childRepository.findById(childId).orElseThrow(() -> new DataException(ErrorCode.DATA_NOT_FOUND));
 
         if (!child.getUserId().equals(userId)) {
-            throw new UnauthorizedException(new ResponseData<>(ErrorCode.DATA_FORBIDDEN_ACCESS.getCode(), ErrorCode.DATA_FORBIDDEN_ACCESS.getMessage(), null));
+            throw new DataException(ErrorCode.DATA_FORBIDDEN_ACCESS);
         }
     }
 }
