@@ -8,7 +8,6 @@ import com.ssafy.iscream.patTest.dto.request.PatTestCreateReq;
 import com.ssafy.iscream.patTest.dto.response.PatTestQuestionRes;
 import com.ssafy.iscream.patTest.dto.response.PatTestRes;
 import com.ssafy.iscream.patTest.repository.PatQuestionRepository;
-import com.ssafy.iscream.patTest.repository.PatTestListRepository;
 import com.ssafy.iscream.patTest.repository.PatTestRepository;
 import com.ssafy.iscream.pdf.service.PatTestPdfService;
 import com.ssafy.iscream.user.domain.User;
@@ -28,11 +27,10 @@ public class PatTestService {
 
     private final PatQuestionRepository patQuestionRepository;
     private final PatTestRepository patTestRepository;
-    private final PatTestListRepository patTestListRepository;
     private final PatTestPdfService patTestPdfService;
 
     // PAT 검사 질문 조회
-    public List<PatTestQuestionRes> getPatTestList(User user) {
+    public List<PatTestQuestionRes> getPatTestList() {
         List<PatQuestion> questions = patQuestionRepository.findAll();
         return questions.stream()
                 .map(q -> new PatTestQuestionRes(
@@ -48,8 +46,8 @@ public class PatTestService {
     @Transactional
     public PatTestRes postPatTestResult(User user, PatTestCreateReq patTestCreateReq) {
         PatTest patTest = PatTest.builder()
-                .user(user)
-                .testDate(LocalDate.now().toString())
+                .userId(user.getUserId())
+                .testDate(LocalDate.now())
                 .aScore(patTestCreateReq.getScoreA())
                 .bScore(patTestCreateReq.getScoreB())
                 .cScore(patTestCreateReq.getScoreC())
@@ -59,7 +57,7 @@ public class PatTestService {
         patTestRepository.save(patTest);
 
         return new PatTestRes(
-                patTest.getTestDate(),
+                patTest.getTestDate().toString(),
                 patTest.getAScore(),
                 patTest.getBScore(),
                 patTest.getCScore(),
@@ -69,11 +67,11 @@ public class PatTestService {
 
     // PAT 검사 결과 최신 조회
     public PatTestRes getPatTestResult(User user) {
-        PatTest patTest = patTestRepository.findLatestByUser(user)
+        PatTest patTest = patTestRepository.findLatestByUserId(user.getUserId())
                 .orElseThrow(() -> new DataException(ErrorCode.DATA_NOT_FOUND));
 
         return new PatTestRes(
-                patTest.getTestDate(),
+                patTest.getTestDate().toString(),
                 patTest.getAScore(),
                 patTest.getBScore(),
                 patTest.getCScore(),
@@ -82,11 +80,11 @@ public class PatTestService {
     }
 
     // PAT 검사 결과 리스트 조회
-    public List<PatTestRes> getPatTestResultList(User user) {
-        List<PatTest> patTestList = patTestListRepository.findByUser(user);
+    public List<PatTestRes> getPatTestResultList(User user, LocalDate startDate, LocalDate endDate) {
+        List<PatTest> patTestList = patTestRepository.findByUserIdAndDate(user.getUserId(), startDate, endDate);
         return patTestList.stream()
                 .map(l -> new PatTestRes(
-                        l.getTestDate(),
+                        l.getTestDate().toString(),
                         l.getAScore(),
                         l.getBScore(),
                         l.getCScore(),

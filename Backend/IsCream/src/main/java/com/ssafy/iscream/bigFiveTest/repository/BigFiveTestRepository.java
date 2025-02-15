@@ -6,16 +6,25 @@ import org.springframework.data.jpa.repository.Query;
 import org.springframework.data.repository.query.Param;
 import org.springframework.stereotype.Repository;
 
+import java.time.LocalDate;
 import java.util.List;
 
 @Repository
 public interface BigFiveTestRepository extends JpaRepository<BigFiveTest, Integer> {
-    @Query("SELECT b FROM BigFiveTest b WHERE b.childId = :childId ORDER BY b.date DESC LIMIT 1")
+    @Query("SELECT b FROM BigFiveTest b WHERE b.childId = :childId ORDER BY b.testDate DESC LIMIT 1")
     BigFiveTest findFirstByChildIdOrderByTestDateDesc(@Param("childId") Integer childId);
-
-    List<BigFiveTest> findByUserId(Integer userId);
 
     @Query("SELECT b.pdfUrl FROM BigFiveTest b WHERE b.childId IN :childIds")
     List<String> findPdfUrlByChildIdIn(List<Integer> childIds);
+
+    @Query("SELECT b FROM BigFiveTest b " +
+            "WHERE b.userId = :userId " +
+            "AND b.testDate BETWEEN :startDate AND :endDate " +
+            "ORDER BY b.testDate DESC")
+    List<BigFiveTest> findByUserIdAndDate(
+            @Param("userId") Integer userId,
+            @Param("startDate") LocalDate startDate,
+            @Param("endDate") LocalDate endDate
+    );
 
 }

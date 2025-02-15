@@ -7,9 +7,12 @@ import com.ssafy.iscream.bigFiveTest.service.BigFiveTestService;
 import com.ssafy.iscream.common.util.ResponseUtil;
 import com.ssafy.iscream.user.domain.User;
 import io.swagger.v3.oas.annotations.Operation;
+import io.swagger.v3.oas.annotations.media.Schema;
 import lombok.RequiredArgsConstructor;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
+
+import java.time.LocalDate;
 
 @RestController
 @RequiredArgsConstructor
@@ -40,8 +43,14 @@ public class BigFiveTestController {
 
     @Operation(summary = "사용자의 성격 5요인 검사 결과 목록 조회", tags = "big-five")
     @GetMapping()
-    public ResponseEntity<?> getBigFiveListResult(@Login User user){
-        return ResponseUtil.success(bigFiveFacade.getUserBigFiveTestListResults(user));
+    public ResponseEntity<?> getBigFiveListResult(@Login User user,
+                             @Schema(description = "조회 시작 날짜", example = "2025-01-01")
+                             @RequestParam("startDate") LocalDate startDate,
+                             @Schema(description = "조회 종료 날짜", example = "2025-02-10")
+                             @RequestParam("endDate") LocalDate endDate) {
+        return ResponseUtil.success(
+                bigFiveFacade.getUserBigFiveTestListResults(
+                        user, startDate, endDate));
     }
 
     @Operation(summary = "성격 5요인 검사 결과 PDF 추출", tags = "big-five")

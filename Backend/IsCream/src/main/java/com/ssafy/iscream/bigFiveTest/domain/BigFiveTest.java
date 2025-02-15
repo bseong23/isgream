@@ -3,6 +3,8 @@ package com.ssafy.iscream.bigFiveTest.domain;
 import jakarta.persistence.*;
 import lombok.*;
 
+import java.time.LocalDate;
+
 @Entity
 @Table(name = "big_five_test")
 @Getter
@@ -23,8 +25,7 @@ public class BigFiveTest {
     @Column(nullable = false)
     private Integer userId;
 
-    @Column(name = "test_date",nullable = false)
-    private String date;
+    private LocalDate testDate;
 
     @Column(nullable = false)
     private Double conscientiousness;

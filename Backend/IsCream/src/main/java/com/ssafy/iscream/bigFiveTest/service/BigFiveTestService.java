@@ -61,7 +61,7 @@ public class BigFiveTestService {
         BigFiveTest bigFiveTest = BigFiveTest.builder()
                 .userId(user.getUserId())
                 .childId(bigFiveTestCreateReq.getChildId())
-                .date(LocalDate.now().toString())
+                .testDate(LocalDate.now())
                 .conscientiousness(bigFiveTestCreateReq.getConscientiousness() - consAvg)
                 .agreeableness(bigFiveTestCreateReq.getAgreeableness() - agreeAvg)
                 .emotionalStability(bigFiveTestCreateReq.getEmotionalStability() - emoAvg)
@@ -72,7 +72,7 @@ public class BigFiveTestService {
         bigFiveTestRepository.save(bigFiveTest);
 
         return new BigFiveTestRes(
-                bigFiveTest.getDate(),
+                bigFiveTest.getTestDate().toString(),
                 bigFiveTest.getConscientiousness(),
                 bigFiveTest.getAgreeableness(),
                 bigFiveTest.getEmotionalStability(),
@@ -90,7 +90,7 @@ public class BigFiveTestService {
         }
 
         return new BigFiveTestRes(
-                bigFiveTest.getDate(),
+                bigFiveTest.getTestDate().toString(),
                 bigFiveTest.getConscientiousness(),
                 bigFiveTest.getAgreeableness(),
                 bigFiveTest.getEmotionalStability(),

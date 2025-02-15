@@ -12,12 +12,14 @@ import com.ssafy.iscream.htpTest.service.HtpTestService;
 import com.ssafy.iscream.user.domain.User;
 import io.swagger.v3.oas.annotations.Operation;
 import io.swagger.v3.oas.annotations.Parameter;
+import io.swagger.v3.oas.annotations.media.Schema;
 import lombok.RequiredArgsConstructor;
 import org.springframework.http.MediaType;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
 import org.springframework.web.multipart.MultipartFile;
 
+import java.time.LocalDate;
 import java.util.List;
 
 @RequestMapping("/htp-tests")
@@ -53,8 +55,12 @@ public class HtpTestController {
 
     @GetMapping
     @Operation(summary = "user 자녀의 모든 HTP 테스트 결과 조회", tags = "htp")
-    public ResponseEntity<?> getHtpTests(@Login User user) {
-        List<HtpTestResponseDto> htpTestList = htpFacade.getHtpTestList(user);
+    public ResponseEntity<?> getHtpTests(@Login User user,
+                             @Schema(description = "조회 시작 날짜", example = "2025-01-01")
+                             @RequestParam("startDate") LocalDate startDate,
+                             @Schema(description = "조회 종료 날짜", example = "2025-02-10")
+                             @RequestParam("endDate") LocalDate endDate) {
+        List<HtpTestResponseDto> htpTestList = htpFacade.getHtpTestList(user, startDate, endDate);
         return ResponseUtil.success(htpTestList);
     }
 
