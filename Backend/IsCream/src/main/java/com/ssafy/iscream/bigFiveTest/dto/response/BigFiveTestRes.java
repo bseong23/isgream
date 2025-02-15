@@ -13,7 +13,7 @@ import lombok.Setter;
 public class BigFiveTestRes {
 
     @Schema(description = "날짜", example = "2025-02-11")
-    private String date;
+    private String testDate;
 
     @Schema(description = "성실성", example = "5")
     private Double conscientiousness;

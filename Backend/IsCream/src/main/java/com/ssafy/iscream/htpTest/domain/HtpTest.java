@@ -22,6 +22,9 @@ public class HtpTest extends BaseTimeEntity {
     private Integer htpTestId;
 
     @Column(nullable = false)
+    private Integer userId;
+
+    @Column(nullable = false)
     private Integer childId;
 
     private LocalDate testDate;

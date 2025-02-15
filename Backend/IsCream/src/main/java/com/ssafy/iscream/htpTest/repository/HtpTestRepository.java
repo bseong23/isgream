@@ -24,7 +24,15 @@ public interface HtpTestRepository extends JpaRepository<HtpTest, Integer> {
             @Param("selectedDate") LocalDate selectedDate
     );
 
-    List<HtpTest> findByChildId(Integer childId);
+    @Query("SELECT h FROM HtpTest h " +
+            "WHERE h.userId = :userId " +
+            "AND h.testDate BETWEEN :startDate AND :endDate " +
+            "ORDER BY h.testDate DESC")
+    List<HtpTest> findByUserIdAndDate(
+            @Param("userId") Integer userId,
+            @Param("startDate") LocalDate startDate,
+            @Param("endDate") LocalDate endDate
+    );
 
     HtpTest findByHtpTestId(Integer htpTestId);
 

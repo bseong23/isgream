@@ -1,7 +1,6 @@
 package com.ssafy.iscream.bigFiveTest.dto.response;
 
 import io.swagger.v3.oas.annotations.media.Schema;
-import jakarta.persistence.Column;
 import lombok.AllArgsConstructor;
 import lombok.Getter;
 import lombok.NoArgsConstructor;
@@ -20,7 +19,7 @@ public class BigFiveTestListRes {
     private String title;
 
     @Schema(description = "검사 날짜", example = "2025-02-11")
-    private String date;
+    private String testDate;
     
     @Schema(description = "아이 이름", example = "철수")
     private String childName;

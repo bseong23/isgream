@@ -9,6 +9,7 @@ import lombok.RequiredArgsConstructor;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
+import java.time.LocalDate;
 import java.util.List;
 
 /**
@@ -22,13 +23,13 @@ public class HtpSelectService {
     private final HtpTestRepository htpTestRepository; // HTP 테스트 관련 DB 접근 Repository
 
     /**
-     * 특정 자녀(childId)의 모든 HTP 테스트 목록을 조회하여 반환
+     * 사용자(userId)의 모든 HTP 테스트 목록을 조회하여 반환
      *
-     * @param childId 자녀 ID
-     * @return 해당 자녀의 HTP 테스트 목록
+     * @param userId 사용자 ID
+     * @return 해당 사용자의 HTP 테스트 목록
      */
-    public List<HtpTest> getHtpTestList(Integer childId) {
-        return htpTestRepository.findByChildId(childId);
+    public List<HtpTest> getHtpTestList(Integer userId, LocalDate startDate, LocalDate endDate) {
+        return htpTestRepository.findByUserIdAndDate(userId, startDate, endDate);
     }
 
     /**

@@ -5,12 +5,14 @@ import com.ssafy.iscream.bigFiveTest.dto.request.BigFiveTestCreateReq;
 import com.ssafy.iscream.bigFiveTest.service.BigFiveFacade;
 import com.ssafy.iscream.bigFiveTest.service.BigFiveTestService;
 import com.ssafy.iscream.common.util.ResponseUtil;
-import com.ssafy.iscream.patTest.dto.request.PatTestCreateReq;
 import com.ssafy.iscream.user.domain.User;
 import io.swagger.v3.oas.annotations.Operation;
+import io.swagger.v3.oas.annotations.media.Schema;
 import lombok.RequiredArgsConstructor;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
+
+import java.time.LocalDate;
 
 @RestController
 @RequiredArgsConstructor
@@ -22,7 +24,7 @@ public class BigFiveTestController {
 
     @Operation(summary = "성격 5요인 검사 문제 조회", tags = "big-five")
     @GetMapping("/questions")
-    public ResponseEntity<?> getBigFiveTest(@Login User user){
+    public ResponseEntity<?> getBigFiveTest(){
         return ResponseUtil.success(bigFiveTestService.getBigFiveTestList());
     }
 
@@ -33,21 +35,27 @@ public class BigFiveTestController {
         return ResponseUtil.success(bigFiveTestService.postBigFiveTestResult(user, bigFiveTestCreateReq));
     }
 
-    @Operation(summary = "성격 5요인 테스트 최근 결과 조회", tags = "big-five")
-    @GetMapping("/recent")
-    public ResponseEntity<?> getBigFiveResult(@Login User user, Integer childId){
+    @Operation(summary = "성격 5요인 테스트 최근 검사 결과 조회 (1개)", tags = "big-five")
+    @GetMapping("/recent/{childId}")
+    public ResponseEntity<?> getBigFiveResult(@PathVariable Integer childId){
         return ResponseUtil.success(bigFiveTestService.getBigFiveTestResult(childId));
     }
 
-    @Operation(summary = "성격 5요인 검사 결과 목록 조회", tags = "big-five")
+    @Operation(summary = "사용자의 성격 5요인 검사 결과 목록 조회", tags = "big-five")
     @GetMapping()
-    public ResponseEntity<?> getBigFiveListResult(@Login User user){
-        return ResponseUtil.success(bigFiveFacade.getUserBigFiveTestListResults(user));
+    public ResponseEntity<?> getBigFiveListResult(@Login User user,
+                             @Schema(description = "조회 시작 날짜", example = "2025-01-01")
+                             @RequestParam("startDate") LocalDate startDate,
+                             @Schema(description = "조회 종료 날짜", example = "2025-02-10")
+                             @RequestParam("endDate") LocalDate endDate) {
+        return ResponseUtil.success(
+                bigFiveFacade.getUserBigFiveTestListResults(
+                        user, startDate, endDate));
     }
 
-    @Operation(summary = "성격 5요인 검사 결과 PDF 조회", tags = "big-five")
-    @GetMapping("/{big_five_test_id}/pdf")
-    public ResponseEntity<?> getBigFivePDF(@Login User user, @PathVariable("big_five_test_id") Integer bigFiveTestId){
+    @Operation(summary = "성격 5요인 검사 결과 PDF 추출", tags = "big-five")
+    @GetMapping("/{big-five-test-id}/pdf")
+    public ResponseEntity<?> getBigFivePDF(@Login User user, @PathVariable("big-five-test-id") Integer bigFiveTestId){
         return ResponseUtil.success(bigFiveTestService.getBigFivePdfUrl(user, bigFiveTestId));
     }
 }

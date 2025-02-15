@@ -18,10 +18,7 @@ import org.springframework.transaction.annotation.Transactional;
 import java.time.LocalDate;
 import java.time.LocalDateTime;
 import java.time.LocalTime;
-import java.util.ArrayList;
-import java.util.List;
-import java.util.Map;
-import java.util.Objects;
+import java.util.*;
 import java.util.stream.Stream;
 
 @Service
@@ -64,7 +61,7 @@ public class HtpTestService {
 
     // ✅ House 그림 처리
     private void testHouse(User user, HtpTestReq req, Map<String, HtpTestDiagnosisReq> imageMap) {
-        HtpTest htpTest = saveOrGetHtpTest(req.getChildId());
+        HtpTest htpTest = saveOrGetHtpTest(user.getUserId(), req.getChildId());
         String url = s3Service.uploadImage(req.getFile());
         htpTest.setHouseDrawingUrl(url);
 
@@ -74,7 +71,7 @@ public class HtpTestService {
 
     // ✅ Tree 그림 처리
     private void testTree(User user, HtpTestReq req, Map<String, HtpTestDiagnosisReq> imageMap) {
-        HtpTest htpTest = saveOrGetHtpTest(req.getChildId());
+        HtpTest htpTest = saveOrGetHtpTest(user.getUserId(), req.getChildId());
         String url = s3Service.uploadImage(req.getFile());
         htpTest.setTreeDrawingUrl(url);
 
@@ -84,7 +81,7 @@ public class HtpTestService {
 
     // ✅ Male 그림 처리
     private String testMale(User user, HtpTestReq req, Map<String, HtpTestDiagnosisReq> imageMap) {
-        HtpTest htpTest = saveOrGetHtpTest(req.getChildId());
+        HtpTest htpTest = saveOrGetHtpTest(user.getUserId(), req.getChildId());
         String url = s3Service.uploadImage(req.getFile());
         htpTest.setMaleDrawingUrl(url);
 
@@ -99,7 +96,7 @@ public class HtpTestService {
 
     // ✅ Female 그림 처리
     private String testFemale(User user, HtpTestReq req, Map<String, HtpTestDiagnosisReq> imageMap) {
-        HtpTest htpTest = saveOrGetHtpTest(req.getChildId());
+        HtpTest htpTest = saveOrGetHtpTest(user.getUserId(), req.getChildId());
         String url = s3Service.uploadImage(req.getFile());
         htpTest.setFemaleDrawingUrl(url);
 
@@ -167,21 +164,28 @@ public class HtpTestService {
     }
 
     // ✅ PDF URL 생성 및 반환
-    public String getHtpTestPdfUrl(User user, Integer htpTestId) {
+    public Map<String, String> getHtpTestPdfUrl(User user, Integer htpTestId) {
         HtpTest htpTest = htpTestRepository.findByHtpTestId(htpTestId);
         Child child = childrenService.getById(htpTest.getChildId());
         htpTest.setPdfUrl(pdfService.generatePdf(user, child, htpTest.getAnalysisResult(), htpTest));
-        return htpTest.getPdfUrl();
+
+        Map<String, String> result = new HashMap<>();
+        result.put("url", htpTest.getPdfUrl());
+
+        return result;
     }
 
     // ✅ HtpTest 저장 (기존 데이터가 없으면 새로 생성)
-    private HtpTest saveOrGetHtpTest(Integer childId) {
+    private HtpTest saveOrGetHtpTest(Integer userId, Integer childId) {
         List<HtpTest> htpTests = getHtpTestByChildIdAndDate(childId);
         if (!htpTests.isEmpty()) {
             return htpTests.get(0);
         }
+
         HtpTest newTest = new HtpTest();
+        newTest.setUserId(userId);
         newTest.setChildId(childId);
+
         return htpTestRepository.save(newTest);
     }
 }

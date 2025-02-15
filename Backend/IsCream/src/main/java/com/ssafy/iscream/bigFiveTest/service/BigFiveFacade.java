@@ -10,6 +10,7 @@ import lombok.RequiredArgsConstructor;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
+import java.time.LocalDate;
 import java.util.List;
 import java.util.stream.Collectors;
 
@@ -30,12 +31,14 @@ public class BigFiveFacade {
      * @param user 현재 로그인한 사용자
      * @return 사용자별 Big Five 테스트 결과 리스트
      */
-    public List<BigFiveTestListRes> getUserBigFiveTestListResults(User user) {
+    public List<BigFiveTestListRes> getUserBigFiveTestListResults(
+            User user, LocalDate startDate, LocalDate endDate) {
         // 사용자(user)의 자녀 목록을 조회
         List<ChildrenGetRes> children = childrenService.getChildren(user.getUserId());
 
         // userId 기반으로 Big Five 테스트 리스트 조회 후 DTO 변환
-        return bigFiveTestRepository.findByUserId(user.getUserId()).stream()
+        return bigFiveTestRepository.findByUserIdAndDate(user.getUserId(), startDate, endDate)
+                .stream()
                 .map(test -> convertToBigFiveTestListRes(test, children))
                 .collect(Collectors.toList());
     }
@@ -58,7 +61,7 @@ public class BigFiveFacade {
         return new BigFiveTestListRes(
                 bigFiveTest.getTestId(), // 테스트 ID
                 "Big-Five", // 검사 제목 (고정값)
-                bigFiveTest.getDate(), // 검사 날짜
+                bigFiveTest.getTestDate().toString(), // 검사 날짜
                 childNickname // 자녀 닉네임 추가
         );
     }

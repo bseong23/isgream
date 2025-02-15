@@ -21,7 +21,9 @@ import org.springframework.transaction.annotation.Isolation;
 import org.springframework.transaction.annotation.Transactional;
 
 import java.time.LocalDate;
+import java.util.HashMap;
 import java.util.List;
+import java.util.Map;
 import java.util.stream.Collectors;
 
 @Service
@@ -59,7 +61,7 @@ public class BigFiveTestService {
         BigFiveTest bigFiveTest = BigFiveTest.builder()
                 .userId(user.getUserId())
                 .childId(bigFiveTestCreateReq.getChildId())
-                .date(LocalDate.now().toString())
+                .testDate(LocalDate.now())
                 .conscientiousness(bigFiveTestCreateReq.getConscientiousness() - consAvg)
                 .agreeableness(bigFiveTestCreateReq.getAgreeableness() - agreeAvg)
                 .emotionalStability(bigFiveTestCreateReq.getEmotionalStability() - emoAvg)
@@ -70,7 +72,7 @@ public class BigFiveTestService {
         bigFiveTestRepository.save(bigFiveTest);
 
         return new BigFiveTestRes(
-                bigFiveTest.getDate(),
+                bigFiveTest.getTestDate().toString(),
                 bigFiveTest.getConscientiousness(),
                 bigFiveTest.getAgreeableness(),
                 bigFiveTest.getEmotionalStability(),
@@ -88,7 +90,7 @@ public class BigFiveTestService {
         }
 
         return new BigFiveTestRes(
-                bigFiveTest.getDate(),
+                bigFiveTest.getTestDate().toString(),
                 bigFiveTest.getConscientiousness(),
                 bigFiveTest.getAgreeableness(),
                 bigFiveTest.getEmotionalStability(),
@@ -99,11 +101,15 @@ public class BigFiveTestService {
 
 
     @Transactional
-    public String getBigFivePdfUrl(User user, Integer bigFiveTestId) {
+    public Map<String, String> getBigFivePdfUrl(User user, Integer bigFiveTestId) {
         BigFiveTest bigFiveTest = bigFiveTestRepository.findById(bigFiveTestId).get();
         Child child = childrenService.getById(bigFiveTest.getChildId());
         bigFiveTest.setPdfUrl(bigFiveTestPdfService.generatePdf(user, child, bigFiveTest));
-        return bigFiveTest.getPdfUrl();
+
+        Map<String, String> result = new HashMap<>();
+        result.put("url", bigFiveTest.getPdfUrl());
+
+        return result;
     }
 
 
