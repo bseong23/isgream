@@ -9,7 +9,6 @@ import org.springframework.scheduling.annotation.Scheduled;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
-import java.util.Objects;
 import java.util.Optional;
 import java.util.Set;
 
@@ -41,7 +40,7 @@ public class PostLikeService {
         String countKey = getLikesCountKey(postId);
         Integer count = (Integer) redisTemplate.opsForValue().get(countKey);
 
-        return Objects.requireNonNullElse(count, 0);
+        return count == null ? 0 : count;
     }
 
     // 게시글 좋아요

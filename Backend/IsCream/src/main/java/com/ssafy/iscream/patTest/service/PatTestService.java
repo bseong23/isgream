@@ -1,9 +1,7 @@
 package com.ssafy.iscream.patTest.service;
 
-import com.ssafy.iscream.children.domain.Child;
 import com.ssafy.iscream.common.exception.ErrorCode;
-import com.ssafy.iscream.common.exception.MinorException.*;
-import com.ssafy.iscream.htpTest.domain.HtpTest;
+import com.ssafy.iscream.common.exception.MinorException.DataException;
 import com.ssafy.iscream.patTest.domain.PatQuestion;
 import com.ssafy.iscream.patTest.domain.PatTest;
 import com.ssafy.iscream.patTest.dto.request.PatTestCreateReq;
@@ -14,14 +12,14 @@ import com.ssafy.iscream.patTest.repository.PatTestListRepository;
 import com.ssafy.iscream.patTest.repository.PatTestRepository;
 import com.ssafy.iscream.pdf.service.PatTestPdfService;
 import com.ssafy.iscream.user.domain.User;
-import lombok.AllArgsConstructor;
 import lombok.RequiredArgsConstructor;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
 import java.time.LocalDate;
+import java.util.HashMap;
 import java.util.List;
-import java.util.Optional;
+import java.util.Map;
 import java.util.stream.Collectors;
 
 @Service
@@ -73,6 +71,7 @@ public class PatTestService {
     public PatTestRes getPatTestResult(User user) {
         PatTest patTest = patTestRepository.findLatestByUser(user)
                 .orElseThrow(() -> new DataException(ErrorCode.DATA_NOT_FOUND));
+
         return new PatTestRes(
                 patTest.getTestDate(),
                 patTest.getAScore(),
@@ -98,17 +97,28 @@ public class PatTestService {
 
     // PAT 검사 결과 PDF 조회
     @Transactional
-    public String getPatTestPdfUrl(User user, Integer patTestId) {
+    public Map<String, String> getPatTestPdfUrl(User user, Integer patTestId) {
         PatTest patTest = patTestRepository.findById(patTestId).orElseThrow();
         patTest.setPdfUrl(patTestPdfService.generatePdf(user, patTest));
-        return patTest.getPdfUrl();
+
+        Map<String, String> result = new HashMap<>();
+        result.put("url", patTest.getPdfUrl());
+
+        return result;
     }
 
 
     private PatTest.ResultType calculateResult(int scoreA, int scoreB, int scoreC){
         int maxScore = Math.max(Math.max(scoreA, scoreB), scoreC);
-        if (maxScore == scoreA) return PatTest.ResultType.A;
-        if (maxScore == scoreB) return PatTest.ResultType.B;
+
+        if (maxScore == scoreA) {
+            return PatTest.ResultType.A;
+        }
+
+        if (maxScore == scoreB) {
+            return PatTest.ResultType.B;
+        }
+
         return PatTest.ResultType.C;
     }
     

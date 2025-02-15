@@ -18,10 +18,7 @@ import org.springframework.transaction.annotation.Transactional;
 import java.time.LocalDate;
 import java.time.LocalDateTime;
 import java.time.LocalTime;
-import java.util.ArrayList;
-import java.util.List;
-import java.util.Map;
-import java.util.Objects;
+import java.util.*;
 import java.util.stream.Stream;
 
 @Service
@@ -167,11 +164,15 @@ public class HtpTestService {
     }
 
     // ✅ PDF URL 생성 및 반환
-    public String getHtpTestPdfUrl(User user, Integer htpTestId) {
+    public Map<String, String> getHtpTestPdfUrl(User user, Integer htpTestId) {
         HtpTest htpTest = htpTestRepository.findByHtpTestId(htpTestId);
         Child child = childrenService.getById(htpTest.getChildId());
         htpTest.setPdfUrl(pdfService.generatePdf(user, child, htpTest.getAnalysisResult(), htpTest));
-        return htpTest.getPdfUrl();
+
+        Map<String, String> result = new HashMap<>();
+        result.put("url", htpTest.getPdfUrl());
+
+        return result;
     }
 
     // ✅ HtpTest 저장 (기존 데이터가 없으면 새로 생성)

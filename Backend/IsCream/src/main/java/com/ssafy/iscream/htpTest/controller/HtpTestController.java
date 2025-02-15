@@ -26,14 +26,13 @@ import java.util.List;
 public class HtpTestController {
     private final HtpTestService htpTestService;
     private final HtpSelectService htpSelectService;
-    private final HtpFacade htpFercade;
+    private final HtpFacade htpFacade;
 
     /**
      * HTP 테스트 수행 (총 4번 진행해야 함)
      */
-
     @PostMapping(path = "/img", consumes = {MediaType.MULTIPART_FORM_DATA_VALUE})
-    @Operation(summary = "Htp 테스트 수행 4번해야함", tags = "htp")
+    @Operation(summary = "Htp 테스트 수행  - 4번 해야함", tags = "htp")
     public ResponseEntity<?> img(@Login User user,
                                  @RequestPart(name = "htp") HtpTestCreateReq req, // JSON 데이터
                                  @Parameter(name = "file")
@@ -53,22 +52,22 @@ public class HtpTestController {
 
 
     @GetMapping
-    @Operation(summary = "user 자녀의 HTP 테스트 리스트", tags = "htp")
+    @Operation(summary = "user 자녀의 모든 HTP 테스트 결과 조회", tags = "htp")
     public ResponseEntity<?> getHtpTests(@Login User user) {
-        List<HtpTestResponseDto> htpTestList = htpFercade.getHtpTestList(user);
+        List<HtpTestResponseDto> htpTestList = htpFacade.getHtpTestList(user);
         return ResponseUtil.success(htpTestList);
     }
 
-    @GetMapping("/{htp_test_id}")
+    @GetMapping("/{htp-test-id}")
     @Operation(summary = "특정 HTP 테스트 조회", tags = "htp")
-    public ResponseEntity<?> getHtpTestById(@Login User user, @PathVariable("htp_test_id") Integer htpTestId) {
+    public ResponseEntity<?> getHtpTestById(@PathVariable("htp-test-id") Integer htpTestId) {
         HtpTestDetailDto htpTest = htpSelectService.getHtpTestById(htpTestId);
         return ResponseUtil.success(htpTest);
     }
 
-    @GetMapping("/{htp_test_id}/pdf")
-    @Operation(summary = "특정 HTP 테스트 결과 PDF 조회", tags = "htp")
-    public ResponseEntity<?> getHtpTestPdf(@Login User user, @PathVariable("htp_test_id") Integer htpTestId) {
+    @GetMapping("/{htp-test-id}/pdf")
+    @Operation(summary = "특정 HTP 테스트 결과 PDF 추출", tags = "htp")
+    public ResponseEntity<?> getHtpTestPdf(@Login User user, @PathVariable("htp-test-id") Integer htpTestId) {
         return ResponseUtil.success(htpTestService.getHtpTestPdfUrl(user, htpTestId));
     }
 
