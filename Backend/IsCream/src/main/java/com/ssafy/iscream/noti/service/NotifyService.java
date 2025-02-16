@@ -64,6 +64,10 @@ public class NotifyService {
                                  Integer postId, Integer chatId) {
         String token = getFcmToken(userId);
 
+        if (token == null) {
+            return;
+        }
+
         Notification notification = Notification.builder()
                 .setTitle(title)
                 .setBody(body)
