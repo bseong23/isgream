@@ -38,7 +38,7 @@ services:
       dockerfile: Dockerfile
     restart: always
     deploy:
-      replicas: 2  
+      replicas: 4  
       restart_policy:
         condition: on-failure
     expose:
