@@ -58,7 +58,7 @@ public class HtpFacade {
 
         return new HtpTestResponseDto(
                 htpTest.getHtpTestId(), // 테스트 ID
-                "Big-Five", // 검사 제목 (고정값)
+                "HTP 검사", // 검사 제목 (고정값)
                 htpTest.getTestDate().toString(), // 검사 날짜
                 childNickname // 자녀 닉네임 추가
         );
