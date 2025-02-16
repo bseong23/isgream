@@ -69,7 +69,8 @@ public class BigFiveTestService {
                 .openness(bigFiveTestCreateReq.getOpenness() - openAvg)
                 .build();
 
-        bigFiveTestRepository.save(bigFiveTest);
+        BigFiveTest save = bigFiveTestRepository.save(bigFiveTest);
+        updateAnalysis(save.getTestId());
 
         return new BigFiveTestRes(
                 bigFiveTest.getTestDate().toString(),
@@ -77,7 +78,8 @@ public class BigFiveTestService {
                 bigFiveTest.getAgreeableness(),
                 bigFiveTest.getEmotionalStability(),
                 bigFiveTest.getExtraversion(),
-                bigFiveTest.getOpenness()
+                bigFiveTest.getOpenness(),
+                bigFiveTest.getAnalysis()
         );
     }
 
@@ -95,7 +97,8 @@ public class BigFiveTestService {
                 bigFiveTest.getAgreeableness(),
                 bigFiveTest.getEmotionalStability(),
                 bigFiveTest.getExtraversion(),
-                bigFiveTest.getOpenness()
+                bigFiveTest.getOpenness(),
+                bigFiveTest.getAnalysis()
         );
     }
 
@@ -136,6 +139,73 @@ public class BigFiveTestService {
     // childIds 해당하는 pdf url 목록 조회
     public List<String> getBigFiveTestPdfUrl(List<Integer> childIds) {
         return bigFiveTestRepository.findPdfUrlByChildIdIn(childIds);
+    }
+    private void updateAnalysis(Integer testId) {
+        // 테스트 결과 가져오기
+        BigFiveTest bigFiveTest = bigFiveTestRepository.findById(testId)
+                .orElseThrow(() -> new RuntimeException("테스트 결과를 찾을 수 없습니다."));
+
+        // 해석 생성
+        String analysis = generateBigFiveAnalysis(bigFiveTest);
+        bigFiveTest.setAnalysis(analysis);
+
+        // 업데이트 저장
+        bigFiveTestRepository.save(bigFiveTest);
+    }
+
+    private String generateBigFiveAnalysis(BigFiveTest bigFiveTest) {
+        double conscientiousness = bigFiveTest.getConscientiousness();
+        double agreeableness = bigFiveTest.getAgreeableness();
+        double emotionalStability = bigFiveTest.getEmotionalStability();
+        double extraversion = bigFiveTest.getExtraversion();
+        double openness = bigFiveTest.getOpenness();
+
+        StringBuilder analysis = new StringBuilder();
+        analysis.append("성격 해석: \n");
+
+        // 성실성 해석
+        analysis.append("성실성 (Conscientiousness):\n");
+        analysis.append(getTraitAnalysis(conscientiousness, "계획적이고 신중한 성향", "즉흥적인 성향"));
+        analysis.append("\n");
+
+        // 친화성 해석
+        analysis.append("친화성 (Agreeableness):\n");
+        analysis.append(getTraitAnalysis(agreeableness, "협력적이고 배려하는 성향", "경쟁적이고 독립적인 성향"));
+        analysis.append("\n");
+
+        // 정서적 안정성 해석
+        analysis.append("정서적 안정성 (Emotional Stability):\n");
+        analysis.append(getTraitAnalysis(emotionalStability, "감정적으로 안정적이며 스트레스에 강한 성향", "감정 기복이 크고 불안감이 높은 성향"));
+        analysis.append("\n");
+
+        // 외향성 해석
+        analysis.append("외향성 (Extraversion):\n");
+        analysis.append(getTraitAnalysis(extraversion, "활발하고 사교적인 성향", "조용하고 내향적인 성향"));
+        analysis.append("\n");
+
+        // 개방성 해석
+        analysis.append("개방성 (Openness):\n");
+        analysis.append(getTraitAnalysis(openness, "창의적이고 새로운 경험을 선호하는 성향", "전통적이고 익숙한 방식을 선호하는 성향"));
+        analysis.append("\n");
+
+        return analysis.toString();
+    }
+
+    /**
+     * 편차 값을 기반으로 성격 특성 해석을 생성하는 메서드
+     */
+    private static String getTraitAnalysis(double deviation, String highTrait, String lowTrait) {
+        if (deviation >= 1.0) {
+            return "- 평균보다 상당히 높음: " + highTrait + "이 강한 편입니다.\n";
+        } else if (deviation >= 0.5) {
+            return "- 평균보다 다소 높음: " + highTrait + " 경향이 있습니다.\n";
+        } else if (deviation >= -0.5) {
+            return "- 평균적인 수준: 특정 성향이 두드러지지 않으며 균형을 이루고 있습니다.\n";
+        } else if (deviation >= -1.0) {
+            return "- 평균보다 다소 낮음: " + lowTrait + " 경향이 있습니다.\n";
+        } else {
+            return "- 평균보다 상당히 낮음: " + lowTrait + "이 강한 편입니다.\n";
+        }
     }
 }
 
