@@ -45,7 +45,6 @@ services:
       - "8000"  
     volumes:
       - /home/ubuntu/models:/home/ubuntu/models
-    volumes:
       - /home/ubuntu/.env:/app/.env 
     networks:
       - mynetwork
