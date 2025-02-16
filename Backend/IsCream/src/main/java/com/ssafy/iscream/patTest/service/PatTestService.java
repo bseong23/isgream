@@ -5,6 +5,7 @@ import com.ssafy.iscream.common.exception.MinorException.DataException;
 import com.ssafy.iscream.patTest.domain.PatQuestion;
 import com.ssafy.iscream.patTest.domain.PatTest;
 import com.ssafy.iscream.patTest.dto.request.PatTestCreateReq;
+import com.ssafy.iscream.patTest.dto.response.PatTestListRes;
 import com.ssafy.iscream.patTest.dto.response.PatTestQuestionRes;
 import com.ssafy.iscream.patTest.dto.response.PatTestRes;
 import com.ssafy.iscream.patTest.repository.PatQuestionRepository;
@@ -80,15 +81,18 @@ public class PatTestService {
     }
 
     // PAT 검사 결과 리스트 조회
-    public List<PatTestRes> getPatTestResultList(User user, LocalDate startDate, LocalDate endDate) {
-        List<PatTest> patTestList = patTestRepository.findByUserIdAndDate(user.getUserId(), startDate, endDate);
-        return patTestList.stream()
-                .map(l -> new PatTestRes(
-                        l.getTestDate().toString(),
-                        l.getAScore(),
-                        l.getBScore(),
-                        l.getCScore(),
-                        l.getResult().getDescription()
+    public List<PatTestListRes> getPatTestResultList(User user, LocalDate startDate, LocalDate endDate) {
+        List<PatTest> patTests = patTestRepository.findByUserIdAndDate(
+                user.getUserId(),
+                startDate,
+                endDate
+        );
+
+        return patTests.stream()
+                .map(patTest -> new PatTestListRes(
+                        patTest.getPatTestId(), // 테스트 ID
+                        "PAT", // 검사 제목 (고정값)
+                        patTest.getTestDate().toString()  // 검사 날짜
                 ))
                 .collect(Collectors.toList());
     }
