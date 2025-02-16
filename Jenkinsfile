@@ -70,7 +70,7 @@ pipeline {
         stage('Docker Compose Up') {
             steps {
                 sh 'docker-compose down'
-                sh 'docker-compose up -d --build'
+                sh 'docker-compose --env-file /home/ubuntu/.env up -d --build'
             }
         }
     }

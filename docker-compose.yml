@@ -27,6 +27,8 @@ services:
         condition: on-failure
     expose:
       - "8080" 
+    env_file:
+      - /home/ubuntu/.env 
     volumes:
       - /home/ubuntu/.env:/app/.env  
     networks:
