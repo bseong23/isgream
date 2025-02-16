@@ -1,7 +1,10 @@
 package com.ssafy.iscream.noti.service;
 
 import com.google.api.core.ApiFuture;
-import com.google.cloud.firestore.*;
+import com.google.cloud.firestore.DocumentReference;
+import com.google.cloud.firestore.DocumentSnapshot;
+import com.google.cloud.firestore.FieldValue;
+import com.google.cloud.firestore.Firestore;
 import com.google.firebase.messaging.FirebaseMessaging;
 import com.google.firebase.messaging.Message;
 import com.google.firebase.messaging.Notification;
@@ -16,6 +19,7 @@ import lombok.extern.slf4j.Slf4j;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
+import java.util.Collections;
 import java.util.List;
 import java.util.concurrent.ExecutionException;
 
@@ -97,38 +101,52 @@ public class NotifyService {
     public void addFcmToken(Integer userId, String token) {
         DocumentReference userRef = firestore.collection("users").document(String.valueOf(userId));
 
-        // Firestore에 업데이트 요청
-        ApiFuture<WriteResult> future = userRef.update("fcmToken", token); // 토큰 저장
-
-        future.addListener(() -> {
+        userRef.get().addListener(() -> {
             try {
-                future.get();
+                DocumentSnapshot document = userRef.get().get();
+                if (document.exists()) {
+                    userRef.update("fcmToken", token).get();
+                } else {
+                    userRef.set(Collections.singletonMap("fcmToken", token)).get();
+                }
             } catch (Exception e) {
-                userRef.set(token);
+                e.printStackTrace();
             }
         }, Runnable::run);
     }
 
+
     // FCM 토큰 제거
     public void removeFcmToken(Integer userId) {
         DocumentReference userRef = firestore.collection("users").document(String.valueOf(userId));
-        userRef.update("fcmToken", FieldValue.delete());
+
+        userRef.get().addListener(() -> {
+            try {
+                DocumentSnapshot document = userRef.get().get();
+                if (document.exists()) {
+                    userRef.update("fcmToken", FieldValue.delete()).get();
+                }
+            } catch (Exception e) {
+                e.printStackTrace();
+            }
+        }, Runnable::run);
     }
 
     // FCM 토큰 가져오기
-    private String getFcmToken(Integer userId) {
+    public String getFcmToken(Integer userId) {
         DocumentReference userRef = firestore.collection("users").document(String.valueOf(userId));
         ApiFuture<DocumentSnapshot> future = userRef.get();
 
         try {
-            DocumentSnapshot document = future.get();
+            DocumentSnapshot document = future.get(); // 동기 실행
             if (document.exists() && document.contains("fcmToken")) {
                 return document.getString("fcmToken");
             }
         } catch (InterruptedException | ExecutionException e) {
-            Thread.currentThread().interrupt(); // 인터럽트 발생 시 현재 스레드 중단
+            Thread.currentThread().interrupt();
         }
-        return null; // 사용자가 없거나 토큰이 없는 경우
+        return null;
     }
+
 
 }
