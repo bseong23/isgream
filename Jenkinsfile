@@ -12,6 +12,9 @@ pipeline {
                 sh 'whoami'            // 사용자 확인
                 sh 'git --version'     // Git 버전 확인
                 sh 'echo $PATH'        // PATH 확인
+                sh 'ls -l /home/ubuntu/.env'  // .env 파일 존재 여부 확인
+                sh 'cat /home/ubuntu/.env'    // .env 파일 내용 확인
+                sh 'printenv | grep SPRING_'  // 환경 변수 확인
             }
         }
         
