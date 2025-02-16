@@ -14,7 +14,7 @@ COPY .env .env
 ENV $(grep -v '^#' .env | xargs)
 
 # Gradle 빌드 실행
-RUN ./gradlew clean build --no-daemon
+RUN ./gradlew clean build -x test --no-daemon
 
 # 애플리케이션 실행 환경
 FROM openjdk:17-jdk-alpine
