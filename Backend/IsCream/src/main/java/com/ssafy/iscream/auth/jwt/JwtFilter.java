@@ -30,6 +30,10 @@ public class JwtFilter extends OncePerRequestFilter {
 
     @Override
     protected void doFilterInternal(HttpServletRequest request, HttpServletResponse response, FilterChain filterChain) throws ServletException, IOException {
+        if (request.getMethod().equals("OPTIONS")) {
+            return;
+        }
+
         // '/reissue' 요청은 필터링하지 않음
         String path = request.getRequestURI();
 

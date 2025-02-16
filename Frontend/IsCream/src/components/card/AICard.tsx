@@ -6,7 +6,7 @@ const AICard = () => {
     <div className="w-full bg-white mt-4">
       <div className="mx-auto max-w-[706px] relative">
         <Link to="/ai-analysis" className="no-underline">
-          <div className="relative w-full border border-[#009E28] rounded-[20px] bg-white p-1 flex hover:shadow-lg transition-shadow duration-200">
+          <div className="relative w-full border border-[#009E28] rounded-[20px] bg-white p-1 hover:bg-gray-50 flex hover:shadow-lg transition-shadow duration-200">
             {/* 왼쪽 이미지 영역: 50% */}
             <div className="w-1/2 flex items-center justify-center">
               <img

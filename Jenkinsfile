@@ -6,6 +6,15 @@ pipeline {
     }
 
     stages {
+
+        stage('Check Environment') {
+            steps {
+                sh 'whoami'            // 사용자 확인
+                sh 'git --version'     // Git 버전 확인
+                sh 'echo $PATH'        // PATH 확인
+            }
+        }
+        
         stage('Checkout') {
             steps {
                 checkout scm
@@ -45,10 +54,12 @@ pipeline {
             steps {
                 script {
                     sh '''
-                        docker ps -q --filter "name=backend-app" | xargs -r docker stop
-                        docker ps -aq --filter "name=backend-app" | xargs -r docker rm
-                        docker ps -q --filter "name=frontend-app" | xargs -r docker stop
-                        docker ps -aq --filter "name=frontend-app" | xargs -r docker rm
+                        docker ps -q --filter "name=nginx" | xargs -r docker stop
+                        docker ps -aq --filter "name=nginx" | xargs -r docker rm
+                        
+                        docker ps -q --filter "name=backend" | xargs -r docker stop
+                        docker ps -aq --filter "name=backend" | xargs -r docker rm
+                        
                         docker ps -q --filter "name=ai-server" | xargs -r docker stop
                         docker ps -aq --filter "name=ai-server" | xargs -r docker rm
                     '''

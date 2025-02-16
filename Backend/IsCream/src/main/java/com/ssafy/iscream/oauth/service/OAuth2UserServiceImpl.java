@@ -5,7 +5,7 @@ import com.ssafy.iscream.oauth.dto.GoogleResponse;
 import com.ssafy.iscream.oauth.dto.OAuth2Response;
 import com.ssafy.iscream.user.domain.Role;
 import com.ssafy.iscream.user.domain.User;
-import com.ssafy.iscream.user.domain.UserRepository;
+import com.ssafy.iscream.user.repository.UserRepository;
 import lombok.RequiredArgsConstructor;
 import org.springframework.security.oauth2.client.userinfo.DefaultOAuth2UserService;
 import org.springframework.security.oauth2.client.userinfo.OAuth2UserRequest;

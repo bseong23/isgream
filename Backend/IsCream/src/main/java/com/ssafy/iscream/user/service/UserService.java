@@ -11,9 +11,10 @@ import com.ssafy.iscream.user.dto.request.UserCreateReq;
 import com.ssafy.iscream.user.dto.request.UserInfoReq;
 import com.ssafy.iscream.user.dto.request.UserUpdateReq;
 import com.ssafy.iscream.user.dto.response.UserInfo;
+import com.ssafy.iscream.user.dto.response.UserProfile;
 import com.ssafy.iscream.user.exception.UserException.*;
 import com.ssafy.iscream.auth.exception.AuthException.*;
-import com.ssafy.iscream.user.domain.UserRepository;
+import com.ssafy.iscream.user.repository.UserRepository;
 import jakarta.servlet.http.HttpServletRequest;
 import jakarta.servlet.http.HttpServletResponse;
 import lombok.RequiredArgsConstructor;
@@ -153,6 +154,7 @@ public class UserService {
         }
     }
 
+    // 사용자 탈퇴 처리
     @Transactional
     public void updateUserStatus(HttpServletRequest request, HttpServletResponse response, Integer userId) {
         User user = userRepository.findById(userId)
@@ -164,6 +166,22 @@ public class UserService {
         tokenService.deleteRefreshToken(refresh); // Redis에 저장된 리프레시 토큰 삭제
 
         response.addHeader("Set-Cookie", JwtUtil.createCookie("refresh", ""));
+    }
+
+    // 게시글, 댓글 작성자 정보 가져오기
+    public UserProfile getUserProfile(Integer userId) {
+        User user = userRepository.findById(userId)
+                .orElseThrow(() -> new UserNotFoundException(ErrorCode.USER_NOT_FOUND));
+
+        return new UserProfile(user);
+    }
+
+    // 게시글 목록에서 작성자 닉네임 가져오기
+    public String getUserNickname(Integer userId) {
+        User user = userRepository.findById(userId)
+                .orElseThrow(() -> new UserNotFoundException(ErrorCode.USER_NOT_FOUND));
+
+        return user.getNickname();
     }
 
 }

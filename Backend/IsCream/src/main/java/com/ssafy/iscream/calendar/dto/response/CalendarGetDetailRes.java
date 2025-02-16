@@ -10,7 +10,8 @@ public class CalendarGetDetailRes {
     Boolean isHtp = false;
     String houseUrl;
     String treeUrl;
-    String personUrl;
+    String maleUrl;
+    String femaleUrl;
     String report;
     Integer memoId;
     String memoContent;
@@ -20,7 +21,8 @@ public class CalendarGetDetailRes {
             isHtp = true;
             houseUrl = htpTest.getHouseDrawingUrl();
             treeUrl = htpTest.getTreeDrawingUrl();
-            personUrl = htpTest.getPersonDrawingUrl();
+            maleUrl = htpTest.getMaleDrawingUrl();
+            femaleUrl = htpTest.getFemaleDrawingUrl();
             report = htpTest.getAnalysisResult();
         }
         if (memo != null) {
