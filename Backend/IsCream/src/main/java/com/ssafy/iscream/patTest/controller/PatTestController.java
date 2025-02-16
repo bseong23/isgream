@@ -9,9 +9,16 @@ import io.swagger.v3.oas.annotations.Operation;
 import io.swagger.v3.oas.annotations.media.Schema;
 import io.swagger.v3.oas.annotations.tags.Tag;
 import lombok.RequiredArgsConstructor;
+import org.springframework.core.io.InputStreamResource;
+import org.springframework.http.HttpHeaders;
+import org.springframework.http.MediaType;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
 
+import java.io.IOException;
+import java.io.InputStream;
+import java.net.HttpURLConnection;
+import java.net.URL;
 import java.time.LocalDate;
 
 @RestController
@@ -54,7 +61,20 @@ public class PatTestController {
     @Operation(summary = "PAT 검사 결과 PDF 추출", tags = "pat")
     @GetMapping("/{pat-test-id}/pdf")
     public ResponseEntity<?> getPatTestPdf(@Login User user, @PathVariable("pat-test-id") Integer patTestId) {
-        return ResponseUtil.success(patTestService.getPatTestPdfUrl(user, patTestId));
+        String pdfUrl = patTestService.getPatTestPdfUrl(user, patTestId).get("url");
+        try {
+            URL url = new URL(pdfUrl);
+            HttpURLConnection connection = (HttpURLConnection) url.openConnection();
+            connection.setRequestMethod("GET");
+            InputStream inputStream = connection.getInputStream();
+            InputStreamResource resource = new InputStreamResource(inputStream);
+            return ResponseEntity.ok()
+                    .header(HttpHeaders.CONTENT_DISPOSITION, "attachment; filename=pat_test_" + patTestId + ".pdf")
+                    .contentType(MediaType.APPLICATION_PDF)
+                    .body(resource);
+        } catch (IOException e) {
+            throw new RuntimeException(e);
+        }
     }
 
 }
