@@ -35,7 +35,7 @@ pipeline {
         stage('Build Backend') {
             steps {
                 dir('Backend/IsCream') {
-                    sh './gradlew clean build'
+                    sh 'export $(cat /home/ubuntu/.env | xargs) && ./gradlew clean build'
                 }
             }
         }
