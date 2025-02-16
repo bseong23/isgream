@@ -25,7 +25,7 @@ public class CommentController {
     @Operation(summary = "댓글/대댓글 작성", tags = "comments")
     @PostMapping
     public ResponseEntity<?> createComment(@Login User user, @RequestBody CommentCreateReq req) {
-        return ResponseUtil.success(commentService.createComment(user, req));
+        return ResponseUtil.success(commentFacade.createComment(user, req));
     }
 
     @Operation(summary = "댓글/대댓글 수정", tags = "comments")
