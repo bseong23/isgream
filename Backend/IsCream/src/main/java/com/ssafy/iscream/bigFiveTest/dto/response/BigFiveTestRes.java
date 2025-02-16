@@ -30,4 +30,6 @@ public class BigFiveTestRes {
     @Schema(description = "개방성", example = "1")
     private Double openness;
 
+    @Schema(description = "결과")
+    private String analysis;
 }

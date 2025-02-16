@@ -78,7 +78,8 @@ public class BigFiveTestService {
                 bigFiveTest.getAgreeableness(),
                 bigFiveTest.getEmotionalStability(),
                 bigFiveTest.getExtraversion(),
-                bigFiveTest.getOpenness()
+                bigFiveTest.getOpenness(),
+                bigFiveTest.getAnalysis()
         );
     }
 
@@ -96,7 +97,8 @@ public class BigFiveTestService {
                 bigFiveTest.getAgreeableness(),
                 bigFiveTest.getEmotionalStability(),
                 bigFiveTest.getExtraversion(),
-                bigFiveTest.getOpenness()
+                bigFiveTest.getOpenness(),
+                bigFiveTest.getAnalysis()
         );
     }
 
