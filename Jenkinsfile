@@ -3,15 +3,17 @@ pipeline {
 
     environment {
         DOCKER_COMPOSE_FILE = 'docker-compose.yml'
+        ENV_FILE_PATH = '/home/ubuntu/.env' 
     }
 
     stages {
 
         stage('Check Environment') {
             steps {
-                sh 'whoami'            // 사용자 확인
-                sh 'git --version'     // Git 버전 확인
-                sh 'echo $PATH'        // PATH 확인
+                sh 'whoami'           
+                sh 'git --version'     
+                sh 'echo $PATH'       
+                sh 'printenv | grep SPRING_' 
             }
         }
         
@@ -32,10 +34,26 @@ pipeline {
             }
         }
 
+        stage('Load Environment Variables') {
+            steps {
+                script {
+                    sh "export \$(grep -v '^#' ${ENV_FILE_PATH} | xargs)"
+                }
+            }
+        }
+
         stage('Build Backend') {
             steps {
                 dir('Backend/IsCream') {
                     sh './gradlew clean build'
+                }
+            }
+        }
+
+        stage('Build AI Server') {
+            steps {
+                dir('AI') {
+                    sh 'docker build -t ai-server .'
                 }
             }
         }
@@ -69,8 +87,12 @@ pipeline {
 
         stage('Docker Compose Up') {
             steps {
-                sh 'docker-compose down'
-                sh 'docker-compose up -d --build'
+                script {
+                    sh '''
+                        docker-compose down
+                        docker-compose up -d --build
+                    '''
+                }
             }
         }
     }
