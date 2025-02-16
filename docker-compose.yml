@@ -28,9 +28,7 @@ services:
     expose:
       - "8080" 
     env_file:
-      - /home/ubuntu/.env 
-    volumes:
-      - /home/ubuntu/.env:/app/.env  
+      - .env 
     networks:
       - mynetwork
 
@@ -47,7 +45,8 @@ services:
       - "8000"  
     volumes:
       - /home/ubuntu/models:/home/ubuntu/models
-      - /home/ubuntu/.env:/app/.env 
+    env_file:
+      - .env 
     networks:
       - mynetwork
 
