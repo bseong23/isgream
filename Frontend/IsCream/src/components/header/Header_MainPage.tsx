@@ -1,9 +1,12 @@
 import { useState, useEffect } from "react";
-
-interface Child {
-  id: number;
-  nickname: string;
-}
+import { useChild } from "../../hooks/child/useChild";
+import { useAuth } from "../../hooks/useAuth";
+import { useSelector } from "react-redux";
+import { RootState } from "@/store";
+import { useLocation } from "react-router-dom";
+import { useNavigate } from "react-router-dom";
+// import NotificationModal from "../notification/NotificationModal"; // 추가
+// import { useNotification } from "../../hooks/notification/useNotification"; // 추가
 
 interface HeaderProps {
   onNotificationClick?: () => void;
@@ -11,83 +14,72 @@ interface HeaderProps {
 }
 
 const Header = ({ onNotificationClick, onChildSelect }: HeaderProps) => {
-  const [hasUnreadNotification, setHasUnreadNotification] = useState(false);
+  const navigate = useNavigate();
+  const [hasUnreadNotification] = useState(false);
   const [isOpen, setIsOpen] = useState(false);
-  const [children, setChildren] = useState<Child[]>([]);
-  const [selectedChild, setSelectedChild] = useState<string>("");
-  const [loading, setLoading] = useState(true);
   const [isVisible, setIsVisible] = useState(true);
   const [lastScrollY, setLastScrollY] = useState(0);
 
+  const location = useLocation();
+  const { isAuthenticated } = useAuth();
+  const { children, loading, handleChildSelect } = useChild(onChildSelect);
+  const selectedChild = useSelector(
+    (state: RootState) => state.child.selectedChild
+  );
+  // const { requestNotificationPermission } = useNotification();
+
+  // const handleNotificationClick = () => {
+  //   setIsNotificationModalOpen(true);
+  //   requestNotificationPermission(); // 알림 권한 요청
+  // };
+
   useEffect(() => {
-    const fetchChildren = async () => {
-      try {
-        const response = await fetch("/api/children", {
-          headers: {
-            Authorization: `Bearer ${localStorage.getItem("token")}`
-          }
-        });
-
-        if (!response.ok) {
-          throw new Error("자녀 목록을 불러오는 데 실패했습니다.");
-        }
-
-        const data = await response.json();
-        if (data.code === "S0000" && data.data.length > 0) {
-          setChildren(data.data);
-          setSelectedChild(data.data[0].nickname);
-          onChildSelect(data.data[0].nickname);
-        }
-      } catch (error) {
-        console.error("자녀 목록 조회 실패:", error);
-      } finally {
-        setLoading(false);
-      }
-    };
-
-    const fetchNotifications = async () => {
-      try {
-        const response = await fetch("/api/notifications/unread", {
-          headers: {
-            Authorization: `Bearer ${localStorage.getItem("token")}`
-          }
-        });
-
-        if (!response.ok) {
-          throw new Error("알림 데이터를 불러오는 데 실패했습니다.");
-        }
-
-        const data = await response.json();
-        setHasUnreadNotification(data.hasUnread);
-      } catch (error) {
-        console.error("알림 조회 실패:", error);
-      }
-    };
-
-    fetchChildren();
-    fetchNotifications();
-  }, [onChildSelect]);
-
-// 🔥 스크롤 이벤트 추가 (빠르게 올릴 경우 바로 헤더 표시)
-useEffect(() => {
-  const handleScroll = () => {
-    const scrollY = window.scrollY;
-
-    // 🔥 기존 lastScrollY보다 10px 이상 올리면 헤더 표시
-    if (scrollY < lastScrollY - 10) {
-      setIsVisible(true);
-    } 
-    // 🔥 스크롤을 내릴 때는 바로 숨김
-    else if (scrollY > lastScrollY + 10) {
-      setIsVisible(false);
+    // 로그인 페이지에서는 헤더를 숨김
+    if (location.pathname === "/login") {
+      return;
     }
 
-    setLastScrollY(scrollY);
-  };
+    // if (!isAuthenticated) return;
 
-  window.addEventListener("scroll", handleScroll);
-  return () => window.removeEventListener("scroll", handleScroll);
-}, [lastScrollY]);
+    // 알림 fetch 로직은 기존과 동일
+    // const fetchNotifications = async () => {
+    //   try {
+    //     const response = await fetch("/api/notifications/unread", {
+    //       headers: {
+    //         Authorization: `Bearer ${localStorage.getItem("token")}`
+    //       }
+    //     });
+
+    //     if (!response.ok) {
+    //       throw new Error("알림 데이터를 불러오는 데 실패했습니다.");
+    //     }
+
+    //     const data = await response.json();
+    //     setHasUnreadNotification(data.hasUnread);
+    //   } catch (error) {
+    //     console.error("알림 조회 실패:", error);
+    //   }
+    // };
+
+    // fetchNotifications();
+  }, [isAuthenticated, location.pathname]);
+
+  useEffect(() => {
+    const handleScroll = () => {
+      const scrollY = window.scrollY;
+
+      if (scrollY < lastScrollY - 10) {
+        setIsVisible(true);
+      } else if (scrollY > lastScrollY + 10) {
+        setIsVisible(false);
+      }
+
+      setLastScrollY(scrollY);
+    };
+
+    window.addEventListener("scroll", handleScroll);
+    return () => window.removeEventListener("scroll", handleScroll);
+  }, [lastScrollY]);
 
   return (
     <header
@@ -96,36 +88,17 @@ useEffect(() => {
       }`}
     >
       <div className="flex items-center justify-between h-[52px] px-4 w-full">
-        {/* 🔥 뒤로가기 버튼 (onBackClick 제거) */}
-        <button
-          type="button"
-          onClick={() => window.history.back()} // 기본 브라우저 뒤로가기
-          className="p-2 w-[40px] h-[40px] rounded-bl-[10px]"
-          aria-label="뒤로가기"
-        >
-          <svg
-            width="20"
-            height="20"
-            viewBox="0 0 24 24"
-            fill="none"
-            stroke="currentColor"
-            strokeWidth="2"
-            strokeLinecap="round"
-            strokeLinejoin="round"
-          >
-            <polyline points="15 18 9 12 15 6"></polyline>
-          </svg>
-        </button>
-
-        {/* 중앙 자녀 선택 드롭다운 */}
-        <div className="relative flex justify-center items-center ml-4">
+        {/* 메인 페이지가 아닐 때만 뒤로가기 버튼 표시 */}
+        {location.pathname !== "/" && (
           <button
-            onClick={() => setIsOpen(!isOpen)}
-            className="flex items-center gap-2 text-[16px] font-medium text-gray-900 relative z-10"
+            type="button"
+            onClick={() => navigate(-1)}
+            className="p-2 w-[40px] h-[40px] rounded-bl-[10px]"
+            aria-label="뒤로가기"
           >
-            {loading ? "로딩 중..." : selectedChild || "자녀 선택"}
             <svg
-              className={`w-4 h-4 transition-transform ${isOpen ? "rotate-180" : ""}`}
+              width="20"
+              height="20"
               viewBox="0 0 24 24"
               fill="none"
               stroke="currentColor"
@@ -133,28 +106,61 @@ useEffect(() => {
               strokeLinecap="round"
               strokeLinejoin="round"
             >
-              <polyline points="6 9 12 15 18 9"></polyline>
+              <polyline points="15 18 9 12 15 6"></polyline>
             </svg>
           </button>
+        )}
+        {/* 메인 페이지일 때는 빈 div로 레이아웃 유지 */}
+        {location.pathname === "/" && <div className="w-[40px]"></div>}
 
-          {isOpen && (
+        {/* 중앙 자녀 선택 드롭다운 */}
+        <div className="relative flex justify-center items-center ml-4">
+          {isAuthenticated ? (
+            <button
+              onClick={() => setIsOpen(!isOpen)}
+              className="flex items-center gap-2 text-[16px] font-medium text-gray-900 relative z-10"
+            >
+              {loading
+                ? "로딩 중..."
+                : selectedChild?.nickname ||
+                  (children.length === 0 ? "등록된 아이 없음" : "자녀 선택")}
+              <svg
+                className={`w-4 h-4 transition-transform ${isOpen ? "rotate-180" : ""}`}
+                viewBox="0 0 24 24"
+                fill="none"
+                stroke="currentColor"
+                strokeWidth="2"
+                strokeLinecap="round"
+                strokeLinejoin="round"
+              >
+                <polyline points="6 9 12 15 18 9"></polyline>
+              </svg>
+            </button>
+          ) : (
+            <span className="text-[16px] font-medium text-gray-900">
+              아이's그림
+            </span>
+          )}
+
+          {isAuthenticated && isOpen && (
             <div className="absolute top-full mt-1 w-[200px] rounded-lg bg-white py-2 shadow-lg border border-gray-200">
               {children.length > 0 ? (
                 children.map((child) => (
                   <button
-                    key={child.id}
+                    key={child.childId}
                     className="w-full px-4 py-2 text-left text-[14px] hover:bg-gray-50"
                     onClick={() => {
-                      setSelectedChild(child.nickname);
+                      handleChildSelect(child);
                       setIsOpen(false);
-                      onChildSelect(child.nickname);
                     }}
                   >
                     {child.nickname}
                   </button>
                 ))
               ) : (
-                <p className="text-center p-2 text-gray-500">자녀 없음</p>
+                <p className="text-center p-2 text-gray-500">
+                  등록된 아이가 없습니다
+                </p>
               )}
             </div>
           )}

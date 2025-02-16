@@ -1,4 +1,3 @@
-// CalendarHeader.tsx
 import React, { useState, useRef, useEffect } from "react";
 import { CalendarHeaderProps } from "./types";
 
@@ -14,10 +13,9 @@ const CalendarHeader: React.FC<CalendarHeaderProps> = ({
   const monthPopupRef = useRef<HTMLDivElement>(null);
 
   // 년도 선택 옵션 (현재 년도 ±10년)
-  // HI
   const years = Array.from(
-    { length: 21 },
-    (_, i) => currentDate.getFullYear() - 10 + i
+    { length: 9 },
+    (_, i) => currentDate.getFullYear() - 5 + i
   );
 
   // 월 선택 옵션
@@ -98,18 +96,20 @@ const CalendarHeader: React.FC<CalendarHeaderProps> = ({
           {showYearSelect && (
             <div
               ref={yearPopupRef}
-              className="absolute top-full mt-1 bg-white border rounded-lg shadow-lg w-24 max-h-60 overflow-y-auto z-50"
+              className="absolute top-full mt-1 left-1/2 transform -translate-x-1/2 bg-white border rounded-lg shadow-lg z-50 w-48"
             >
-              {years.map((year) => (
-                <button
-                  key={year}
-                  className={`block w-full px-4 py-2 text-left hover:bg-gray-100 
-                   ${year === currentDate.getFullYear() ? "bg-blue-50" : ""}`}
-                  onClick={() => handleYearChange(year)}
-                >
-                  {year}년
-                </button>
-              ))}
+              <div className="grid grid-cols-3 gap-2 p-2">
+                {years.map((year) => (
+                  <button
+                    key={year}
+                    className={`px-1 py-1 rounded text-center w-full
+                     ${year === currentDate.getFullYear() ? "bg-blue-50 text-blue-600" : "hover:bg-gray-100"}`}
+                    onClick={() => handleYearChange(year)}
+                  >
+                    {year}년
+                  </button>
+                ))}
+              </div>
             </div>
           )}
         </div>

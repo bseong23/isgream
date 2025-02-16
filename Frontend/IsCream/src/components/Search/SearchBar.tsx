@@ -1,30 +1,42 @@
-import React from "react";
+import React, { useState } from "react";
 
 interface SearchBarProps {
   onSearch: (query: string) => void;
   className?: string;
-  placeholder?: string; // placeholder prop 추가
+  placeholder?: string;
 }
 
 const SearchBar: React.FC<SearchBarProps> = ({
   onSearch,
   className,
-  placeholder = "무슨 일이 있었나요?" // 기본값 설정
+  placeholder = "장소를 검색하세요"
 }) => {
-  const handleSearch = (event: React.ChangeEvent<HTMLInputElement>) => {
-    onSearch(event.target.value);
+  const [value, setValue] = useState("");
+
+  const handleSubmit = (e: React.FormEvent) => {
+    e.preventDefault();
+    if (value.trim()) {
+      onSearch(value);
+    }
   };
 
   return (
-    <div className={`relative w-[95%] h-[75px] mx-auto ${className}`}>
+    <form
+      onSubmit={handleSubmit}
+      className={`relative h-[75px] mx-auto ${className}`}
+    >
       <div className="relative w-full h-full flex items-center">
         <input
           type="text"
-          placeholder={placeholder} // props로 받은 placeholder 사용
+          value={value}
+          onChange={(e) => setValue(e.target.value)}
+          placeholder={placeholder}
           className="w-full h-[45px] pl-4 pr-12 rounded-lg border border-gray-200 focus:outline-none text-gray-700"
-          onChange={handleSearch}
         />
-        <button className="absolute right-4 top-1/2 transform -translate-y-1/2">
+        <button
+          type="submit"
+          className="absolute right-4 top-1/2 transform -translate-y-1/2"
+        >
           <svg
             width="20"
             height="20"
@@ -42,7 +54,7 @@ const SearchBar: React.FC<SearchBarProps> = ({
           </svg>
         </button>
       </div>
-    </div>
+    </form>
   );
 };
 

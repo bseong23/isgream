@@ -9,27 +9,26 @@ const Header = ({ onNotificationClick }: HeaderProps) => {
   const [isVisible, setIsVisible] = useState(true);
   const [lastScrollY, setLastScrollY] = useState(0);
 
-// 🔥 스크롤 이벤트 추가 (빠르게 올릴 경우 바로 헤더 표시)
-useEffect(() => {
-  const handleScroll = () => {
-    const scrollY = window.scrollY;
+  // 🔥 스크롤 이벤트 추가 (빠르게 올릴 경우 바로 헤더 표시)
+  useEffect(() => {
+    const handleScroll = () => {
+      const scrollY = window.scrollY;
 
-    // 🔥 기존 lastScrollY보다 10px 이상 올리면 헤더 표시
-    if (scrollY < lastScrollY - 10) {
-      setIsVisible(true);
-    } 
-    // 🔥 스크롤을 내릴 때는 바로 숨김
-    else if (scrollY > lastScrollY + 10) {
-      setIsVisible(false);
-    }
+      // 🔥 기존 lastScrollY보다 10px 이상 올리면 헤더 표시
+      if (scrollY < lastScrollY - 10) {
+        setIsVisible(true);
+      }
+      // 🔥 스크롤을 내릴 때는 바로 숨김
+      else if (scrollY > lastScrollY + 10) {
+        setIsVisible(false);
+      }
 
-    setLastScrollY(scrollY);
-  };
+      setLastScrollY(scrollY);
+    };
 
-  window.addEventListener("scroll", handleScroll);
-  return () => window.removeEventListener("scroll", handleScroll);
-}, [lastScrollY]);
-
+    window.addEventListener("scroll", handleScroll);
+    return () => window.removeEventListener("scroll", handleScroll);
+  }, [lastScrollY]);
 
   return (
     <header

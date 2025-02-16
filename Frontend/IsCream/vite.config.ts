@@ -29,5 +29,20 @@ export default defineConfig({
         ]
       }
     })
-  ]
+  ],
+  define: {
+    "process.env": process.env
+  },
+  server: {
+    proxy: {
+      "/api": {
+        target: "https://i12a407.p.ssafy.io",
+        changeOrigin: true,
+        secure: true,
+        headers: {
+          "Access-Control-Allow-Origin": "*"
+        }
+      }
+    }
+  }
 });
