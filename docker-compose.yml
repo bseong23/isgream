@@ -27,8 +27,8 @@ services:
         condition: on-failure
     expose:
       - "8080" 
-    environment:
-      - SPRING_PROFILES_ACTIVE=prod
+    env_file:
+      - /home/ubuntu/.env
     networks:
       - mynetwork
 
@@ -45,8 +45,8 @@ services:
       - "8000"  
     volumes:
       - /home/ubuntu/models:/home/ubuntu/models
-    environment:
-      - OPENAI_API_KEY=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
+    env_file:
+      - /home/ubuntu/.env
     networks:
       - mynetwork
 
