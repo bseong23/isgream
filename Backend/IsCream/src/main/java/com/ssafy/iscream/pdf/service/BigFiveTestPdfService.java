@@ -24,6 +24,7 @@ import com.itextpdf.layout.properties.TextAlignment;
 import com.itextpdf.layout.properties.UnitValue;
 import com.itextpdf.layout.properties.VerticalAlignment;
 import com.ssafy.iscream.bigFiveTest.domain.BigFiveTest;
+import com.ssafy.iscream.bigFiveTest.repository.BigFiveTestRepository;
 import com.ssafy.iscream.children.domain.Child;
 import com.ssafy.iscream.htpTest.domain.HtpTest;
 import com.ssafy.iscream.s3.service.S3Service;
@@ -37,6 +38,7 @@ import java.io.ByteArrayOutputStream;
 @RequiredArgsConstructor
 public class BigFiveTestPdfService {
     private final S3Service s3Service;
+    private final BigFiveTestRepository bigFiveTestRepository;
 
     private static final DeviceRgb HEADER_COLOR = new DeviceRgb(33, 37, 41);
     private static final DeviceRgb SECTION_COLOR = new DeviceRgb(52, 152, 219);
@@ -97,37 +99,14 @@ public class BigFiveTestPdfService {
         return s3Service.uploadPdfFile(outputStream.toByteArray());
     }
     private static Paragraph getBigFiveAnalysis(BigFiveTest bigFiveTest) {
-        String analysis = """
-        성실성(Conscientiousness):
-        - 높은 점수: 신중하고 계획적이며 책임감이 강함.
-        - 낮은 점수: 즉흥적이며 규칙을 따르지 않는 경향이 있음.
 
-        친화성(Agreeableness):
-        - 높은 점수: 친절하고 협조적이며 타인의 감정을 잘 배려함.
-        - 낮은 점수: 경쟁적이고 직설적인 성향이 강함.
-
-        정서적 안정성(Emotional Stability):
-        - 높은 점수: 감정 조절이 뛰어나며 스트레스에 강함.
-        - 낮은 점수: 불안감이 높고 감정 기복이 심할 가능성이 있음.
-
-        외향성(Extraversion):
-        - 높은 점수: 활발하고 사교적인 성향이 강함.
-        - 낮은 점수: 내성적이며 혼자 있는 것을 선호함.
-
-        개방성(Openness):
-        - 높은 점수: 창의적이고 새로운 경험을 즐기는 경향이 있음.
-        - 낮은 점수: 전통적이고 변화보다는 익숙한 것을 선호함.
-        """;
-
-        return new Paragraph(analysis)
+        return new Paragraph(bigFiveTest.getAnalysis())
                 .setFontSize(12)
                 .setFontColor(TEXT_COLOR)
                 .setBorder(new SolidBorder(BORDER_COLOR, 1))
                 .setPadding(10)
                 .setMarginTop(10);
     }
-
-
 
     private static Paragraph getTitle(String title) {
         return new Paragraph(title)

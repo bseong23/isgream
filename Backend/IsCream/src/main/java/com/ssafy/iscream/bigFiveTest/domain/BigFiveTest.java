@@ -42,6 +42,9 @@ public class BigFiveTest {
     @Column(nullable = false)
     private Double openness;
 
+    @Column(columnDefinition = "TEXT")
+    private String analysis;
+
     @Column
     private String pdfUrl;
 }
