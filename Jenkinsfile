@@ -35,7 +35,10 @@ pipeline {
         stage('Build Backend') {
             steps {
                 dir('Backend/IsCream') {
-                    sh 'export $(cat /home/ubuntu/.env | xargs) && ./gradlew clean build'
+                    sh '''
+                    export $(grep -v '^#' ../../.env | xargs)
+                    ./gradlew clean build
+                    '''
                 }
             }
         }
@@ -70,7 +73,7 @@ pipeline {
         stage('Docker Compose Up') {
             steps {
                 sh 'docker-compose down'
-                sh 'docker-compose --env-file /home/ubuntu/.env up -d --build'
+                sh 'docker-compose up -d --build'
             }
         }
     }
