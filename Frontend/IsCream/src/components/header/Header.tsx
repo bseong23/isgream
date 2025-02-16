@@ -7,18 +7,18 @@ const HeaderController = () => {
 
   // 선택 이벤트 핸들러 (기본 함수 추가)
   const handleChildSelect = (selectedItem: string) => {
-    console.log("Selected item:", selectedItem);
+    console.log("선택된 아이:", selectedItem);
   };
 
   // 메인 페이지와 마이페이지에서 HeaderMain 사용
   if (location.pathname === "/" || location.pathname === "/mypage") {
     return <HeaderMain onChildSelect={handleChildSelect} />;
-  }
+  } else return <HeaderNormal />;
 
   // 게시판 페이지를 제외한 모든 페이지에서 HeaderNormal 사용
-  if (location.pathname !== "/board") {
-    return <HeaderNormal />;
-  }
+  // if (location.pathname !== "/" || location.pathname !== "/mypage") {
+  //   return <HeaderNormal />;
+  // }
 
   // 게시판(`/board`)에서는 헤더 없음
   return null;

@@ -9,9 +9,9 @@ import org.springframework.stereotype.Repository;
 
 @Repository
 public interface PostLikeRepository extends JpaRepository<PostLike, Integer> {
-    void deleteByPostIdAndUserId(Integer postId, Integer userId);
-    Boolean existsByPostIdAndUserId(Integer postId, Integer userId);
-    Integer countByPostId(Integer postId);
+    void deleteById_PostIdAndId_UserId(Integer postId, Integer userId);
+    Boolean existsById_PostIdAndId_UserId(Integer postId, Integer userId);
+    Integer countById_PostId(Integer postId);
 
     @Modifying
     @Query(value = "INSERT IGNORE INTO post_like (post_id, user_id) VALUES (:postId, :userId)", nativeQuery = true)

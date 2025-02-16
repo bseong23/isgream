@@ -22,9 +22,6 @@ public class PostReq {
     @Schema(description = "개수 (default 0)", example = "10")
     private Integer size = 10;
 
-    @Schema(description = "검색 제목", example = "제목")
-    private String title;
-
-    @Schema(description = "검색 내용", example = "내용")
-    private String content;
+    @Schema(description = "검색 내용", example = "제목")
+    private String keyword;
 }

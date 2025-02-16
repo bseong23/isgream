@@ -1,8 +1,9 @@
 package com.ssafy.iscream.bigFiveTest.domain;
 
-import com.ssafy.iscream.user.domain.User;
 import jakarta.persistence.*;
 import lombok.*;
+
+import java.time.LocalDate;
 
 @Entity
 @Table(name = "big_five_test")
@@ -19,10 +20,12 @@ public class BigFiveTest {
     private Integer testId;
 
     @Column(nullable = false)
+    private Integer childId;
+
+    @Column(nullable = false)
     private Integer userId;
 
-    @Column(name = "test_date",nullable = false)
-    private String date;
+    private LocalDate testDate;
 
     @Column(nullable = false)
     private Double conscientiousness;
@@ -38,6 +41,9 @@ public class BigFiveTest {
 
     @Column(nullable = false)
     private Double openness;
+
+    @Column(columnDefinition = "TEXT")
+    private String analysis;
 
     @Column
     private String pdfUrl;

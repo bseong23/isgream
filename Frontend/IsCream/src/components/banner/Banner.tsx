@@ -81,7 +81,7 @@ const Banner = () => {
                 <img
                   src={slide.image}
                   alt="배너 이미지"
-                  className="w-full h-full object-cover"
+                  className="w-full h-full object-cover rounded-[15px]"
                   loading="lazy"
                 />
               </Link>

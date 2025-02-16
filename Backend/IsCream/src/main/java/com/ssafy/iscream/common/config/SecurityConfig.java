@@ -2,10 +2,10 @@ package com.ssafy.iscream.common.config;
 
 import com.ssafy.iscream.auth.exception.JwtAccessDeniedHandler;
 import com.ssafy.iscream.auth.exception.JwtAuthenticationEntryPoint;
-import com.ssafy.iscream.auth.jwt.TokenProvider;
-import com.ssafy.iscream.auth.jwt.JwtFilter;
-import com.ssafy.iscream.auth.filter.LoginFilter;
 import com.ssafy.iscream.auth.filter.AuthLogoutFilter;
+import com.ssafy.iscream.auth.filter.LoginFilter;
+import com.ssafy.iscream.auth.jwt.JwtFilter;
+import com.ssafy.iscream.auth.jwt.TokenProvider;
 import com.ssafy.iscream.auth.service.TokenService;
 import com.ssafy.iscream.auth.service.UserDetailsServiceImpl;
 import com.ssafy.iscream.oauth.AuthSuccessHandler;
@@ -31,7 +31,6 @@ import org.springframework.web.cors.CorsUtils;
 
 import java.util.Arrays;
 import java.util.Collections;
-import java.util.List;
 
 @Configuration
 @EnableWebSecurity
@@ -101,8 +100,16 @@ public class SecurityConfig {
                         .requestMatchers(HttpMethod.GET, "/board/post/{postId}", "/board/main").permitAll()
                         .requestMatchers(HttpMethod.POST, "/board").permitAll()
                         .requestMatchers(HttpMethod.GET, "/comments/{postId}").permitAll()
+                        .requestMatchers(HttpMethod.POST, "/chatbot").permitAll()
                         .requestMatchers(CorsUtils::isPreFlightRequest).permitAll()
                         .anyRequest().authenticated());
+
+        // 예외 처리
+        http.exceptionHandling((exceptionConfig) ->
+                exceptionConfig
+                        .authenticationEntryPoint(authenticationEntryPoint)
+                        .accessDeniedHandler(accessDeniedHandler)
+        );
 
         http
                 .oauth2Login((oauth2) -> oauth2
@@ -110,13 +117,6 @@ public class SecurityConfig {
                                 .userService(customOAuth2UserService))
                         .successHandler(customSuccessHandler)
                 );
-
-        // 예외 처리
-        http.exceptionHandling((exceptionConfig) ->
-            exceptionConfig
-                    .authenticationEntryPoint(authenticationEntryPoint)
-                    .accessDeniedHandler(accessDeniedHandler)
-        );
 
         http
                 .addFilterBefore(new JwtFilter(tokenProvider, userDetailsService), LoginFilter.class);

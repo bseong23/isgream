@@ -21,7 +21,7 @@ public class CommentService {
     private final CommentQueryRepository commentQueryRepository;
 
     // 댓글/대댓글 작성
-    public Integer saveComment(User user, CommentCreateReq req) {
+    public Integer createComment(User user, CommentCreateReq req) {
         Comment comment = Comment.builder()
                 .postId(req.getPostId())
                 .content(req.getContent())

@@ -1,16 +1,15 @@
 package com.ssafy.iscream.htpTest.service;
 
-import com.ssafy.iscream.children.service.ChildrenService;
 import com.ssafy.iscream.common.exception.ErrorCode;
 import com.ssafy.iscream.common.exception.MinorException;
 import com.ssafy.iscream.htpTest.domain.HtpTest;
 import com.ssafy.iscream.htpTest.dto.response.HtpTestDetailDto;
 import com.ssafy.iscream.htpTest.repository.HtpTestRepository;
-import com.ssafy.iscream.s3.service.S3Service;
 import lombok.RequiredArgsConstructor;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
+import java.time.LocalDate;
 import java.util.List;
 
 /**
@@ -22,16 +21,15 @@ import java.util.List;
 public class HtpSelectService {
 
     private final HtpTestRepository htpTestRepository; // HTP 테스트 관련 DB 접근 Repository
-    private final S3Service s3Service; // S3 파일 관련 서비스
 
     /**
-     * 특정 자녀(childId)의 모든 HTP 테스트 목록을 조회하여 반환
+     * 사용자(userId)의 모든 HTP 테스트 목록을 조회하여 반환
      *
-     * @param childId 자녀 ID
-     * @return 해당 자녀의 HTP 테스트 목록
+     * @param userId 사용자 ID
+     * @return 해당 사용자의 HTP 테스트 목록
      */
-    public List<HtpTest> getHtpTestList(Integer childId) {
-        return htpTestRepository.findByChildId(childId);
+    public List<HtpTest> getHtpTestList(Integer userId, LocalDate startDate, LocalDate endDate) {
+        return htpTestRepository.findByUserIdAndDate(userId, startDate, endDate);
     }
 
     /**
@@ -46,5 +44,9 @@ public class HtpSelectService {
                 .orElseThrow(() -> new MinorException.DataException(ErrorCode.DATA_NOT_FOUND));
 
         return new HtpTestDetailDto(htpTest);
+    }
+
+    public List<String> getHtpTestFileUrl(List<Integer> childIds) {
+        return htpTestRepository.findHtpFileUrlsByChildIds(childIds);
     }
 }

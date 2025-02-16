@@ -9,12 +9,11 @@ import org.hibernate.annotations.DynamicInsert;
 @NoArgsConstructor
 @AllArgsConstructor
 @DynamicInsert
+@Table(
+        uniqueConstraints = @UniqueConstraint(columnNames = {"userId", "postId"})
+)
 public class PostLike {
-    @Id
-    @GeneratedValue(strategy = GenerationType.IDENTITY)
-    private Integer postLikeId;
 
-    private Integer userId;
-
-    private Integer postId;
+    @EmbeddedId
+    private PostLikeId id;
 }

@@ -26,8 +26,8 @@ const COLOR_PROPS = {
 const LABELS = ["A형", "B형", "C형"];
 
 const BarChart: React.FC<BarChartProps> = ({
-  data = [12, 3, 20],
-  title = "2024.01.31",
+  data = [0, 0, 0],
+  title = "0000.00.00",
   className = ""
 }) => {
   const maxValue = Math.max(...data);
@@ -90,10 +90,12 @@ const BarChart: React.FC<BarChartProps> = ({
   };
 
   return (
-    <div
-      className={`w-9/11 h-80 p-4 bg-white rounded-lg shadow-sm ${className}`}
-    >
-      <Bar data={chartData} options={options} />
+    <div  className="w-full flex justify-center">
+      <div
+        className={`w-[80%] h-full bg-white flex justify-center ${className}`}
+      >
+        <Bar data={chartData} options={options} className="w-full"/>
+      </div>
     </div>
   );
 };

@@ -33,7 +33,7 @@ public class PostFacade {
     }
 
     public PostDetail makePostDetail(Post post, User user) {
-        Boolean userLiked = postService.isUserLiked(post, user);
+        Boolean userLiked = postService.isUserLiked(post.getPostId(), user != null ? user.getUserId() : null);
         Integer likes = postService.getPostLikes(post.getPostId());
         Integer viewCount = postService.getPostViewCount(post.getPostId());
         List<String> images = postService.getPostImages(post.getPostId());
@@ -73,7 +73,7 @@ public class PostFacade {
                 .map(post -> PostInfo.of(
                         post,
                         postService.getPostThumbnail(post.getPostId()),
-                        postService.isUserLiked(post, user),
+                        postService.isUserLiked(post.getPostId(), user != null ? user.getUserId() : null),
                         postService.getPostLikes(post.getPostId()),
                         postService.getPostViewCount(post.getPostId()),
                         userService.getUserNickname(post.getUserId()),

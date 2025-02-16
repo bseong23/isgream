@@ -67,7 +67,7 @@ public class BoardController {
     @Operation(summary = "게시글 좋아요", tags = "board")
     @GetMapping("/post/{postId}/like")
     public ResponseEntity<?> likePost(@PathVariable Integer postId, @Login User user) {
-        postService.addPostLike(postId, user);
+        postService.addPostLike(postId, user.getUserId());
         return ResponseUtil.success();
     }
 
