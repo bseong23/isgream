@@ -68,6 +68,9 @@ public class NotifyService {
         Message message = Message.builder()
                 .setToken(token)  // 푸시 알림을 받을 기기의 FCM 토큰
                 .setNotification(notification)
+                .putData("type", type.name())  // 추가적인 데이터 전달
+                .putData("postId", postId != null ? postId.toString() : "")
+                .putData("chatId", chatId != null ? chatId.toString() : "")
                 .build();
 
         // DB에 알림 내역 저장

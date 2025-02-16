@@ -10,7 +10,6 @@ import lombok.extern.slf4j.Slf4j;
 import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.Configuration;
 
-import java.io.FileInputStream;
 import java.io.FileNotFoundException;
 import java.io.InputStream;
 
@@ -23,9 +22,6 @@ public class FirebaseConfig {
     @PostConstruct
     public void init() {
         try {
-//            FileInputStream serviceAccount =
-//                    new FileInputStream("src/main/resources/firebase/serviceAccountKey.json");
-
             InputStream serviceAccount = getClass().getClassLoader()
                     .getResourceAsStream("firebase/serviceAccountKey.json");
 
