@@ -11,7 +11,8 @@ RUN ./gradlew clean build -x test --no-daemon
 # 애플리케이션 실행 환경
 FROM eclipse-temurin:17-jdk
 
+
 # JAR 파일 복사 및 실행
 COPY --from=build /app/build/libs/*.jar app.jar
 EXPOSE 8080
-CMD ["java", "-Xms256m", "-Xmx1024m", "-jar", "app.jar"]
+CMD ["java", "-jar", "app.jar"]
