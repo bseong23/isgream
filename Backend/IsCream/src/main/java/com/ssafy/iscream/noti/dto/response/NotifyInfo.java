@@ -9,6 +9,8 @@ public record NotifyInfo(
         String content,
         String type,
         Boolean read,
+        Integer postId,
+        Integer charId,
         String createdAt
 ) {
     public NotifyInfo(Notify notify) {
@@ -18,6 +20,8 @@ public record NotifyInfo(
                 notify.getContent(),
                 notify.getType().name(),
                 notify.isRead(),
+                notify.getPostId(),
+                notify.getChatId(),
                 DateUtil.format(notify.getCreatedAt())
         );
     }
