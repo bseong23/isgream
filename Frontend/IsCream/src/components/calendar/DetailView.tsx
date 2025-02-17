@@ -32,6 +32,7 @@ const DetailView: React.FC<DetailViewProps> = ({
     null
   );
   const { fetchCalendarDetail } = useCalendar(childId);
+  const [processedReport, setProcessedReport] = useState<string[][]>([]);
 
   useEffect(() => {
     const fetchDetail = async () => {
@@ -46,6 +47,25 @@ const DetailView: React.FC<DetailViewProps> = ({
 
     fetchDetail();
   }, [selectedDate, childId, fetchCalendarDetail]);
+
+  useEffect(() => {
+    if (detail?.report) {
+      // \n 문자열을 실제 개행으로 변환
+      const processedText = detail.report
+        .replace(/\\n/g, "\n")
+        .replace(/^"|"$/g, ""); // 시작과 끝의 따옴표 제거
+
+      // 섹션 분리
+      const sections = processedText.split("----").map((section) =>
+        section
+          .trim()
+          .split("\n")
+          .filter((line) => line.length > 0)
+      );
+
+      setProcessedReport(sections);
+    }
+  }, [detail?.report]);
 
   const handleMemoSave = async (memo: string) => {
     if (selectedDate.day) {
@@ -98,7 +118,7 @@ const DetailView: React.FC<DetailViewProps> = ({
         </button>
       </div>
 
-      <div className="border border-[#E6E6E6] bg-white -mt-[1px] rounded-b-[15px] rounded-r-[15px] h-[350px]">
+      <div className="border border-[#E6E6E6] bg-white -mt-[1px] rounded-b-[15px] rounded-r-[15px] h-[700px]">
         {activeTab === "htp" && (
           <div className="p-6 h-full overflow-y-auto">
             {detail?.isHtp ? (
@@ -107,46 +127,78 @@ const DetailView: React.FC<DetailViewProps> = ({
                   {selectedDate.year}년 {selectedDate.month}월{" "}
                   {selectedDate.day}일의 HTP 검사
                 </h3>
-                <div className="grid grid-cols-3 gap-4 mb-6">
-                  {detail.houseUrl && (
-                    <div>
-                      <h4 className="text-sm text-gray-500 mb-2">집</h4>
-                      <img
-                        src={detail.houseUrl}
-                        alt="House"
-                        className="w-full h-auto rounded-lg"
-                      />
-                    </div>
-                  )}
-                  {detail.treeUrl && (
-                    <div>
-                      <h4 className="text-sm text-gray-500 mb-2">나무</h4>
-                      <img
-                        src={detail.treeUrl}
-                        alt="Tree"
-                        className="w-full h-auto rounded-lg"
-                      />
-                    </div>
-                  )}
-                  {detail.personUrl && (
-                    <div>
-                      <h4 className="text-sm text-gray-500 mb-2">사람</h4>
-                      <img
-                        src={detail.personUrl}
-                        alt="Person"
-                        className="w-full h-auto rounded-lg"
-                      />
-                    </div>
-                  )}
-                </div>
-                {detail.report && (
-                  <div className="h-[300px] mb-1">
+                {detail.report &&
+                detail.houseUrl &&
+                detail.treeUrl &&
+                detail.maleUrl &&
+                detail.femaleUrl ? (
+                  <div>
                     <h4 className="font-medium mb-2">검사 결과</h4>
-                    <div className="h-full overflow-y-auto pb-10 pr-2">
-                      <p className="whitespace-pre-line text-gray-600">
-                        {detail.report}
-                      </p>
+                    <div>
+                      {processedReport.map((section, idx) => {
+                        // 검사 유형 찾기
+                        const typeInfo = section.find((line) =>
+                          line.includes("검사 유형:")
+                        );
+                        const type = typeInfo?.split(":")?.[1]?.trim();
+
+                        return (
+                          <div key={idx} className="mb-8">
+                            {/* 검사 유형에 따른 이미지 표시 */}
+                            {type === "House" && detail.houseUrl && (
+                              <div className="mb-4 w-full sm:w-2/3 md:w-1/2 lg:w-1/3 mx-auto">
+                                <img
+                                  src={detail.houseUrl}
+                                  alt="House"
+                                  className="w-full h-auto border border-[#BEBEBE] rounded-lg"
+                                />
+                              </div>
+                            )}
+                            {type === "Tree" && detail.treeUrl && (
+                              <div className="mb-4 w-full sm:w-2/3 md:w-1/2 lg:w-1/3 mx-auto">
+                                <img
+                                  src={detail.treeUrl}
+                                  alt="Tree"
+                                  className="w-full h-auto border border-[#BEBEBE] rounded-lg"
+                                />
+                              </div>
+                            )}
+                            {type === "Male" && detail.maleUrl && (
+                              <div className="mb-4 w-full sm:w-2/3 md:w-1/2 lg:w-1/3 mx-auto">
+                                <img
+                                  src={detail.maleUrl}
+                                  alt="Male"
+                                  className="w-full h-auto border border-[#BEBEBE] rounded-lg"
+                                />
+                              </div>
+                            )}
+                            {type === "Female" && detail.femaleUrl && (
+                              <div className="mb-4 w-full sm:w-2/3 md:w-1/2 lg:w-1/3 mx-auto">
+                                <img
+                                  src={detail.femaleUrl}
+                                  alt="Female"
+                                  className="w-full h-auto border border-[#BEBEBE] rounded-lg"
+                                />
+                              </div>
+                            )}
+
+                            {/* 텍스트 표시 */}
+                            {section.map((paragraph, pIdx) => (
+                              <p
+                                key={pIdx}
+                                className="text-gray-600 mb-2 text-2xl whitespace-pre-line"
+                              >
+                                {paragraph}
+                              </p>
+                            ))}
+                          </div>
+                        );
+                      })}
                     </div>
+                  </div>
+                ) : (
+                  <div className="text-gray-500 text-center py-8">
+                    아직 검사를 모두 진행하지 않으셨습니다!
                   </div>
                 )}
               </>

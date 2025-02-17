@@ -34,6 +34,15 @@ export { default as ChatRoomPage } from "./chat/ChatRoomPage";
 // 🌟 HTP 검사 (그림판)
 export { default as CanvasPage } from "./htp/CanvasPage";
 export { default as AiAnalysisPage } from "./htp/AiAnalysisPage";
-export { default as CameraPage } from "./htp/CameraPage";
+
+export { default as CameraPage } from "./htp/PhotoCapturePage";
 export { default as PhotoCapturePage } from "./htp/PhotoCapturePage";
-export { default as HTPResultsPage   } from "./htp/HTPResultsPage";
+export { default as HTPResultsPage } from "./htp/HTPResultsPage";
+// 🌟 부모 양육 태도 검사 (Parenting Test)
+export { default as ParentingTestPage } from "./pat/ParentingTest"; // ✅ 추가
+export { default as PatTestResultPage } from "./pat/PatTestResultPage";
+
+// 🌟 BIG5 검사
+export { default as BigFivePage } from "./bigfive/BigFivePage";
+export { default as BigFiveQuestionPage } from "./bigfive/BigFiveQuestionPage";
+export { default as BigFiveResultPage } from "./bigfive/BigFiveResultPage";

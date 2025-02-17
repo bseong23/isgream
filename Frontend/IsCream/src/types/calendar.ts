@@ -35,7 +35,8 @@ export interface CalendarDetailResponse {
     isHtp: boolean;
     houseUrl?: string;
     treeUrl?: string;
-    personUrl?: string;
+    maleUrl?: string;
+    femaleUrl?: string;
     report?: string;
     memoId?: string;
     memoContent?: string;

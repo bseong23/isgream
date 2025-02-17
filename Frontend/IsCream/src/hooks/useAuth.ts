@@ -11,6 +11,7 @@ import { AxiosError } from "axios";
 import { resetChild } from "../store/slices/childSlice";
 import { clearAccessToken } from "../store/slices/authSlice";
 import { useDispatch } from "react-redux";
+import { useFCM } from "./notification/useFCM";
 
 interface User {
   id?: string;
@@ -27,6 +28,7 @@ interface AuthHook {
 
 export const useAuth = (): AuthHook => {
   const dispatch = useDispatch();
+  const { deleteToken } = useFCM();
   const isAuthenticated = !!localStorage.getItem("accessToken");
 
   const login = async (loginData: LoginRequest): Promise<LoginResponse> => {
@@ -52,6 +54,7 @@ export const useAuth = (): AuthHook => {
 
   const logout = async (): Promise<LogoutResponse> => {
     try {
+      await deleteToken(); // FCM 토큰 삭제
       const response = await api.post<LogoutResponse>("/users/logout");
 
       if (response.data.code === ERROR_CODES.SUCCESS) {

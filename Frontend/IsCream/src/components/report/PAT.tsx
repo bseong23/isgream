@@ -25,6 +25,8 @@ const PAT: React.FC = () => {
     const fetchPATData = async () => {
       try {
         setIsLoading(true);
+        console.log("pat검사 결과 조회 시작");
+        
         const response = await patApi.getRecentResult();
         console.log("pat검사결과데이터: ", response);
 
@@ -40,27 +42,27 @@ const PAT: React.FC = () => {
     fetchPATData();
   }, []);
 
-  // 로딩 중일 때
-  if (isLoading) {
-    return (
-      <div className="w-full flex justify-center">
-        <div className="w-full max-w-[706px] p-3 my-2 bg-white border border-gray-300 rounded items-center">
-          로딩 중...
-        </div>
-      </div>
-    );
-  }
+  // // 로딩 중일 때
+  // if (isLoading) {
+  //   return (
+  //     <div className="w-full flex justify-center">
+  //       <div className="w-full max-w-[706px] p-3 my-2 bg-white border border-gray-300 rounded items-center">
+  //         로딩 중...
+  //       </div>
+  //     </div>
+  //   );
+  // }
 
-  // 에러가 있을 때
-  if (error) {
-    return (
-      <div className="w-full flex justify-center">
-        <div className="w-full max-w-[706px] p-3 my-2 bg-white border border-gray-300 rounded items-center text-red-500">
-          {error}
-        </div>
-      </div>
-    );
-  }
+  // // 에러가 있을 때
+  // if (error) {
+  //   return (
+  //     <div className="w-full flex justify-center">
+  //       <div className="w-full max-w-[706px] p-3 my-2 bg-white border border-gray-300 rounded items-center text-red-500">
+  //         {error}
+  //       </div>
+  //     </div>
+  //   );
+  // }
 
   return (
     <div className="w-full flex justify-center">
@@ -70,7 +72,7 @@ const PAT: React.FC = () => {
           <div>
             <BarChart
               data={
-                patData ? [patData.scoreA, patData.scoreB, patData.scoreC] : []
+                patData ? [patData.scoreA, patData.scoreB, patData.scoreC] : [0,0,0]
               }
               title={patData?.testDate || "날짜 없음"}
             />

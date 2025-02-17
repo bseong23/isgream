@@ -1,5 +1,6 @@
 import { useEffect, useState } from "react";
 import { useParams, useNavigate } from "react-router-dom";
+import { chatApi } from "../../api/chat";
 
 interface ChatMessage {
   messageId: number;
@@ -24,70 +25,88 @@ const ChatRoomPage = () => {
   const navigate = useNavigate();
   const [newMessage, setNewMessage] = useState("");
   const [chatData, setChatData] = useState<ChatRoomData | null>(null);
+  const [isConnected, setIsConnected] = useState(false);
 
+  useEffect(() => {
+    const initializeChatRoom = async () => {
+      try {
+        // 1. 채팅방 입장 및 초기 메시지 로드
+        const response = await chatApi.openChatroom(roomId, 1);
+        setChatData(response.data);
+
+        // 2. 웹소켓 연결
+        await chatApi.connectChatroom();
+        setIsConnected(true);
+
+        // 3. 채팅방 구독
+        await chatApi.subscribeChatroom();
+
+        // 4. 읽지 않은 메시지 처리
+        await chatApi.ackMessage();
+
+      } catch (error) {
+        console.error("채팅방 초기화 실패:", error);
+        // 에러 처리 (예: 에러 메시지 표시, 이전 페이지로 이동 등)
+      }
+    };
+
+    initializeChatRoom();
+
+    // 컴포넌트 언마운트 시 cleanup
+    return () => {
+      // 웹소켓 연결 해제 등의 cleanup 로직
+    };
+  }, [roomId]);
   console.log(roomId);
   // 더미 데이터
-  const dummyData: ChatApiResponse = {
-    code: "S0000",
-    message: "success",
-    data: {
-      profileUrl: "/default-profile.png",
-      chats: [
-        {
-          messageId: 1,
-          senderId: 1,
-          message: "안녕하세요~~",
-          timestamp: "2024-02-10T10:00:00Z"
-        },
-        {
-          messageId: 2,
-          senderId: 2,
-          message: "안녕하세요^~^",
-          timestamp: "2024-02-10T10:01:00Z"
-        },
-        {
-          messageId: 3,
-          senderId: 1,
-          message: "작성하신 글 보고 연락드려요~~",
-          timestamp: "2024-02-10T10:02:00Z"
-        },
-        {
-          messageId: 4,
-          senderId: 2,
-          message:
-            "아 그러시군요~~ HTTP 강사 해봤는데, 재미도 있고 도움도 되고 좋았어요 ^^",
-          timestamp: "2024-02-10T10:03:00Z"
-        }
-      ]
-    }
-  };
+  // const dummyData: ChatApiResponse = {
+  //   code: "S0000",
+  //   message: "success",
+  //   data: {
+  //     profileUrl: "/default-profile.png",
+  //     chats: [
+  //       {
+  //         messageId: 1,
+  //         senderId: 1,
+  //         message: "안녕하세요~~",
+  //         timestamp: "2024-02-10T10:00:00Z"
+  //       },
+  //       {
+  //         messageId: 2,
+  //         senderId: 2,
+  //         message: "안녕하세요^~^",
+  //         timestamp: "2024-02-10T10:01:00Z"
+  //       },
+  //       {
+  //         messageId: 3,
+  //         senderId: 1,
+  //         message: "작성하신 글 보고 연락드려요~~",
+  //         timestamp: "2024-02-10T10:02:00Z"
+  //       },
+  //       {
+  //         messageId: 4,
+  //         senderId: 2,
+  //         message:
+  //           "아 그러시군요~~ HTTP 강사 해봤는데, 재미도 있고 도움도 되고 좋았어요 ^^",
+  //         timestamp: "2024-02-10T10:03:00Z"
+  //       }
+  //     ]
+  //   }
+  // };
 
-  // 테스트를 위해 더미 데이터 사용
-  useEffect(() => {
-    setChatData(dummyData.data);
-  }, []);
+  // // 테스트를 위해 더미 데이터 사용
+  // useEffect(() => {
+  //   setChatData(dummyData.data);
+  // }, []);
 
-  const handleSendMessage = () => {
-    if (newMessage.trim()) {
-      const newChat: ChatMessage = {
-        messageId: chatData?.chats.length
-          ? chatData.chats[chatData.chats.length - 1].messageId + 1
-          : 1,
-        senderId: 2, // 내 ID
-        message: newMessage,
-        timestamp: new Date().toISOString()
-      };
-
-      setChatData((prev) =>
-        prev
-          ? {
-              ...prev,
-              chats: [...prev.chats, newChat]
-            }
-          : null
-      );
-
-      setNewMessage("");
+  const handleSendMessage = async () => {
+    if (newMessage.trim() && isConnected) {
+      try {
+        await chatApi.sendMessage(roomId, newMessage);
+        setNewMessage("");
+      } catch (error) {
+        console.error("메시지 전송 실패:", error);
+      }
     }
   };
 

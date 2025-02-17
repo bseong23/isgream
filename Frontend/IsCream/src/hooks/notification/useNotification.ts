@@ -1,82 +1,106 @@
 import { useState, useEffect } from "react";
-import { initializeApp } from "firebase/app";
-import { getMessaging, getToken, onMessage } from "firebase/messaging";
-import { tokenApi } from "../../api/notification/token"; // 경로 확인 필요
-
-const firebaseConfig = {
-  apiKey: import.meta.env.VITE_FIREBASE_API_KEY, // 환경변수 이름 수정
-  authDomain: import.meta.env.VITE_FIREBASE_AUTH_DOMAIN,
-  projectId: import.meta.env.VITE_FIREBASE_PROJECT_ID,
-  storageBucket: import.meta.env.VITE_FIREBASE_STORAGE_BUCKET,
-  messagingSenderId: import.meta.env.VITE_FIREBASE_MESSAGING_SENDER_ID,
-  appId: import.meta.env.VITE_FIREBASE_APP_ID
-};
+import { notificationAPI } from "../../api/notification/notification";
+import type { NotifyItem } from "../../types/notification";
 
 export const useNotification = () => {
-  const [isSupported, setIsSupported] = useState(false);
-  const [messaging, setMessaging] = useState<ReturnType<
-    typeof getMessaging
-  > | null>(null);
+  const [notifications, setNotifications] = useState<NotifyItem[]>([]);
+  const [hasUnread, setHasUnread] = useState(false);
+  const [loading, setLoading] = useState(true);
+  const [error, setError] = useState<string | null>(null);
 
-  useEffect(() => {
-    // Firebase 앱 초기화
-    const app = initializeApp(firebaseConfig);
-    const messagingInstance = getMessaging(app);
-    setMessaging(messagingInstance);
+  const fetchNotifications = async () => {
+    try {
+      setLoading(true);
+      setError(null);
 
-    // 브라우저 지원 확인
-    setIsSupported("Notification" in window && "serviceWorker" in navigator);
-
-    // 포그라운드 알림 핸들러
-    const unsubscribe = onMessage(messagingInstance, (payload) => {
-      new Notification(payload.notification?.title || "알림", {
-        body: payload.notification?.body || "새로운 알림이 도착했습니다."
+      // 토큰 확인 및 로깅
+      const token = localStorage.getItem("accessToken");
+      console.log("📋 현재 토큰 상태:", {
+        token: token ? "존재함" : "없음",
+        tokenLength: token ? token.length : 0
       });
-    });
 
-    // 컴포넌트 언마운트 시 리스너 정리
-    return () => {
-      unsubscribe();
-    };
-  }, []);
+      // API 호출
+      const response = await notificationAPI.getNotifications();
 
-  // 알림 권한 요청
-  const requestNotificationPermission = async () => {
-    if (!isSupported) {
-      console.error("브라우저가 알림을 지원하지 않습니다.");
-      return null;
-    }
+      // 성공 케이스 처리
+      if (response.data?.code === "S0000") {
+        const notifyData = response.data.data || [];
 
-    const permission = await Notification.requestPermission();
-    if (permission === "granted" && messaging) {
-      try {
-        const token = await getToken(messaging, {
-          vapidKey: import.meta.env.VITE_FIREBASE_VAPID_KEY
+        console.log("✅ 알림 데이터 처리:", {
+          totalNotifications: notifyData.length,
+          unreadCount: notifyData.filter((n) => !n.read).length
         });
 
-        // 백엔드에 토큰 저장
-        await tokenApi.saveToken(token);
-        return token;
-      } catch (error) {
-        console.error("토큰 생성 중 오류 발생:", error);
-        return null;
+        setNotifications(notifyData);
+        setHasUnread(notifyData.some((notify) => !notify.read));
+      } else {
+        // API 응답 코드가 성공이 아닌 경우
+        const errorMsg = response.data?.message || "알림 조회에 실패했습니다.";
+        console.warn(`❌ API 응답 오류: ${errorMsg}`);
+
+        throw new Error(errorMsg);
       }
+    } catch (error: unknown) {
+      // 에러 상세 로깅
+      console.group("❌ 알림 조회 에러");
+      console.error("에러 객체:", error);
+
+      let errorMessage = "알림을 불러오는데 실패했습니다.";
+
+      // 타입 가드를 사용하여 안전하게 에러 메시지 추출
+      if (error instanceof Error) {
+        errorMessage = error.message;
+      } else if (typeof error === "object" && error !== null) {
+        const anyError = error as {
+          response?: {
+            data?: {
+              message?: string;
+            };
+            status?: number;
+          };
+          message?: string;
+        };
+
+        errorMessage =
+          anyError.response?.data?.message || anyError.message || errorMessage;
+
+        console.log("에러 상태:", {
+          responseStatus: anyError.response?.status,
+          responseData: anyError.response?.data
+        });
+      }
+
+      console.log("에러 메시지:", errorMessage);
+      console.groupEnd();
+
+      // 상태 업데이트
+      setError(errorMessage);
+      setNotifications([]);
+      setHasUnread(false);
+    } finally {
+      // 로딩 상태 종료
+      setLoading(false);
     }
-    return null;
   };
 
-  // 토큰 삭제
-  const removeNotificationToken = async () => {
-    try {
-      await tokenApi.removeToken();
-    } catch (error) {
-      console.error("토큰 삭제 중 오류 발생:", error);
-    }
+  // 초기 로드 및 의존성 배열 없는 최초 1회 실행
+  useEffect(() => {
+    fetchNotifications();
+  }, []);
+
+  // 수동 새로고침 함수
+  const refresh = () => {
+    fetchNotifications();
   };
 
   return {
-    isSupported,
-    requestNotificationPermission,
-    removeNotificationToken
+    notifications, // 알림 목록
+    hasUnread, // 읽지 않은 알림 존재 여부
+    loading, // 로딩 상태
+    error, // 에러 메시지
+    refresh, // 수동 새로고침 함수
+    fetchNotifications, // API 호출 함수
+    markAsRead: notificationAPI.markAsRead // 알림 읽음 처리 함수
   };
 };

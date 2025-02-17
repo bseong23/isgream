@@ -1,22 +1,26 @@
-import axios from "axios";
-import { NotificationItem } from "../../types/notification";
+import { api } from "../../utils/common/axiosInstance";
+import { NotifyResponse } from "../../types/notification";
 
-const BASE_URL = import.meta.env.VITE_BASE_URI;
+export const notificationAPI = {
+  // FCM 토큰 저장
+  saveToken: (token: string) => {
+    return api.post("/notify/token", {
+      token: token
+    });
+  },
 
-export const notificationApi = {
+  // FCM 토큰 삭제
+  deleteToken: () => {
+    return api.delete("/notify/token");
+  },
+
   // 알림 내역 조회
-  getNotifications: async () => {
-    const response = await axios.get<{
-      code: string;
-      message: string;
-      data: NotificationItem[];
-    }>(`${BASE_URL}/notify`);
-    return response.data;
+  getNotifications: () => {
+    return api.get<NotifyResponse>("/notify");
   },
 
   // 알림 읽음 처리
-  markAsRead: async (notifyId: number) => {
-    const response = await axios.get(`${BASE_URL}/notify/${notifyId}`);
-    return response.data;
+  markAsRead: (notifyId: number) => {
+    return api.get(`/notify/${notifyId}`);
   }
 };

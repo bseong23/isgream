@@ -3,15 +3,22 @@ import DateSelector from "../../components/pdf/DateSelector";
 import TestList from "../../components/pdf/TestList";
 import { DateRange, TestType, TestResult } from "../../components/pdf/types";
 import { useState, useEffect } from "react";
-// import { patApi } from "../../api/pat";
-// import { bigFiveApi } from "../../api/bigFive";
+import { patApi } from "../../api/pat";
+import { bigFiveApi } from "../../api/bigFive";
+import { useLocation } from 'react-router-dom';
+import { htpGetResultList } from "../../api/htp";
 
 const PDFDownload = () => {
+  const location = useLocation();
+  const nickname = location.state?.nickname;
+  const today = new Date().toISOString().split('T')[0];
   const [dateRange, setDateRange] = useState<DateRange>({
-    startDate: "2025-01-20",
-    endDate: "2025-02-13"
+    startDate: today,
+    endDate: today
   });
 
+  console.log("닉네임::::::::::::::", nickname);
+  
   const [selectedTests, setSelectedTests] = useState<TestType[]>([
     { id: "HTP", name: "AI 그림검사", isSelected: true },
     { id: "PAT", name: "부모양육태도 검사", isSelected: false },
@@ -39,24 +46,63 @@ const PDFDownload = () => {
           let response;
           console.log("API 호출 시작:", test.id);
 
-          // switch(test.id) {
-          //     case 'PAT':
-          //         response = await patApi.getResultList(
-          //             dateRange.startDate,
-          //             dateRange.endDate
-          //         );
-          //         break;
-          //     case 'BFI':
-          //         response = await bigFiveApi.getResultList(
-          //             dateRange.startDate,
-          //             dateRange.endDate
-          //         );
-          //         break;
-          //     case 'HTP':
-          //         // HTP API 호출 추가 필요
-          //         break;
-          // }
-          return response?.data;
+          switch(test.id) {
+            case 'HTP':
+              response = await htpGetResultList(
+                dateRange.startDate,
+                dateRange.endDate
+              );
+                break;
+
+              case 'PAT':
+                  response = await patApi.getResultList(
+                      dateRange.startDate,
+                      dateRange.endDate
+                  );
+                  break;
+
+              case 'BFI':
+                  response = await bigFiveApi.getResultList(
+                      dateRange.startDate,
+                      dateRange.endDate
+                  );
+                  break;
+          }
+
+          console.log("response: ", response);
+          
+          // 각 응답에 testType 추가
+          if (response?.data) {
+            switch(test.id) {
+              case 'HTP':
+                return response.data.map((item: any) => ({
+                  testId: item.testId,
+                  title: item.title,
+                  date: item.date,        // HTP는 date 필드 사용
+                  childName: item.childName,
+                  type: 'HTP'
+                }));
+              
+              case 'PAT':  // PAT와 BFI는 testDate 사용
+                return response.data.map((item: any) => ({
+                  testId: item.testId,
+                  title: item.title,
+                  date: item.testDate,    // 나머지는 testDate 사용
+                  childName: item.childName,
+                  type: 'PAT'  
+                }));
+
+                case 'BFI':  // PAT와 BFI는 testDate 사용
+                return response.data.map((item: any) => ({
+                  testId: item.testId,
+                  title: item.title,
+                  date: item.testDate,    // 나머지는 testDate 사용
+                  childName: item.childName,
+                  type: 'BFI'  
+                }));
+            }
+          }
+          return [];
         })
       );
 
@@ -64,15 +110,11 @@ const PDFDownload = () => {
 
       const formattedResults = results
         .flat()
-        .filter(Boolean)
-        .map((result) => ({
-          id: result.id,
-          testType: result.testType,
-          date: result.date,
-          status: result.status
-        }));
+        .filter(Boolean);
 
-      setTestResults(formattedResults);
+        console.log("합쳐진결과: ", formattedResults);
+        setTestResults(formattedResults);
+        
     } catch (err) {
       console.error("Error fetching test results:", err);
       setError("검사 결과를 불러오는데 실패했습니다.");
@@ -84,7 +126,7 @@ const PDFDownload = () => {
   useEffect(
     () => {
       fetchTestResults();
-    } /* [dateRange.startDate, dateRange.endDate]*/
+    }, [selectedTests]
   ); // selectedTests는 제거하고 날짜만 watching
 
   const handleDateChange = (newRange: DateRange) => {
@@ -98,7 +140,7 @@ const PDFDownload = () => {
       );
       return updated;
     });
-    fetchTestResults(); // 테스트 선택 변경 시 직접 호출
+    // fetchTestResults(); // 테스트 선택 변경 시 직접 호출
   };
 
   const handleResultSelect = (resultId: string) => {
@@ -126,6 +168,7 @@ const PDFDownload = () => {
           <TestList
             testResults={testResults}
             onResultSelect={handleResultSelect}
+            nickname={nickname}
           />
         )}
       </div>

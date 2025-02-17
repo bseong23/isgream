@@ -1,20 +1,24 @@
+import { useState } from "react";
+
 interface ChatRoomProps {
-  roomId: number;
-  profileUrl: string;
+  roomId: string;
   opponentName: string;
   newMessageCount: number;
   lastMessageTime: string;
+  onDelete: () => void;
   onClick: () => void;
 }
 
 const ChatRoomItem = ({
   // roomId,
-  profileUrl,
   opponentName,
   newMessageCount,
   lastMessageTime,
+  onDelete,
   onClick
 }: ChatRoomProps) => {
+  const [showOptions, setShowOptions] = useState(false);
+
   const formatRelativeTime = (lastMessageTime: string) => {
     const now = new Date();
     const messageTime = new Date(lastMessageTime);
@@ -43,14 +47,6 @@ const ChatRoomItem = ({
       onClick={onClick}
       className="flex items-center p-4 border-b hover:bg-gray-50 cursor-pointer"
     >
-      {/* 프로필 이미지 */}
-      <div className="w-12 h-12 rounded-full overflow-hidden mr-4">
-        <img
-          src={profileUrl || "/default-profile.png"}
-          alt="프로필"
-          className="w-full h-full object-cover"
-        />
-      </div>
 
       {/* 채팅방 정보 */}
       <div className="flex-1">
@@ -76,6 +72,35 @@ const ChatRoomItem = ({
           </div>
         )}
       </div>
+
+      {/* 채팅방이 존재할 때만 옵션 버튼 표시 */}
+      {opponentName && (
+        <button
+          onClick={(e) => {
+            e.stopPropagation();
+            setShowOptions(!showOptions);
+          }}
+          className="ml-4 p-2 hover:bg-red-50 rounded"
+        >
+          ⋮
+        </button>
+      )}
+
+      {/* 드롭다운 메뉴 */}
+      {showOptions && (
+        <div className="absolute right-0 top-12 bg-white shadow-lg rounded-lg py-2 z-10">
+          <button
+            onClick={(e) => {
+              e.stopPropagation();
+              onDelete();
+              setShowOptions(false);
+            }}
+            className="w-full px-4 py-2 text-left text-red-500 hover:bg-gray-50"
+          >
+            나가기
+          </button>
+        </div>
+      )}
     </div>
   );
 };

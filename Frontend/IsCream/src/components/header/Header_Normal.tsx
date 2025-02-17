@@ -1,11 +1,15 @@
 import { useState, useEffect } from "react";
 
-interface HeaderProps {
-  onNotificationClick?: () => void;
-}
+// interface HeaderProps {
+//   // 알림 클릭 핸들러 (현재 미사용)
+//   onNotificationClick?: () => void;
+// }
 
-const Header = ({ onNotificationClick }: HeaderProps) => {
-  const [hasUnreadNotification /*setHasUnreadNotification*/] = useState(false);
+// {* onNotificationClick */}: HeaderProps
+
+const Header = () => {
+  // 알림 상태 (현재 미사용)
+  // const [hasUnreadNotification /*setHasUnreadNotification*/] = useState(false);
   const [isVisible, setIsVisible] = useState(true);
   const [lastScrollY, setLastScrollY] = useState(0);
 
@@ -60,11 +64,11 @@ const Header = ({ onNotificationClick }: HeaderProps) => {
 
         {/* 제목 */}
         <h1 className="flex-1 text-center text-base font-medium text-gray-900">
-          아이’s 그림
+          아이's 그림
         </h1>
 
-        {/* 알림 버튼 */}
-        <button
+        {/* 알림 버튼 (현재 비활성화) */}
+        {/* <button
           type="button"
           onClick={onNotificationClick}
           className="p-2 w-[40px] h-[40px] relative flex items-center justify-center"
@@ -91,7 +95,7 @@ const Header = ({ onNotificationClick }: HeaderProps) => {
               />
             )}
           </div>
-        </button>
+        </button> */}
       </div>
     </header>
   );
