@@ -8,6 +8,7 @@ import com.ssafy.iscream.auth.jwt.JwtFilter;
 import com.ssafy.iscream.auth.jwt.TokenProvider;
 import com.ssafy.iscream.auth.service.TokenService;
 import com.ssafy.iscream.auth.service.UserDetailsServiceImpl;
+import com.ssafy.iscream.common.util.RequestLoggingFilter;
 import com.ssafy.iscream.oauth.AuthSuccessHandler;
 import com.ssafy.iscream.oauth.service.OAuth2UserServiceImpl;
 import jakarta.servlet.http.HttpServletRequest;
@@ -67,6 +68,9 @@ public class SecurityConfig {
 
     @Bean
     public SecurityFilterChain filterChain(HttpSecurity http) throws Exception {
+        http.addFilterBefore(new RequestLoggingFilter(), UsernamePasswordAuthenticationFilter.class);
+
+
         http
                 .cors((corsCustomizer -> corsCustomizer.configurationSource(new CorsConfigurationSource() {
                     @Override
