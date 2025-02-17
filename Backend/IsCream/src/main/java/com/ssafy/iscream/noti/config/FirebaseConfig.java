@@ -9,6 +9,7 @@ import jakarta.annotation.PostConstruct;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.Configuration;
+import org.springframework.core.io.ClassPathResource;
 import org.springframework.stereotype.Service;
 
 import java.io.FileInputStream;
@@ -24,8 +25,11 @@ public class FirebaseConfig {
     @PostConstruct
     public void init() {
         try {
-            InputStream serviceAccount = getClass().getClassLoader()
-                    .getResourceAsStream("/firebase/serviceAccountKey.json");
+
+            ClassPathResource classPathResource = new ClassPathResource("firebase/serviceAccountKey.json");
+            InputStream serviceAccount = classPathResource.getInputStream();
+//            InputStream serviceAccount = getClass().getClassLoader()
+//                    .getResourceAsStream("/firebase/serviceAccountKey.json");
 
             System.out.println("================================================");
             System.out.println(serviceAccount);
