@@ -3,7 +3,7 @@ pipeline {
 
     environment {
         DOCKER_COMPOSE_FILE = 'docker-compose.yml'
-        LOCAL_ENV_FILE = '/home/ubuntu/.env' 
+        LOCAL_ENV_FILE = '/var/lib/jenkins/.env'
     }
 
     stages {
