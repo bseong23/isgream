@@ -13,19 +13,24 @@ pipeline {
                 sh 'whoami'            // 사용자 확인
                 sh 'git --version'     // Git 버전 확인
                 sh 'echo $PATH'        // PATH 확인
-                def backendEnvFile = "${env.WORKSPACE}/Backend/IsCream/.env"
-                def aiServerEnvFile = "${env.WORKSPACE}/AI/.env"
+            }
+        }
+        stage('Copy Local .env') {
+            steps {
+                script {
+                    def backendEnvFile = "${env.WORKSPACE}/Backend/IsCream/.env"
+                    def aiServerEnvFile = "${env.WORKSPACE}/AI-Server/.env"
 
-                if (fileExists(env.LOCAL_ENV_FILE)) {
-                    sh "cp ${env.LOCAL_ENV_FILE} ${backendEnvFile}"
-                    sh "cp ${env.LOCAL_ENV_FILE} ${aiServerEnvFile}"
-                    sh "ls -la ${backendEnvFile} ${aiServerEnvFile}"  // 복사 확인
-                } else {
-                    error "Local .env file not found at ${env.LOCAL_ENV_FILE}!"
+                    if (fileExists(env.LOCAL_ENV_FILE)) {
+                        sh "cp ${env.LOCAL_ENV_FILE} ${backendEnvFile}"
+                        sh "cp ${env.LOCAL_ENV_FILE} ${aiServerEnvFile}"
+                        sh "ls -la ${backendEnvFile} ${aiServerEnvFile}"  // 복사 확인
+                    } else {
+                        error "Local .env file not found at ${env.LOCAL_ENV_FILE}!"
+                    }
                 }
             }
         }
-        
         stage('Checkout') {
             steps {
                 checkout scm
