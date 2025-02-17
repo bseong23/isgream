@@ -96,8 +96,8 @@ public class PostLikeService {
         return exist;
     }
 
-//    @Scheduled(cron = "0 */30 * * * ?")
-    @Scheduled(cron = "0/10 * * * * ?")
+    @Scheduled(cron = "0 */30 * * * ?")
+//    @Scheduled(cron = "0/10 * * * * ?")
     @Transactional
     public void updateLikeToDatabase() {
         Set<String> keys = redisTemplate.keys("post:*:likes");
