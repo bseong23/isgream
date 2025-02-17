@@ -42,7 +42,7 @@ public class CommentFacade {
         Integer commentId = commentService.saveComment(user, req);
 
         Post post = postService.getPost(req.getPostId(), user, null);
-        notifyService.sendCommentNotify(post.getUserId(), req.getPostId()); // 게시글 작성자에게 알림 전송
+//        notifyService.sendCommentNotify(post.getUserId(), req.getPostId()); // 게시글 작성자에게 알림 전송
 
         return commentId;
     }
