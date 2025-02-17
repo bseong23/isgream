@@ -5,6 +5,7 @@ import com.ssafy.iscream.auth.service.TokenService;
 import com.ssafy.iscream.common.exception.ErrorCode;
 import com.ssafy.iscream.s3.service.S3Service;
 import com.ssafy.iscream.user.domain.Relation;
+import com.ssafy.iscream.user.domain.Role;
 import com.ssafy.iscream.user.domain.Status;
 import com.ssafy.iscream.user.domain.User;
 import com.ssafy.iscream.user.dto.request.UserCreateReq;
@@ -55,7 +56,7 @@ public class UserService {
         User user = modelMapper.map(userReq, User.class);
         user.setRelation(Relation.valueOf(userReq.getRelation()));
         user.setPassword(bCryptPasswordEncoder.encode(password));
-
+        user.setRole(Role.USER);
         return userRepository.save(user).getUserId();
     }
 
