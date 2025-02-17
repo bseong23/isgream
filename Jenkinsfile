@@ -3,16 +3,16 @@ pipeline {
 
     environment {
         DOCKER_COMPOSE_FILE = 'docker-compose.yml'
-        LOCAL_ENV_FILE = '/home/ubuntu/.env'  // 로컬 .env 파일의 실제 경로
+        LOCAL_ENV_FILE = '/home/ubuntu/.env' 
     }
 
     stages {
 
         stage('Check Environment') {
             steps {
-                sh 'whoami'            // 사용자 확인
-                sh 'git --version'     // Git 버전 확인
-                sh 'echo $PATH'        // PATH 확인
+                sh 'whoami'
+                sh 'git --version'
+                sh 'echo $PATH'
             }
         }
         
@@ -25,12 +25,13 @@ pipeline {
         stage('Copy Local .env') {
             steps {
                 script {
-                    def workspaceEnvFile = "${env.WORKSPACE}/Backend/IsCream/.env"
+                    def backendEnvFile = "${env.WORKSPACE}/Backend/IsCream/.env"
                     def aiServerEnvFile = "${env.WORKSPACE}/AI/.env"
+
                     if (fileExists(env.LOCAL_ENV_FILE)) {
-                        sh "cp ${env.LOCAL_ENV_FILE} ${workspaceEnvFile}"
+                        sh "cp ${env.LOCAL_ENV_FILE} ${backendEnvFile}"
                         sh "cp ${env.LOCAL_ENV_FILE} ${aiServerEnvFile}"
-                        sh "ls -la ${workspaceEnvFile}"  // 복사 확인
+                        sh "ls -la ${backendEnvFile} ${aiServerEnvFile}"  // 복사 확인
                     } else {
                         error "Local .env file not found at ${env.LOCAL_ENV_FILE}!"
                     }
@@ -55,6 +56,17 @@ pipeline {
                     sh '''
                     export $(grep -v '^#' .env | xargs)
                     ./gradlew clean build
+                    '''
+                }
+            }
+        }
+
+        stage('Build AI Server') {
+            steps {
+                dir('AI-Server') {
+                    sh '''
+                    export $(grep -v '^#' .env | xargs)
+                    docker build -t ai-server .
                     '''
                 }
             }
