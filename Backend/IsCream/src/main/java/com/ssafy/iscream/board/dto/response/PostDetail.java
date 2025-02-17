@@ -22,11 +22,13 @@ public class PostDetail {
     private List<String> images;
     private String createdAt;
     private UserProfile author;
+    private Integer userId;
     private String userImageUrl;
 
     public static PostDetail of(Post post, User user, Boolean userLiked, Integer viewCount,
                                 List<String> images, Integer likes, UserProfile author) {
         return PostDetail.builder()
+                .userId(post.getUserId())
                 .postId(post.getPostId())
                 .title(post.getTitle())
                 .content(post.getContent())
