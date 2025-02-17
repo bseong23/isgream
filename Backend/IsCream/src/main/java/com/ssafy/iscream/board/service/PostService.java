@@ -80,8 +80,10 @@ public class PostService {
     public Post getPost(Integer postId, User user, HttpServletRequest request) {
         Post post = postRepository.findById(postId)
                 .orElseThrow(() -> new DataException(ErrorCode.DATA_NOT_FOUND));
-
-        postViewService.checkPostView(post, user, request);
+        
+        if (request != null) {
+            postViewService.checkPostView(post, user, request);
+        }
 
         return post;
     }

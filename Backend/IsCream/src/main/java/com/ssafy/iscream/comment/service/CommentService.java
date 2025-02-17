@@ -1,11 +1,11 @@
 package com.ssafy.iscream.comment.service;
 
 import com.ssafy.iscream.comment.domain.Comment;
+import com.ssafy.iscream.comment.dto.request.CommentCreateReq;
 import com.ssafy.iscream.comment.repository.CommentQueryRepository;
 import com.ssafy.iscream.comment.repository.CommentRepository;
-import com.ssafy.iscream.comment.dto.request.CommentCreateReq;
 import com.ssafy.iscream.common.exception.ErrorCode;
-import com.ssafy.iscream.common.exception.MinorException.*;
+import com.ssafy.iscream.common.exception.MinorException.DataException;
 import com.ssafy.iscream.user.domain.User;
 import lombok.RequiredArgsConstructor;
 import org.springframework.stereotype.Service;
@@ -21,7 +21,7 @@ public class CommentService {
     private final CommentQueryRepository commentQueryRepository;
 
     // 댓글/대댓글 작성
-    public Integer createComment(User user, CommentCreateReq req) {
+    public Integer saveComment(User user, CommentCreateReq req) {
         Comment comment = Comment.builder()
                 .postId(req.getPostId())
                 .content(req.getContent())
