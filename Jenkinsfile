@@ -19,7 +19,7 @@ pipeline {
             steps {
                 script {
                     def backendEnvFile = "${env.WORKSPACE}/Backend/IsCream/.env"
-                    def aiServerEnvFile = "${env.WORKSPACE}/AI-Server/.env"
+                    def aiServerEnvFile = "${env.WORKSPACE}/AI/.env"
 
                     if (fileExists(env.LOCAL_ENV_FILE)) {
                         sh "cp ${env.LOCAL_ENV_FILE} ${backendEnvFile}"
