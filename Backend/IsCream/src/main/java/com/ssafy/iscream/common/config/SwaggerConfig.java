@@ -126,6 +126,21 @@ public class SwaggerConfig {
                 .pathsToMatch("/educations/**")
                 .build();
     }
+    @Bean
+    GroupedOpenApi chatRoomApi() {
+        return GroupedOpenApi.builder()
+                .group("chatrooms")
+                .pathsToMatch("/chatrooms/**")
+                .build();
+    }
+
+    @Bean
+    GroupedOpenApi chatApi() {
+        return GroupedOpenApi.builder()
+                .group("chat")
+                .pathsToMatch("/chat/**")
+                .build();
+    }
 
     private Components securityComponents() {
         return new Components()
