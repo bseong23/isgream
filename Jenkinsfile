@@ -3,7 +3,7 @@ pipeline {
 
     environment {
         DOCKER_COMPOSE_FILE = 'docker-compose.yml'
-        LOCAL_ENV_FILE = '/home/ubuntu/project/.env'  // 로컬 .env 파일의 실제 경로
+        LOCAL_ENV_FILE = '/home/ubuntu/.env'  // 로컬 .env 파일의 실제 경로
     }
 
     stages {
