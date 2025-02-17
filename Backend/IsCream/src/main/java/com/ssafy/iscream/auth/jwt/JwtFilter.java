@@ -30,6 +30,21 @@ public class JwtFilter extends OncePerRequestFilter {
 
     @Override
     protected void doFilterInternal(HttpServletRequest request, HttpServletResponse response, FilterChain filterChain) throws ServletException, IOException {
+        if (request.getMethod().equals("OPTIONS")) {
+            return;
+        }
+
+        // 🔹 WebSocket 요청인지 확인
+        String connectionHeader = request.getHeader("Connection");
+        String upgradeHeader = request.getHeader("Upgrade");
+
+        if (connectionHeader != null && connectionHeader.equalsIgnoreCase("Upgrade") &&
+                upgradeHeader != null && upgradeHeader.equalsIgnoreCase("websocket")) {
+            log.info("🔹 WebSocket 요청 감지, JWT 필터링 건너뜀: " + request.getRequestURI());
+            filterChain.doFilter(request, response);
+            return;
+        }
+
         // '/reissue' 요청은 필터링하지 않음
         String path = request.getRequestURI();
 
