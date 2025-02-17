@@ -3,6 +3,7 @@ pipeline {
 
     environment {
         DOCKER_COMPOSE_FILE = 'docker-compose.yml'
+        LOCAL_ENV_FILE = '/home/ubuntu/.env'  // 로컬 .env 파일의 실제 경로
     }
 
     stages {
@@ -21,6 +22,22 @@ pipeline {
             }
         }
 
+        stage('Copy Local .env') {
+            steps {
+                script {
+                    def workspaceEnvFile = "${env.WORKSPACE}/Backend/IsCream/.env"
+                    def aiServerEnvFile = "${env.WORKSPACE}/AI/.env"
+                    if (fileExists(env.LOCAL_ENV_FILE)) {
+                        sh "cp ${env.LOCAL_ENV_FILE} ${workspaceEnvFile}"
+                        sh "cp ${env.LOCAL_ENV_FILE} ${aiServerEnvFile}"
+                        sh "ls -la ${workspaceEnvFile}"  // 복사 확인
+                    } else {
+                        error "Local .env file not found at ${env.LOCAL_ENV_FILE}!"
+                    }
+                }
+            }
+        }
+
         stage('Set Permissions') {
             steps {
                 dir('Backend/IsCream') {
@@ -35,7 +52,10 @@ pipeline {
         stage('Build Backend') {
             steps {
                 dir('Backend/IsCream') {
-                    sh './gradlew clean build'
+                    sh '''
+                    export $(grep -v '^#' .env | xargs)
+                    ./gradlew clean build
+                    '''
                 }
             }
         }
