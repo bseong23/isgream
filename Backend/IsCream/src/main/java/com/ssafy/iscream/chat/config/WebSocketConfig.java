@@ -38,5 +38,8 @@ public class WebSocketConfig implements WebSocketMessageBrokerConfigurer {
         registry.addEndpoint("/ws")
                 .setAllowedOriginPatterns("*");
                 //.withSockJS(); //이거하면 웹소켓 안됨 ㅇ으으아아아으아
+        registry.addEndpoint("/api/ws") // ✅ /api/ws 엔드포인트 등록
+                .setAllowedOriginPatterns("*");
+                //.withSockJS();
     }
 }
