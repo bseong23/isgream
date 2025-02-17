@@ -4,6 +4,7 @@ import io.jsonwebtoken.Claims;
 import io.jsonwebtoken.JwtException;
 import io.jsonwebtoken.Jwts;
 import jakarta.annotation.PostConstruct;
+import lombok.extern.slf4j.Slf4j;
 import org.springframework.beans.factory.annotation.Value;
 import org.springframework.stereotype.Component;
 
@@ -11,7 +12,7 @@ import javax.crypto.SecretKey;
 import javax.crypto.spec.SecretKeySpec;
 import java.nio.charset.StandardCharsets;
 import java.util.Date;
-
+@Slf4j
 @Component
 public class TokenProvider {
 
@@ -61,8 +62,12 @@ public class TokenProvider {
                     .parseSignedClaims(token)
                     .getPayload().getExpiration();
 
-            return expiration.after(new Date()); // 만료 시간이 현재 시간보다 이후이면 true (유효함)
+            boolean isValid = expiration.after(new Date());
+            log.info("🛠 Token Validation: token={}, isValid={}, expiration={}", token, isValid, expiration);
+            return isValid;
+
         } catch (JwtException e) {
+            log.error("🚨 JWT Validation Error: {}", e.getMessage());
             return false; // 파싱 실패 또는 만료된 경우 false 반환
         }
     }
