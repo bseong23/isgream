@@ -20,12 +20,13 @@ pipeline {
                 script {
                     def backendEnvFile = "${env.WORKSPACE}/Backend/IsCream/.env"
                     def aiServerEnvFile = "${env.WORKSPACE}/AI/.env"
-                    def workspaceEnvFile = "${env.WORKSPACE}/.env"  // 🔹 추가: 최상위 경로에도 복사
-
+                    def workspaceEnvFile = "${env.WORKSPACE}/.env"
+                    def frontendEnvFile = "${env.WORKSPACE}/Frontend/IsCream/.env"
                     if (fileExists(env.LOCAL_ENV_FILE)) {
                         sh "cp ${env.LOCAL_ENV_FILE} ${backendEnvFile}"
                         sh "cp ${env.LOCAL_ENV_FILE} ${aiServerEnvFile}"
-                        sh "cp ${env.LOCAL_ENV_FILE} ${workspaceEnvFile}"  // 🔹 추가
+                        sh "cp ${env.LOCAL_ENV_FILE} ${workspaceEnvFile}"
+                        sh "cp ${env.LOCAL_ENV_FILE} ${frontendEnvFile}"
                         sh "ls -la ${backendEnvFile} ${aiServerEnvFile} ${workspaceEnvFile}"  // 🔹 복사 확인
                     } else {
                         error "Local .env file not found at ${env.LOCAL_ENV_FILE}!"
