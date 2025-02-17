@@ -76,7 +76,7 @@ public class HtpTestPdfService {
             }
 
             document.add(getSectionTitle("집 그림 검사 분석"));
-            document.add(getAnalysisTable(analysisParts[0]));
+            document.add(getAnalysisTable("\n"+analysisParts[0]));
 
             document.add(getSectionTitle("나무 그림 검사 분석"));
             document.add(getAnalysisTable(analysisParts[1]));

@@ -14,11 +14,18 @@ import io.swagger.v3.oas.annotations.Operation;
 import io.swagger.v3.oas.annotations.Parameter;
 import io.swagger.v3.oas.annotations.media.Schema;
 import lombok.RequiredArgsConstructor;
+import org.springframework.core.io.InputStreamResource;
+import org.springframework.http.HttpHeaders;
 import org.springframework.http.MediaType;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
 import org.springframework.web.multipart.MultipartFile;
 
+import java.io.IOException;
+import java.io.InputStream;
+import java.net.HttpURLConnection;
+import java.net.MalformedURLException;
+import java.net.URL;
 import java.time.LocalDate;
 import java.util.List;
 
@@ -56,10 +63,10 @@ public class HtpTestController {
     @GetMapping
     @Operation(summary = "user 자녀의 모든 HTP 테스트 결과 조회", tags = "htp")
     public ResponseEntity<?> getHtpTests(@Login User user,
-                             @Schema(description = "조회 시작 날짜", example = "2025-01-01")
-                             @RequestParam("startDate") LocalDate startDate,
-                             @Schema(description = "조회 종료 날짜", example = "2025-02-10")
-                             @RequestParam("endDate") LocalDate endDate) {
+                                         @Schema(description = "조회 시작 날짜", example = "2025-01-01")
+                                         @RequestParam("startDate") LocalDate startDate,
+                                         @Schema(description = "조회 종료 날짜", example = "2025-02-10")
+                                         @RequestParam("endDate") LocalDate endDate) {
         List<HtpTestResponseDto> htpTestList = htpFacade.getHtpTestList(user, startDate, endDate);
         return ResponseUtil.success(htpTestList);
     }
@@ -74,7 +81,19 @@ public class HtpTestController {
     @GetMapping("/{htp-test-id}/pdf")
     @Operation(summary = "특정 HTP 테스트 결과 PDF 추출", tags = "htp")
     public ResponseEntity<?> getHtpTestPdf(@Login User user, @PathVariable("htp-test-id") Integer htpTestId) {
-        return ResponseUtil.success(htpTestService.getHtpTestPdfUrl(user, htpTestId));
+        String pdfUrl = htpTestService.getHtpTestPdfUrl(user, htpTestId).get("url");
+        try {
+            URL url = new URL(pdfUrl);
+            HttpURLConnection connection = (HttpURLConnection) url.openConnection();
+            connection.setRequestMethod("GET");
+            InputStream inputStream = connection.getInputStream();
+            InputStreamResource resource = new InputStreamResource(inputStream);
+            return ResponseEntity.ok()
+                    .header(HttpHeaders.CONTENT_DISPOSITION, "attachment; filename=htp_test_" + htpTestId + ".pdf")
+                    .contentType(MediaType.APPLICATION_PDF)
+                    .body(resource);
+        } catch (IOException e) {
+            throw new RuntimeException(e);
+        }
     }
-
 }
