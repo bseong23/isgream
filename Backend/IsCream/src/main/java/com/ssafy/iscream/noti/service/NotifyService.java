@@ -1,10 +1,5 @@
 package com.ssafy.iscream.noti.service;
 
-import com.google.api.core.ApiFuture;
-import com.google.cloud.firestore.DocumentReference;
-import com.google.cloud.firestore.DocumentSnapshot;
-import com.google.cloud.firestore.FieldValue;
-import com.google.cloud.firestore.Firestore;
 import com.google.firebase.messaging.FirebaseMessaging;
 import com.google.firebase.messaging.Message;
 import com.google.firebase.messaging.Notification;
@@ -19,7 +14,6 @@ import lombok.extern.slf4j.Slf4j;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
-import java.util.Collections;
 import java.util.List;
 import java.util.concurrent.ExecutionException;
 
@@ -29,7 +23,7 @@ import java.util.concurrent.ExecutionException;
 public class NotifyService {
 
     private final NotifyRepository notificationRepository;
-    private final Firestore firestore;
+//    private final Firestore firestore;
 
     // 알림 목록 조회
     public List<NotifyInfo> getNotifyList(Integer userId) {
@@ -103,52 +97,52 @@ public class NotifyService {
 
     // FCM 토큰 추가/갱신
     public void addFcmToken(Integer userId, String token) {
-        DocumentReference userRef = firestore.collection("users").document(String.valueOf(userId));
-
-        userRef.get().addListener(() -> {
-            try {
-                DocumentSnapshot document = userRef.get().get();
-                if (document.exists()) {
-                    userRef.update("fcmToken", token).get();
-                } else {
-                    userRef.set(Collections.singletonMap("fcmToken", token)).get();
-                }
-            } catch (Exception e) {
-                e.printStackTrace();
-            }
-        }, Runnable::run);
+//        DocumentReference userRef = firestore.collection("users").document(String.valueOf(userId));
+//
+//        userRef.get().addListener(() -> {
+//            try {
+//                DocumentSnapshot document = userRef.get().get();
+//                if (document.exists()) {
+//                    userRef.update("fcmToken", token).get();
+//                } else {
+//                    userRef.set(Collections.singletonMap("fcmToken", token)).get();
+//                }
+//            } catch (Exception e) {
+//                e.printStackTrace();
+//            }
+//        }, Runnable::run);
     }
 
 
     // FCM 토큰 제거
     public void removeFcmToken(Integer userId) {
-        DocumentReference userRef = firestore.collection("users").document(String.valueOf(userId));
-
-        userRef.get().addListener(() -> {
-            try {
-                DocumentSnapshot document = userRef.get().get();
-                if (document.exists()) {
-                    userRef.update("fcmToken", FieldValue.delete()).get();
-                }
-            } catch (Exception e) {
-                e.printStackTrace();
-            }
-        }, Runnable::run);
+//        DocumentReference userRef = firestore.collection("users").document(String.valueOf(userId));
+//
+//        userRef.get().addListener(() -> {
+//            try {
+//                DocumentSnapshot document = userRef.get().get();
+//                if (document.exists()) {
+//                    userRef.update("fcmToken", FieldValue.delete()).get();
+//                }
+//            } catch (Exception e) {
+//                e.printStackTrace();
+//            }
+//        }, Runnable::run);
     }
 
     // FCM 토큰 가져오기
     public String getFcmToken(Integer userId) {
-        DocumentReference userRef = firestore.collection("users").document(String.valueOf(userId));
-        ApiFuture<DocumentSnapshot> future = userRef.get();
-
-        try {
-            DocumentSnapshot document = future.get(); // 동기 실행
-            if (document.exists() && document.contains("fcmToken")) {
-                return document.getString("fcmToken");
-            }
-        } catch (InterruptedException | ExecutionException e) {
-            Thread.currentThread().interrupt();
-        }
+//        DocumentReference userRef = firestore.collection("users").document(String.valueOf(userId));
+//        ApiFuture<DocumentSnapshot> future = userRef.get();
+//
+//        try {
+//            DocumentSnapshot document = future.get(); // 동기 실행
+//            if (document.exists() && document.contains("fcmToken")) {
+//                return document.getString("fcmToken");
+//            }
+//        } catch (InterruptedException | ExecutionException e) {
+//            Thread.currentThread().interrupt();
+//        }
         return null;
     }
 
