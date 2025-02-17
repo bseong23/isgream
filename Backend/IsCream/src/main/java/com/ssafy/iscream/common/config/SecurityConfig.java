@@ -60,10 +60,10 @@ public class SecurityConfig {
         return new BCryptPasswordEncoder();
     }
 
-    @Bean
-    public WebSecurityCustomizer webSecurityCustomizer() {
-        return web -> web.ignoring().requestMatchers("/ws/**", "/api/ws/**");
-    }
+//    @Bean
+//    public WebSecurityCustomizer webSecurityCustomizer() {
+//        return web -> web.ignoring().requestMatchers("/ws/**", "/api/ws/**");
+//    }
 
 
     @Bean
@@ -104,6 +104,7 @@ public class SecurityConfig {
         // 경로별 인가 작업
         http
                 .authorizeHttpRequests((auth) -> auth
+                        .requestMatchers("/api/ws/**", "/ws/**").permitAll()// 웹소켓은 이거 해야함하하
                         .requestMatchers("/v3/api-docs/**", "/swagger-ui/**", "/swagger-ui.html").permitAll()
                         .requestMatchers("/h2-console/**").permitAll()
                         .requestMatchers("/users/join/**", "/users/login/**", "/oauth2/**").permitAll()
@@ -113,7 +114,6 @@ public class SecurityConfig {
                         .requestMatchers(HttpMethod.GET, "/comments/{postId}").permitAll()
                         .requestMatchers(HttpMethod.POST, "/chatbot").permitAll()
                         .requestMatchers(CorsUtils::isPreFlightRequest).permitAll()
-                        .requestMatchers("/api/ws/**", "/ws/**").permitAll()// 웹소켓은 이거 해야함하하
                         .anyRequest().authenticated());
 
         // 예외 처리
