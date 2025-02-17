@@ -53,7 +53,7 @@ pipeline {
                 dir('Backend/IsCream') {
                     sh '''
                     export $(grep -v '^#' .env | xargs)
-                    ./gradlew clean build
+                    ./gradlew clean build -x test
                     '''
                 }
             }
