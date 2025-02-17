@@ -18,8 +18,7 @@ import java.util.Map;
 @RequiredArgsConstructor
 public class WebSocketEventListener {
 
-    @Autowired
-    private RedisTemplate redisTemplate;
+    private final RedisTemplate<String, Object> redisTemplate;
     private final String AUTHORIZATION_HEADER = "Authorization";
 
     @Autowired
