@@ -3,39 +3,32 @@ pipeline {
 
     environment {
         DOCKER_COMPOSE_FILE = 'docker-compose.yml'
-        LOCAL_ENV_FILE = '/var/lib/jenkins/.env'
+         LOCAL_ENV_FILE = '/var/lib/jenkins/.env'
     }
 
     stages {
 
         stage('Check Environment') {
             steps {
-                sh 'whoami'
-                sh 'git --version'
-                sh 'echo $PATH'
+                sh 'whoami'            // 사용자 확인
+                sh 'git --version'     // Git 버전 확인
+                sh 'echo $PATH'        // PATH 확인
+                def backendEnvFile = "${env.WORKSPACE}/Backend/IsCream/.env"
+                def aiServerEnvFile = "${env.WORKSPACE}/AI/.env"
+
+                if (fileExists(env.LOCAL_ENV_FILE)) {
+                    sh "cp ${env.LOCAL_ENV_FILE} ${backendEnvFile}"
+                    sh "cp ${env.LOCAL_ENV_FILE} ${aiServerEnvFile}"
+                    sh "ls -la ${backendEnvFile} ${aiServerEnvFile}"  // 복사 확인
+                } else {
+                    error "Local .env file not found at ${env.LOCAL_ENV_FILE}!"
+                }
             }
         }
         
         stage('Checkout') {
             steps {
                 checkout scm
-            }
-        }
-
-        stage('Copy Local .env') {
-            steps {
-                script {
-                    def backendEnvFile = "${env.WORKSPACE}/Backend/IsCream/.env"
-                    def aiServerEnvFile = "${env.WORKSPACE}/AI/.env"
-
-                    if (fileExists(env.LOCAL_ENV_FILE)) {
-                        sh "cp ${env.LOCAL_ENV_FILE} ${backendEnvFile}"
-                        sh "cp ${env.LOCAL_ENV_FILE} ${aiServerEnvFile}"
-                        sh "ls -la ${backendEnvFile} ${aiServerEnvFile}"  // 복사 확인
-                    } else {
-                        error "Local .env file not found at ${env.LOCAL_ENV_FILE}!"
-                    }
-                }
             }
         }
 
@@ -56,17 +49,6 @@ pipeline {
                     sh '''
                     export $(grep -v '^#' .env | xargs)
                     ./gradlew clean build
-                    '''
-                }
-            }
-        }
-
-        stage('Build AI Server') {
-            steps {
-                dir('AI-Server') {
-                    sh '''
-                    export $(grep -v '^#' .env | xargs)
-                    docker build -t ai-server .
                     '''
                 }
             }
