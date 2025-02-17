@@ -81,6 +81,10 @@ public class SecurityConfig {
                         return configuration;
                     }
                 })));
+        http
+        .authorizeHttpRequests((auth) -> auth
+                .requestMatchers("/ws/**").permitAll() // 🔥 웹소켓 요청 허용
+                .anyRequest().authenticated());
 
         // csrf disable
         http
