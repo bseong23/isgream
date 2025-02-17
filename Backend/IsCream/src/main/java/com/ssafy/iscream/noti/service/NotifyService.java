@@ -1,8 +1,5 @@
 package com.ssafy.iscream.noti.service;
 
-import com.google.firebase.messaging.FirebaseMessaging;
-import com.google.firebase.messaging.Message;
-import com.google.firebase.messaging.Notification;
 import com.ssafy.iscream.common.exception.ErrorCode;
 import com.ssafy.iscream.common.exception.MinorException.DataException;
 import com.ssafy.iscream.noti.domain.Notify;
@@ -15,7 +12,6 @@ import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
 import java.util.List;
-import java.util.concurrent.ExecutionException;
 
 @Slf4j
 @Service
@@ -62,18 +58,18 @@ public class NotifyService {
             return;
         }
 
-        Notification notification = Notification.builder()
-                .setTitle(title)
-                .setBody(body)
-                .build();
-
-        Message message = Message.builder()
-                .setToken(token)  // 푸시 알림을 받을 기기의 FCM 토큰
-                .setNotification(notification)
-                .putData("type", type.name())  // 추가적인 데이터 전달
-                .putData("postId", postId != null ? postId.toString() : "")
-                .putData("chatId", chatId != null ? chatId.toString() : "")
-                .build();
+//        Notification notification = Notification.builder()
+//                .setTitle(title)
+//                .setBody(body)
+//                .build();
+//
+//        Message message = Message.builder()
+//                .setToken(token)  // 푸시 알림을 받을 기기의 FCM 토큰
+//                .setNotification(notification)
+//                .putData("type", type.name())  // 추가적인 데이터 전달
+//                .putData("postId", postId != null ? postId.toString() : "")
+//                .putData("chatId", chatId != null ? chatId.toString() : "")
+//                .build();
 
         // DB에 알림 내역 저장
         Notify notify = Notify.builder()
@@ -87,12 +83,12 @@ public class NotifyService {
 
         notificationRepository.save(notify);
 
-        try {
-            String result = FirebaseMessaging.getInstance().sendAsync(message).get();
-            log.info(result);
-        } catch (InterruptedException | ExecutionException e) {
-            throw new RuntimeException("푸시 알림 전송 실패", e);
-        }
+//        try {
+//            String result = FirebaseMessaging.getInstance().sendAsync(message).get();
+//            log.info(result);
+//        } catch (InterruptedException | ExecutionException e) {
+//            throw new RuntimeException("푸시 알림 전송 실패", e);
+//        }
     }
 
     // FCM 토큰 추가/갱신
