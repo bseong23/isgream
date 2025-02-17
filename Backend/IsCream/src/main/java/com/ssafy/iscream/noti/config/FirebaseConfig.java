@@ -9,6 +9,7 @@ import jakarta.annotation.PostConstruct;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.Configuration;
+import org.springframework.core.env.Environment;
 
 import java.io.FileNotFoundException;
 import java.io.InputStream;
@@ -17,7 +18,12 @@ import java.io.InputStream;
 @Slf4j
 public class FirebaseConfig {
 
+    private final Environment environment;
     private Firestore firestore;
+
+    public FirebaseConfig(Environment environment) {
+        this.environment = environment;
+    }
 
     @PostConstruct
     public void init() {
@@ -32,6 +38,17 @@ public class FirebaseConfig {
             FirebaseOptions options = FirebaseOptions.builder()
                     .setCredentials(GoogleCredentials.fromStream(serviceAccount))
                     .build();
+
+//            String firebaseConfig = environment.getProperty("FIREBASE_CONFIG");
+//            if (firebaseConfig == null || firebaseConfig.isEmpty()) {
+//                throw new IllegalStateException("FIREBASE_CONFIG 환경변수가 설정되지 않았습니다.");
+//            }
+//
+//            FirebaseOptions options = FirebaseOptions.builder()
+//                    .setCredentials(GoogleCredentials.fromStream(
+//                            new ByteArrayInputStream(firebaseConfig.getBytes(StandardCharsets.UTF_8))
+//                    ))
+//                    .build();
 
             if (FirebaseApp.getApps().isEmpty()) {
                 FirebaseApp.initializeApp(options);
