@@ -24,9 +24,12 @@ public class FirebaseConfig {
     @PostConstruct
     public void init() {
         try {
-//            InputStream serviceAccount = getClass().getClassLoader()
-//                    .getResourceAsStream("/firebase/serviceAccountKey.json");
-            FileInputStream serviceAccount = new FileInputStream("./src/main/resources/firebase/serviceAccountKey.json");
+            InputStream serviceAccount = getClass().getClassLoader()
+                    .getResourceAsStream("/firebase/serviceAccountKey.json");
+
+            System.out.println("================================================");
+            System.out.println(serviceAccount);
+            System.out.println("================================================");
 
             if (serviceAccount == null) {
                 throw new FileNotFoundException("Firebase serviceAccountKey.json 파일을 찾을 수 없습니다.");
