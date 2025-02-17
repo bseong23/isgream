@@ -102,6 +102,7 @@ public class SecurityConfig {
                         .requestMatchers(HttpMethod.GET, "/comments/{postId}").permitAll()
                         .requestMatchers(HttpMethod.POST, "/chatbot").permitAll()
                         .requestMatchers(CorsUtils::isPreFlightRequest).permitAll()
+                        .requestMatchers("/ws/**").permitAll() // 🔥 웹소켓 요청 허용
                         .anyRequest().authenticated());
 
         // 예외 처리
