@@ -71,12 +71,12 @@ public class PatTestPdfService {
                     {"A 유형 점수", patTest.getAScore().toString()},
                     {"B 유형 점수", patTest.getBScore().toString()},
                     {"C 유형 점수", patTest.getCScore().toString()},
-                    {"최종 선정된 유형", patTest.getResult().getDescription()} // Enum 설명 가져오기
+                    {"최종 선정된 유형", String.valueOf(patTest.getResult())} // Enum 설명 가져오기
             }));
 
             // ✅ 검사 결과 설명 (A, B, C에 따라 자동 변경)
             document.add(getSectionTitle("검사 결과 설명"));
-            document.add(getAnalysisParagraph(patTest.getResult()));
+            document.add(getAnalysisParagraph(patTest.getResult().getDescription()));
 
             document.close();
         } catch (Exception e) {
@@ -86,32 +86,8 @@ public class PatTestPdfService {
         return s3Service.uploadPdfFile(outputStream.toByteArray());
     }
 
-    private static Paragraph getAnalysisParagraph(PatTest.ResultType resultType) {
-        String explanation = switch (resultType) {
-            case A -> """
-                    A형 (허용형/익애적 양육태도):
-                    - 부모가 자녀를 감싸주고 사랑을 강조하는 양육 방식입니다.
-                    - 자녀의 의견을 존중하고 강압적인 통제를 최소화합니다.
-                    - 감정적으로 개방적이며 따뜻한 분위기를 조성합니다.
-                    - 하지만 지나친 허용은 자녀의 자율성과 책임감 부족을 초래할 수 있습니다.
-                    """;
-            case B -> """
-                    B형 (권위주의적 양육태도):
-                    - 엄격한 규율과 높은 기대치를 강조하는 양육 방식입니다.
-                    - 부모의 권위를 강조하며 자녀에게 복종과 규칙 준수를 요구합니다.
-                    - 벌과 보상을 통해 행동을 통제하는 경향이 있습니다.
-                    - 규율을 강조하지만, 과도하면 자녀가 위축되거나 반항적인 성향을 보일 수 있습니다.
-                    """;
-            case C -> """
-                    C형 (민주적/균형잡힌 양육태도):
-                    - 부모와 자녀가 상호 존중하는 균형 잡힌 양육 방식입니다.
-                    - 자녀의 자율성을 보장하면서도 적절한 규율을 제공합니다.
-                    - 논리적인 설명과 대화를 통해 자녀를 지도합니다.
-                    - 자녀가 독립성과 책임감을 기를 수 있는 환경을 조성합니다.
-                    """;
-        };
-
-        return new Paragraph(explanation)
+    private static Paragraph getAnalysisParagraph(String description) {
+        return new Paragraph(description)
                 .setFontSize(12)
                 .setFontColor(TEXT_COLOR)
                 .setBorder(new SolidBorder(BORDER_COLOR, 1))
