@@ -1,5 +1,6 @@
 package com.ssafy.iscream.noti.service;
 
+import com.google.api.core.ApiFuture;
 import com.google.cloud.firestore.DocumentReference;
 import com.google.cloud.firestore.DocumentSnapshot;
 import com.google.cloud.firestore.FieldValue;
@@ -137,17 +138,17 @@ public class NotifyService {
 
     // FCM 토큰 가져오기
     public String getFcmToken(Integer userId) {
-//        DocumentReference userRef = firestore.collection("users").document(String.valueOf(userId));
-//        ApiFuture<DocumentSnapshot> future = userRef.get();
-//
-//        try {
-//            DocumentSnapshot document = future.get(); // 동기 실행
-//            if (document.exists() && document.contains("fcmToken")) {
-//                return document.getString("fcmToken");
-//            }
-//        } catch (InterruptedException | ExecutionException e) {
-//            Thread.currentThread().interrupt();
-//        }
+        DocumentReference userRef = firestore.collection("users").document(String.valueOf(userId));
+        ApiFuture<DocumentSnapshot> future = userRef.get();
+
+        try {
+            DocumentSnapshot document = future.get(); // 동기 실행
+            if (document.exists() && document.contains("fcmToken")) {
+                return document.getString("fcmToken");
+            }
+        } catch (InterruptedException | ExecutionException e) {
+            Thread.currentThread().interrupt();
+        }
         return null;
     }
 
