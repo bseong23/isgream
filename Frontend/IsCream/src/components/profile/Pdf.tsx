@@ -1,11 +1,17 @@
 import { useNavigate } from 'react-router-dom';
 
-const Pdf = () => {
+interface PdfProps{
+    nickname: string;
+}
+
+const Pdf: React.FC<PdfProps> = ({
+    nickname
+}) => {
     const navigate = useNavigate();
 
     const handleClick = () => {
         console.log('PDF 다운로드 페이지 이동');
-        navigate('/mypage/PDFDownload');
+        navigate('/mypage/PDFDownload', { state: { nickname } });
         
     };
     return (

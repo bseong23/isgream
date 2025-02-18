@@ -72,7 +72,7 @@ const MemoEditor: React.FC<MemoEditorProps> = ({
   };
 
   return (
-    <div className="w-full h-[300px] bg-[#ffffff] p-4 rounded-lg drop-shadow-sm">
+    <div className="w-full h-[650px] bg-[#ffffff] p-4 rounded-lg drop-shadow-sm">
       <textarea
         ref={textareaRef}
         value={memoText}

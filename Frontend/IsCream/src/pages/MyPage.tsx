@@ -143,7 +143,9 @@ const MyPage: React.FC = () => {
         />
 
         {/* 검사결과(PDF) 다운 */}
-        <Pdf />
+        <Pdf 
+          nickname={userData.nickname}
+        />
 
         {/* 막대그래프 및 보고서 */}
         <PAT />

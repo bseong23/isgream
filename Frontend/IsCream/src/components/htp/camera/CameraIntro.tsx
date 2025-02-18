@@ -1,0 +1,78 @@
+import React from "react";
+import houseImage from "../../../assets/image/house.png";
+import treeImage from "../../../assets/image/tree.png";
+import personImage from "../../../assets/image/person.png";
+import characterImage from "../../../assets/image/character2.png";
+
+interface CameraIntroProps {
+  type: "house" | "tree" | "male" | "female";
+  onStart: () => void;
+}
+
+const CAMERA_GUIDE: Record<"house" | "tree" | "person", string[]> = {
+  house: [
+    "✅ 그림을 <span class='text-green-600 font-bold'>가로</span>로 그려주세요!",
+    "✅ <span class='text-green-600 font-bold'>검은색</span>펜만 사용할거에요!",
+    "✅ 그림을 그릴때는 시간을 재주세요!",
+    "✅ 그림 실력을 검사하는 것이 아니에요!",
+    "✅ 즐거운 마음으로 그림을 그려 주세요!"
+  ],
+  tree: [
+    "✅ 그림을 <span class='text-green-600 font-bold'>세로</span>로 그려주세요!",
+    "✅ <span class='text-green-600 font-bold'>검은색</span>펜만 사용할거에요!",
+    "✅ 그림을 그릴때는 시간을 재주세요!",
+    "✅ 그림 실력을 검사하는 것이 아니에요!",
+    "✅ 즐거운 마음으로 그림을 그려 주세요!"
+  ],
+  person: [
+    "✅ 그림을 <span class='text-green-600 font-bold'>세로</span>로 그려주세요!",
+    "✅ <span class='text-green-600 font-bold'>검은색</span>펜만 사용할거에요!",
+    "✅ 그림을 그릴때는 시간을 재주세요!",
+    "✅ 그림 실력을 검사하는 것이 아니에요!",
+    "✅ 즐거운 마음으로 그림을 그려 주세요!"
+  ]
+};
+
+const CAMERA_IMAGES: Record<"house" | "tree" | "person", string> = {
+  house: houseImage,
+  tree: treeImage,
+  person: personImage,
+};
+
+const CameraIntro: React.FC<CameraIntroProps> = ({ type, onStart }) => {
+  const displayType = type === "male" || type === "female" ? "person" : type;
+
+  return (
+    <div className="flex flex-col items-center justify-center w-full min-h-screen bg-white px-4">
+      <h1 className="text-3xl font-bold text-green-700 mt-6 mb-4">
+        {type === "house" ? "집 (HOUSE)" : type === "tree" ? "나무 (TREE)" : "사람 (PERSON)"}
+      </h1>
+
+      <div className="w-full max-w-lg bg-[#EAF2FF] p-6 rounded-[15px] shadow-md flex flex-col items-center border border-green-300">
+        <img src={CAMERA_IMAGES[displayType]} alt={type} className="h-[250px] object-contain mb-4" />
+
+        <div className="text-lg text-gray-700 text-left mb-6 w-full">
+          {CAMERA_GUIDE[displayType].map((guide, index) => (
+            <p key={index} className="mb-2" dangerouslySetInnerHTML={{ __html: guide }}></p>
+          ))}
+        </div>
+      </div>
+
+      <div className="relative mt-6 flex justify-center w-full max-w-lg">
+        <button
+          onClick={onStart}
+          className="bg-green-600 text-white px-6 py-3 rounded-lg text-lg shadow-md hover:bg-green-700"
+        >
+          촬영 시작하기
+        </button>
+        <img
+          src={characterImage}
+          alt="캐릭터"
+          className="absolute right-[-10px] bottom-0 w-28 h-auto"
+        />
+      </div>
+    </div>
+  );
+};
+
+export default CameraIntro;

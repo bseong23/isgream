@@ -15,7 +15,7 @@ const ProfileFormLabel = ({ label, required, children }: ProfileFormLabelProps) 
             {required && <span className="text-blue-500">*</span>}
           </div>
         </div>
-        <div className="flex justify-center">
+        <div className="flex-1 justify-center">
           {children}
         </div>
       </div>

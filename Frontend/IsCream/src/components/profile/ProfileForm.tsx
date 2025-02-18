@@ -29,6 +29,7 @@ const ProfileForm: React.FC<ProfileFormProps> = ({ birthDate, setBirthDate, init
   const [selectedRelation, setSelectedRelation] = useState<string>(initialData?.relation || '');
   // 닉네임 중복 체크 상태 추가
   const [isNicknameChecked, setIsNicknameChecked] = useState(false);
+  const [isNicknameChanged, setIsNicknameChanged] = useState(false);
   
   const navigate = useNavigate();
 
@@ -55,6 +56,7 @@ const ProfileForm: React.FC<ProfileFormProps> = ({ birthDate, setBirthDate, init
   const handleNicknameChange = (value: string) => {
       setNickname(value);
       setIsNicknameChecked(false);
+      setIsNicknameChanged(true);
   };
 
   const handleSubmit = () => {
@@ -63,7 +65,7 @@ const ProfileForm: React.FC<ProfileFormProps> = ({ birthDate, setBirthDate, init
           return;
       }
 
-      if (!isNicknameChecked) {
+      if (isNicknameChanged && !isNicknameChecked) {
           alert('닉네임 중복 확인이 필요합니다.');
           return;
       }

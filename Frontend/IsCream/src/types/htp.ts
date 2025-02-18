@@ -15,3 +15,13 @@ export interface UploadDrawingResponse {
     testId: number;
   };
 }
+export interface GetTestListResponse {
+  code: 'S0000' | 'E4001';
+    message: string;
+    data: {
+        date: string;
+        id: string;
+        status: string;
+        testType: string;
+    }[]
+}

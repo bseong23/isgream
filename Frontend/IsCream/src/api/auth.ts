@@ -20,7 +20,7 @@ export const login = async (
     const accessToken = response.headers["access"];
     if (accessToken) {
       localStorage.setItem("accessToken", accessToken);
-      api.defaults.headers.common["Authorization"] = `Bearer ${accessToken}`;
+      api.defaults.headers.common["access"] = accessToken;
     }
 
     return response.data;
@@ -43,7 +43,7 @@ export const logout = async (): Promise<LogoutResponse> => {
       // 로그아웃 성공 시 로컬 스토리지의 토큰 제거
       localStorage.removeItem("accessToken");
       // axios 인스턴스의 헤더에서 Authorization 제거
-      delete api.defaults.headers.common["Authorization"];
+      delete api.defaults.headers.common["access"];
     }
 
     return response.data;
