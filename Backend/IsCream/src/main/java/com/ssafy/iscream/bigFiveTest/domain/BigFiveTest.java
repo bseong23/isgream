@@ -1,5 +1,6 @@
 package com.ssafy.iscream.bigFiveTest.domain;
 
+import com.ssafy.iscream.common.entity.BaseTimeEntity;
 import jakarta.persistence.*;
 import lombok.*;
 
@@ -12,7 +13,7 @@ import java.time.LocalDate;
 @NoArgsConstructor
 @AllArgsConstructor
 @Builder
-public class BigFiveTest {
+public class BigFiveTest extends BaseTimeEntity {
 
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)
