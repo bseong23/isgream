@@ -5,6 +5,7 @@ import com.ssafy.iscream.common.util.ResponseUtil;
 import com.ssafy.iscream.htpTest.dto.request.HtpTestCreateReq;
 import com.ssafy.iscream.htpTest.dto.request.HtpTestReq;
 import com.ssafy.iscream.htpTest.dto.response.HtpTestDetailDto;
+import com.ssafy.iscream.htpTest.dto.response.HtpTestImageAndDiagnosis;
 import com.ssafy.iscream.htpTest.dto.response.HtpTestResponseDto;
 import com.ssafy.iscream.htpTest.service.HtpFacade;
 import com.ssafy.iscream.htpTest.service.HtpSelectService;
@@ -55,7 +56,7 @@ public class HtpTestController {
                 file
         );
 
-        String result = htpTestService.htpTestCycle(user, htpTestReq);
+        HtpTestImageAndDiagnosis result = htpTestService.htpTestCycle(user, htpTestReq);
         return ResponseUtil.success(result);
     }
 
