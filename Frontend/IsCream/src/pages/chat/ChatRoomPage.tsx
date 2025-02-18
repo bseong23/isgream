@@ -1,5 +1,5 @@
-import { useEffect, useState } from "react";
-import { useParams, useNavigate } from "react-router-dom";
+import { useEffect, useState, useRef } from "react";
+import { useParams, useNavigate, useLocation } from "react-router-dom";
 import { chatApi } from "../../api/chat";
 import { Client } from '@stomp/stompjs';
 
@@ -27,12 +27,25 @@ interface ChatApiResponse {
 
 const ChatRoomPage = () => {
   const { roomId } = useParams();
+  const location = useLocation();
+  // console.log("앞에서 받아온 데이터: ", location);
+  const receiver = location.state?.roomData?.receiver;
+  
   const navigate = useNavigate();
   const [newMessage, setNewMessage] = useState("");
   const [chatData, setChatData] = useState<ChatRoomData | null>(null);
   const [isConnected, setIsConnected] = useState(false);
   const [isLoading, setIsLoading] = useState(true);
   const [currentUserId, setCurrentUserId] = useState<string | null>(null);
+  const messagesEndRef = useRef<HTMLDivElement>(null);
+
+  const scrollToBottom = () => {
+    messagesEndRef.current?.scrollIntoView({ behavior: 'smooth' });
+  };
+
+  useEffect(() => {
+    scrollToBottom();
+  }, [chatData]);
 
   const decodeToken = (token: string) => {
     try {
@@ -84,8 +97,16 @@ const ChatRoomPage = () => {
 
         // 3. 채팅방 구독
         await chatApi.subscribeChatroom(roomId, (message) => {
+          console.log("새 메시지 수신:", message);
           setChatData(prevData => {
-            if (!prevData) return { chats: [message] };
+            if (!prevData) {
+              return { chats: [message] };
+            }
+            // 중복 메시지 방지를 위한 체크
+            const isDuplicate = prevData.chats.some(chat => chat.id === message.id);
+            if (isDuplicate) {
+              return prevData;
+            }
             return {
               ...prevData,
               chats: [...prevData.chats, message]
@@ -110,15 +131,72 @@ const ChatRoomPage = () => {
     };
   }, [roomId, navigate]);
   
+  useEffect(() => {
+    // 메시지가 화면에 표시될 때마다 읽음 처리
+    if (chatData?.chats && currentUserId) {
+        chatData.chats.forEach(chat => {
+            if (!chat.read && chat.receiver === currentUserId) {
+                chatApi.messageRead(chat.id, currentUserId)
+                    .catch(error => console.error("메시지 읽음 처리 실패:", error));
+            }
+        });
+    }
+  }, [chatData?.chats, currentUserId]);
+
+  console.log("새메시지: ", newMessage);
+  console.log(chatData);
+
+  
+  // const handleSendMessage = async () => {
+  //   if (!newMessage.trim() || !isConnected || !roomId || !currentUserId) return;
+  
+  //   try {
+  //     const sentMessage = await chatApi.sendMessage(roomId, currentUserId, receiver, newMessage);
+  
+  //     setChatData(prevData => {
+  //       if (!prevData) return { chats: [sentMessage] };
+  //       return {
+  //         ...prevData,
+  //         chats: [...prevData.chats, sentMessage]
+  //       };
+  //     });
+  
+  //     setNewMessage("");
+  //   } catch (error) {
+  //     console.error("메시지 전송 실패:", error);
+  //     alert("메시지 전송에 실패했습니다.");
+  //   }
+  // };
+
   const handleSendMessage = async () => {
-    if (!newMessage.trim() || !isConnected || !roomId) return;
+    if (!newMessage.trim() || !isConnected || !roomId || !currentUserId) return;
     
     try {
-      await chatApi.sendMessage(roomId, currentUserId, newMessage);
-      setNewMessage("");
+        await chatApi.sendMessage(roomId, currentUserId, receiver, newMessage);
+
+        // 보낸 메시지를 채팅 목록에 추가
+        const sentMessage = {
+          id: Date.now().toString(), // 임시 ID
+          roomId: roomId,
+          sender: currentUserId,
+          receiver: receiver,
+          content: newMessage.trim(),
+          timestamp: new Date().toISOString(),
+          read: false
+        };
+
+        setChatData(prevData => {
+            if (!prevData) return { chats: [sentMessage] };
+            return {
+                ...prevData,
+                chats: [...prevData.chats, sentMessage]
+            };
+        });
+        
+        setNewMessage("");
     } catch (error) {
-      console.error("메시지 전송 실패:", error);
-      alert("메시지 전송에 실패했습니다.");
+        console.error("메시지 전송 실패:", error);
+        alert("메시지 전송에 실패했습니다.");
     }
   };
 
@@ -136,11 +214,20 @@ const ChatRoomPage = () => {
     );
   }
 
+  const formatMessageTime = (timestamp: string) => {
+    const date = new Date(timestamp);
+    return date.toLocaleTimeString('ko-KR', {
+      hour: '2-digit',
+      minute: '2-digit'
+    });
+  };
+  
+
   return (
     <div className="flex flex-col h-screen bg-white">
       {/* 메시지 목록 */}
-      <div className="flex-1 overflow-y-auto p-4 space-y-4">
-        {chatData?.chats.map((chat) => (
+      <div className="flex-1 overflow-y-auto p-4 space-y-4" ref={messagesEndRef}>
+        {chatData?.chats.slice().reverse().map((chat) => (
           <div
             key={chat.id}
             className={`flex ${chat.sender == currentUserId ? "justify-end" : "justify-start"}`}
@@ -156,11 +243,12 @@ const ChatRoomPage = () => {
                 {chat.content}
               </div>
               <div className="text-xs text-gray-500 mt-1">
-                {chat.timestamp}
+                {formatMessageTime(chat.timestamp)}
               </div>
             </div>
           </div>
         ))}
+        
       </div>
 
       {/* 메시지 입력 */}

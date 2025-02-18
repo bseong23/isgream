@@ -11,6 +11,7 @@ interface GetChatListResponse {
     newMessageCount: number;
     lastMessageTime: string;
     lastMessageUnread: string;
+    opponentId: string;
   }[];
 }
 
@@ -42,13 +43,6 @@ interface openChatroomResponse {
         read: boolean;
     }[]
 }
-
-// interface sendMessageProps {
-//     messageId: string;
-//     roomId: string;
-//     sender: string;
-
-// }
 
 let stompClient: Client | null = null;
 
@@ -149,12 +143,15 @@ export const chatApi = {
 
     // 메시지 보내기
     async sendMessage(roomId: string, sender: string, receiver: string, content: string): Promise<void> {
+
+        console.log("roomId: ", roomId, "sender: ", sender, "receiver: ", receiver, "content: ", content);
+        
         if (!stompClient) {
           throw new Error('웹소켓이 연결되지 않았습니다.');
         }
     
         try {
-          await stompClient.publish({
+          const response = await stompClient.publish({
             destination: '/pub/chat/send',
             body: JSON.stringify({
               roomId,
@@ -163,14 +160,38 @@ export const chatApi = {
               content
             })
           });
-          console.log("보낸 메시지 내용: ", content);
-          
+          console.log("보낸 메시지 내용: ", response);
         } catch (error) {
           console.error('메시지 전송 실패:', error);
           throw error;
         }
+
       },
 
+    // async sendMessage(roomId: string, sender: string, receiver: string, content: string): Promise<ChatMessage> {
+    //     if (!stompClient) {
+    //       throw new Error('웹소켓이 연결되지 않았습니다.');
+    //     }
+      
+    //     try {
+    //       const response = await stompClient.publish({
+    //         destination: '/pub/chat/send',
+    //         body: JSON.stringify({
+    //           roomId,
+    //           sender,
+    //           receiver,
+    //           content
+    //         })
+    //       });
+    //       console.log("메시지 데이터베이스에 저장ㄱㄱ: ", response);
+          
+    //       const receivedMessage = JSON.parse(response.body);
+    //       return receivedMessage;
+    //     } catch (error) {
+    //       console.error('메시지 전송 실패:', error);
+    //       throw error;
+    //     }
+    //   },
 
     // // 채팅방 입장시 연결 성공 직후후, 구독
     async subscribeChatroom(roomId: string, onMessageReceived: (message: any) => void): Promise<() => void> {
