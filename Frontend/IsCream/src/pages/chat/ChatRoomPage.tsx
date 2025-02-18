@@ -1,9 +1,6 @@
 import { useEffect, useState, useRef } from "react";
 import { useParams, useNavigate, useLocation } from "react-router-dom";
 import { chatApi } from "../../api/chat";
-import { Client } from '@stomp/stompjs';
-
-let stompClient: Client | null = null;
 
 interface ChatRoomData {
   chats: ChatMessage[];
@@ -19,16 +16,9 @@ interface ChatMessage {
   read: boolean;
 }
 
-interface ChatApiResponse {
-  code: string;
-  message: string;
-  data: ChatRoomData;
-}
-
 const ChatRoomPage = () => {
   const { roomId } = useParams();
   const location = useLocation();
-  // console.log("앞에서 받아온 데이터: ", location);
   const receiver = location.state?.roomData?.receiver;
   
   const navigate = useNavigate();
@@ -123,25 +113,19 @@ const ChatRoomPage = () => {
 
     initializeChatRoom();
 
-    // 컴포넌트 언마운트 시 cleanup
-    return () => {
-      if (stompClient) {
-        stompClient.deactivate();
-      }
-    };
   }, [roomId, navigate]);
   
-  useEffect(() => {
-    // 메시지가 화면에 표시될 때마다 읽음 처리
-    if (chatData?.chats && currentUserId) {
-        chatData.chats.forEach(chat => {
-            if (!chat.read && chat.receiver === currentUserId) {
-                chatApi.messageRead(chat.id, currentUserId)
-                    .catch(error => console.error("메시지 읽음 처리 실패:", error));
-            }
-        });
-    }
-  }, [chatData?.chats, currentUserId]);
+  // useEffect(() => {
+  //   // 메시지가 화면에 표시될 때마다 읽음 처리
+  //   if (chatData?.chats && currentUserId) {
+  //       chatData.chats.forEach(chat => {
+  //           if (!chat.read && chat.receiver === currentUserId) {
+  //               chatApi.messageRead(chat.id, currentUserId)
+  //                   .catch(error => console.error("메시지 읽음 처리 실패:", error));
+  //           }
+  //       });
+  //   }
+  // }, [chatData?.chats, currentUserId]);
 
   console.log("새메시지: ", newMessage);
   console.log(chatData);

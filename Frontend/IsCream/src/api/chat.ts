@@ -17,7 +17,7 @@ interface GetChatListResponse {
 
 interface CreateChatroomResponse {
   code: "S0000" | "E4001";
-  massage: string;
+  message: string;
   data: {
     id: string;
     participantIds: [number, number];
@@ -64,9 +64,9 @@ export const chatApi = {
   },
 
     // 채팅방 생성하기
-    async createChatroom(): Promise<CreateChatroomResponse>{
+    async createChatroom(receiverId: string): Promise<CreateChatroomResponse>{
         try{
-            const response = await api.post("/chatrooms/create");
+            const response = await api.post(`/chatrooms/create?=${receiverId}`);
             if(response.data.code === 'S0000'){
                 return response.data;
             }
@@ -142,59 +142,6 @@ export const chatApi = {
     },
 
     // 메시지 보내기
-    // async sendMessage(roomId: string, sender: string, receiver: string, content: string): Promise<void> {
-
-    //     console.log("roomId: ", roomId, "sender: ", sender, "receiver: ", receiver, "content: ", content);
-        
-    //     if (!stompClient) {
-    //       throw new Error('웹소켓이 연결되지 않았습니다.');
-    //     }
-    
-    //     try {
-    //       const response = await stompClient.publish({
-    //         destination: '/pub/chat/send',
-    //         body: JSON.stringify({
-    //           roomId,
-    //           sender,
-    //           receiver,
-    //           content
-    //         })
-    //       });
-    //       console.log("보낸 메시지 내용: ", response);
-    //     } catch (error) {
-    //       console.error('메시지 전송 실패:', error);
-    //       throw error;
-    //     }
-
-    //   },
-
-    // async sendMessage(roomId: string, sender: string, receiver: string, content: string): Promise<ChatMessage> {
-    //     if (!stompClient) {
-    //       throw new Error('웹소켓이 연결되지 않았습니다.');
-    //     }
-      
-    //     try {
-    //       const response = await stompClient.publish({
-    //         destination: '/pub/chat/send',
-    //         body: JSON.stringify({
-    //           roomId,
-    //           sender,
-    //           receiver,
-    //           content
-    //         })
-    //       });
-    //       console.log("메시지 데이터베이스에 저장ㄱㄱ: ", response);
-          
-    //       const receivedMessage = JSON.parse(response.body);
-    //       console.log("얘는 반환데이터야~~!!: ",receivedMessage );
-          
-    //       return receivedMessage;
-    //     } catch (error) {
-    //       console.error('메시지 전송 실패:', error);
-    //       throw error;
-    //     }
-    //   },
-
     async sendMessage(roomId: string, sender: string, receiver: string, content: string): Promise<void> {
         if (!stompClient) {
           throw new Error('웹소켓이 연결되지 않았습니다.');

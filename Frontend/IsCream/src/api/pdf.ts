@@ -1,4 +1,3 @@
-import { Colors } from "chart.js";
 import { api } from "../utils/common/axiosInstance";
 
 // interface GetResultToPdfResponse {
