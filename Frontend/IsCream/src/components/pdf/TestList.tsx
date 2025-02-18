@@ -130,8 +130,8 @@ const TestList: React.FC<TestListProps> = ({
       }
     } catch (error) {
       console.error("PDF 다운로드 실패:", error);
-    }
-  };
+  }
+};
 
   return (
     <div className="my-5">

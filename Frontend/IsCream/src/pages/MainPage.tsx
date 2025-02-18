@@ -13,7 +13,7 @@ import Recommend from "../assets/image/교육추천.png";
 const MainPage = () => {
   return (
     <>
-      <div>
+      <div className="mt-10">
         <Banner />
       </div>
       <AICard />
