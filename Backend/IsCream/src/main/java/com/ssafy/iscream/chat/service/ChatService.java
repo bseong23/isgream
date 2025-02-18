@@ -63,7 +63,7 @@ public class ChatService {
 
         log.info("📤 Redis Pub/Sub 발행 (messageId 포함): {}", chatMessageDto);
 
-        redisTemplate.convertAndSend("chatroom-" + chatMessageDto.getRoomId(), chatMessageDto);
+        redisTemplate.convertAndSend("chatroom-" + chatMessageDto.getRoomId(), chatMessage);
 
     }
 
