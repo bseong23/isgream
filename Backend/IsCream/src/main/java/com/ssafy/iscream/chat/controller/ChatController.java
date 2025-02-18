@@ -4,6 +4,7 @@ import com.ssafy.iscream.auth.user.Login;
 import com.ssafy.iscream.chat.domain.ChatMessage;
 import com.ssafy.iscream.chat.dto.ChatMessageDto;
 import com.ssafy.iscream.chat.dto.MessageAckDto;
+import com.ssafy.iscream.chat.service.ChatFacade;
 import com.ssafy.iscream.chat.service.ChatService;
 import com.ssafy.iscream.common.util.ResponseUtil;
 import com.ssafy.iscream.user.domain.User;
@@ -28,6 +29,7 @@ import java.util.List;
 public class ChatController {
 
     private final ChatService chatService;
+    private final ChatFacade chatFacade;
 
     @MessageMapping("/chat/send")
     public void sendMessage(@Payload ChatMessageDto chatMessageDto) {
@@ -36,7 +38,7 @@ public class ChatController {
 
         log.info("📢 메시지 브로커에 메시지 발행: {}", destination);
 
-        chatService.sendMessage(chatMessageDto);
+        chatFacade.sendMessage(chatMessageDto);
     }
 
     @MessageMapping("/chat/ack")
