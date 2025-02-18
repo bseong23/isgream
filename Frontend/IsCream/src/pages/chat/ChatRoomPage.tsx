@@ -109,7 +109,7 @@ const ChatRoomPage = () => {
             }
             return {
               ...prevData,
-              chats: [...prevData.chats, message]
+              chats: [message, ...prevData.chats]
             };
           });
         });
@@ -146,28 +146,6 @@ const ChatRoomPage = () => {
   console.log("새메시지: ", newMessage);
   console.log(chatData);
 
-  
-  // const handleSendMessage = async () => {
-  //   if (!newMessage.trim() || !isConnected || !roomId || !currentUserId) return;
-  
-  //   try {
-  //     const sentMessage = await chatApi.sendMessage(roomId, currentUserId, receiver, newMessage);
-  
-  //     setChatData(prevData => {
-  //       if (!prevData) return { chats: [sentMessage] };
-  //       return {
-  //         ...prevData,
-  //         chats: [...prevData.chats, sentMessage]
-  //       };
-  //     });
-  
-  //     setNewMessage("");
-  //   } catch (error) {
-  //     console.error("메시지 전송 실패:", error);
-  //     alert("메시지 전송에 실패했습니다.");
-  //   }
-  // };
-
   const handleSendMessage = async () => {
     if (!newMessage.trim() || !isConnected || !roomId || !currentUserId) return;
     
@@ -189,7 +167,7 @@ const ChatRoomPage = () => {
             if (!prevData) return { chats: [sentMessage] };
             return {
                 ...prevData,
-                chats: [...prevData.chats, sentMessage]
+                chats: [sentMessage, ...prevData.chats]
             };
         });
         
@@ -224,9 +202,11 @@ const ChatRoomPage = () => {
   
 
   return (
-    <div className="flex flex-col h-screen bg-white">
+    <div className="flex flex-col bg-white ">
       {/* 메시지 목록 */}
-      <div className="flex-1 overflow-y-auto p-4 space-y-4" ref={messagesEndRef}>
+      <div 
+          className="flex-1 overflow-y-auto p-4 space-y-4 pb-20" 
+        >
         {chatData?.chats.slice().reverse().map((chat) => (
           <div
             key={chat.id}
@@ -248,26 +228,26 @@ const ChatRoomPage = () => {
             </div>
           </div>
         ))}
-        
+        <div ref={messagesEndRef} /> 
       </div>
 
       {/* 메시지 입력 */}
-      <div className="fixed bottom-20 w-full p-4 flex items-center">
-        <input
-          type="text"
-          value={newMessage}
-          onChange={(e) => setNewMessage(e.target.value)}
-          onKeyPress={handleKeyPress}
-          placeholder="메시지를 입력하세요"
-          className="flex-1 border rounded-lg p-2 mr-2"
-        />
-        <button
-          onClick={handleSendMessage}
-          disabled={!isConnected}
-          className="bg-green-500 text-white px-4 py-2 rounded-lg disabled:bg-gray-300"
-        >
-          전송
-        </button>
+      <div className="fixed bottom-20 w-full p-4 flex items-center bg-white">
+          <input
+            type="text"
+            value={newMessage}
+            onChange={(e) => setNewMessage(e.target.value)}
+            onKeyPress={handleKeyPress}
+            placeholder="메시지를 입력하세요"
+            className="flex-1 border rounded-lg p-2 mr-2"
+          />
+          <button
+            onClick={handleSendMessage}
+            disabled={!isConnected}
+            className="bg-green-500 text-white px-4 py-2 rounded-lg disabled:bg-gray-300"
+          >
+            전송
+          </button>
       </div>
     </div>
   );
