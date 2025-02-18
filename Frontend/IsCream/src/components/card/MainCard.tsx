@@ -21,7 +21,7 @@ const MainCard = ({ image, title, to }: MainCardProps) => {
 
         {/* 텍스트 영역 */}
         <div className="bg-[#009E28] w-[99%] py-0.5 rounded-[15px] flex items-center justify-center">
-          <p className="text-[10px] sm:text-xs md:text-sm text-white overflow-hidden whitespace-nowrap text-ellipsis px-2">
+          <p className="text-xs sm:text-sm md:text-base lg:text-lg text-white overflow-hidden whitespace-nowrap text-ellipsis px-2">
             {title}
           </p>
         </div>

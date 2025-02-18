@@ -13,7 +13,7 @@ import Recommend from "../assets/image/추천교육_카드.png";
 const MainPage = () => {
   return (
     <>
-      <div>
+      <div className="mt-10">
         <Banner />
       </div>
       <AICard />
@@ -22,7 +22,7 @@ const MainPage = () => {
           <div className="grid grid-cols-4 mt-2 gap-1">
             <MainCard
               image={ParentingAttitude}
-              title="부모양육태도 검사"
+              title="양육태도 검사"
               to="/parenting-test"
             />
             <MainCard image={Big5} title="성격5요인 검사" to="/big5-test" />

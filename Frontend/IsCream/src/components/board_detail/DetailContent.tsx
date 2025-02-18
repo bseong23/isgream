@@ -1,5 +1,6 @@
 import React, { useState } from "react";
 import { useNavigate } from "react-router-dom";
+import { chatApi } from "../../api/chat";
 
 interface DetailContentProps {
   post: {
@@ -24,11 +25,39 @@ const DetailContent: React.FC<DetailContentProps> = ({
   onChat
 }) => {
   const [showDropdown, setShowDropdown] = useState(false);
+  const [isCreatingChat, setIsCreatingChat] = useState(false);
   const navigate = useNavigate();
 
+  console.log("post.author.id", post);
   const handleEditClick = () => {
     navigate(`/board/edit/${post.postId}`, { state: { post } });
     setShowDropdown(false);
+  };
+
+  const handleChatClick = async () => {
+    if (isCreatingChat) return;
+    
+    try {
+      setIsCreatingChat(true);
+      
+      const response = await chatApi.createChatroom(post.author.id);
+      
+      if (response.code === 'S0000') {
+        // 채팅방 생성 성공시 채팅방으로 이동
+        if (response.data?.id) {
+          onChat?.(post.author.id);
+          navigate(`/chat/room/${response.data.id}`);
+        }
+      } else {
+        throw new Error(response.message || "채팅방 생성에 실패했습니다.");
+      }
+    } catch (error) {
+      console.error("채팅방 생성 중 오류 발생:", error);
+      alert("채팅방 생성에 실패했습니다. 다시 시도해 주세요.");
+    } finally {
+      setIsCreatingChat(false);
+      setShowDropdown(false);
+    }
   };
 
   return (
@@ -81,10 +110,8 @@ const DetailContent: React.FC<DetailContentProps> = ({
               </button>
               {onChat && (
                 <button
-                  onClick={() => {
-                    onChat(post.author.id);
-                    setShowDropdown(false);
-                  }}
+                  onClick={handleChatClick}
+                  disabled={isCreatingChat}
                   className="w-full px-4 py-2 text-left text-sm hover:bg-gray-100 rounded-b-lg"
                 >
                   채팅하기

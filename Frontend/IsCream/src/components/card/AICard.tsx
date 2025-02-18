@@ -19,14 +19,14 @@ const AICard = () => {
             {/* 오른쪽 텍스트 영역: 50% */}
             <div className="w-1/2 flex flex-col items-center justify-center text-center">
               <div className="bg-[#009E28] text-white rounded-lg w-[80%] md:w-[70%] lg:w-[60%] p-1">
-                <p className="text-xs md:text-sm lg:text-base font-bold">
+                <p className="text-xs sm:text-sm md:text-base lg:text-lg font-bold">
                   AI가 해주는
                 </p>
-                <p className="text-xs md:text-sm lg:text-base font-bold">
+                <p className="text-xs sm:text-sm md:text-base lg:text-lg font-bold">
                   그림 심리 분석
                 </p>
               </div>
-              <p className="text-gray-700 text-xs md:text-sm lg:text-base mt-4 leading-relaxed">
+              <p className="text-gray-700 text-xs sm:text-sm md:text-base lg:text-lg mt-4 leading-relaxed">
                 그림을 그리거나 업로드 하면
                 <br />
                 아이의 감정을 분석해드려요

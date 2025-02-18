@@ -51,9 +51,9 @@ const Header = ({ onChildSelect }: HeaderProps) => {
         isVisible ? "translate-y-0" : "-translate-y-full"
       }`}
     >
-      <div className="relative flex items-center justify-center h-[64px] sm:h-[72px] md:h-[80px] px-4 w-full">
+      <div className="relative flex items-center justify-center h-[80px] sm:h-[80px] md:h-[100px] px-4 w-full">
         {/* 로고와 자녀 선택을 감싸는 컨테이너 */}
-        <div className="flex items-center gap-3">
+        <div className="items-center gap-3">
           {/* 로고 */}
           <img
             src={Logo}
@@ -66,7 +66,7 @@ const Header = ({ onChildSelect }: HeaderProps) => {
             <div className="relative">
               <button
                 onClick={() => setIsOpen(!isOpen)}
-                className="flex items-center gap-2 text-[16px] font-medium text-gray-900"
+                className="flex items-center gap-2 ml-4 text-[16px] font-medium text-gray-900"
               >
                 {loading
                   ? "로딩 중..."
