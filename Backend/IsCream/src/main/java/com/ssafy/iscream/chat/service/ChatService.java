@@ -46,6 +46,11 @@ public class ChatService {
             throw new IllegalArgumentException("🚨 유효하지 않은 채팅방 ID 또는 참가자 불일치");
         }
 
+        // 1. 상대방 유저 ID를 opponentId
+        // 2. 채팅방id chatRoomId
+
+
+
         ChatMessage chatMessage = ChatMessage.builder()
                 .roomId(chatMessageDto.getRoomId())
                 .sender(chatMessageDto.getSender())
