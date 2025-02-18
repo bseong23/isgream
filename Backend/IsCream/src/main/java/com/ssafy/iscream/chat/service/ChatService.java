@@ -5,6 +5,7 @@ import com.ssafy.iscream.chat.domain.ChatRoom;
 import com.ssafy.iscream.chat.dto.ChatMessageDto;
 import com.ssafy.iscream.chat.dto.MessageAckDto;
 import com.ssafy.iscream.chat.dto.ReadReceiptDto;
+import com.ssafy.iscream.chat.dto.res.ChatMessageResDto;
 import com.ssafy.iscream.chat.repository.ChatMessageRepository;
 import com.ssafy.iscream.chat.repository.ChatRoomRepository;
 import com.ssafy.iscream.common.exception.ErrorCode;
@@ -59,11 +60,11 @@ public class ChatService {
         chatMessage = chatMessageRepository.save(chatMessage);
 
         // ✅ 클라이언트에게 messageId 포함해서 전송
-        chatMessageDto.setMessageId(chatMessage.getId());
+        //chatMessageDto.setMessageId(chatMessage.getId());
+        ChatMessageResDto chatMessageResDto = ChatMessageResDto.of(chatMessage);
+        log.info("📤 Redis Pub/Sub 발행 (messageId 포함): {}", chatMessageResDto);
 
-        log.info("📤 Redis Pub/Sub 발행 (messageId 포함): {}", chatMessageDto);
-
-        redisTemplate.convertAndSend("chatroom-" + chatMessageDto.getRoomId(), chatMessage);
+        redisTemplate.convertAndSend("chatroom-" + chatMessageResDto.getRoomId(), chatMessageResDto);
 
     }
 
