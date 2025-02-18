@@ -1,8 +1,10 @@
 import React, { useState, useEffect, useCallback } from "react";
 import { Link } from "react-router-dom";
-import ParentingAttitude from "../../assets/image/부모양육태도.png";
-import Big5 from "../../assets/image/성격5요인검사.png";
-import HTP from "../../assets/image/그림일기.png";
+import Banner1 from "../../assets/image/banner1.png";
+import Banner2 from "../../assets/image/banner2.png";
+import Banner3 from "../../assets/image/banner3.png";
+// import Banner4 from "../../assets/image/banner4.png";
+import Banner5 from "../../assets/image/banner5.png";
 
 interface SlideType {
   image: string;
@@ -12,9 +14,11 @@ interface SlideType {
 
 const Banner = () => {
   const originalSlides: SlideType[] = [
-    { image: HTP, to: "/ai-analysis", isVertical: true },
-    { image: ParentingAttitude, to: "/parenting-test", isVertical: true },
-    { image: Big5, to: "/big5-test" }
+    { image: Banner1, to: "/ai-analysis", isVertical: true },
+    { image: Banner2, to: "/parenting-test", isVertical: true },
+    // { image: Banner4, to: "/parenting-test" },
+    { image: Banner3, to: "/big5-test" },
+    { image: Banner5, to: "/parenting-test" }
   ];
 
   const slides = [
@@ -101,10 +105,10 @@ const Banner = () => {
   };
 
   return (
-    <div className="w-full bg-white">
+    <div className="max-w-[706px] mx-auto pt-2 bg-white">
       <div className="max-w-screen-md mx-auto relative">
         <div
-          className="w-full relative overflow-hidden rounded-lg sm:rounded-xl"
+          className="w-full relative overflow-hidden rounded-[15px]"
           style={{
             aspectRatio: "16/9",
             perspective: "1000px"
@@ -135,7 +139,7 @@ const Banner = () => {
                   <img
                     src={slide.image}
                     alt={`배너 이미지 ${index}`}
-                    className={`h-full rounded-lg ${
+                    className={`h-full rounded-[15px] ${
                       slide.isVertical ? "max-w-[90%" : "w-full"
                     } object-contain`}
                     loading={index <= 1 ? "eager" : "lazy"}

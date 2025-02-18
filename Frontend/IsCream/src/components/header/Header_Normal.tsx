@@ -24,7 +24,7 @@ const Header = () => {
 
   return (
     <header
-      className={`fixed top-0 left-0 w-full bg-white border-b border-gray-200 z-50 rounded-b-[15px] transition-transform duration-300 ${
+      className={`fixed top-0 left-0 w-full bg-white shadow-md z-50 rounded-b-[15px] transition-transform duration-300 ${
         isVisible ? "translate-y-0" : "-translate-y-full"
       }`}
     >
