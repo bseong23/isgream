@@ -6,7 +6,7 @@ import java.time.LocalDate;
 
 @Data
 public class MemoCreateReq {
-    int childId;
+    Integer childId;
     LocalDate selectedDate;
     String memo;
 }

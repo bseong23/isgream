@@ -15,27 +15,15 @@ interface PATData {
 const PAT: React.FC = () => {
   // PAT 데이터를 저장할 state
   const [patData, setPATData] = useState<PATData | null>(null);
-  // 로딩 상태
-  const [isLoading, setIsLoading] = useState(true);
-  // 에러 상태
-  const [error, setError] = useState<string | null>(null);
-
   // 컴포넌트가 마운트될 때 PAT 데이터를 가져옴
   useEffect(() => {
     const fetchPATData = async () => {
       try {
-        setIsLoading(true);
-        console.log("pat검사 결과 조회 시작");
-        
         const response = await patApi.getRecentResult();
         console.log("pat검사결과데이터: ", response);
-
         setPATData(response.data);
       } catch (err) {
-        setError("PAT 결과를 불러오는데 실패했습니다.");
         console.error(err);
-      } finally {
-        setIsLoading(false);
       }
     };
 
@@ -72,7 +60,9 @@ const PAT: React.FC = () => {
           <div>
             <BarChart
               data={
-                patData ? [patData.scoreA, patData.scoreB, patData.scoreC] : [0,0,0]
+                patData
+                  ? [patData.scoreA, patData.scoreB, patData.scoreC]
+                  : [0, 0, 0]
               }
               title={patData?.testDate || "날짜 없음"}
             />

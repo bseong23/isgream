@@ -29,8 +29,12 @@ export const useBigFiveTest = () => {
     setError(null);
     try {
       const response = await bigFiveApi.getQuestionList();
-      setQuestions(response.data.problems);
+      console.log("질문 목록 응답:", response);
+
+      // 타입을 명시적으로 지정
+      setQuestions(response.data);
     } catch (err) {
+      console.error("질문 목록 로드 에러:", err);
       setError(err instanceof Error ? err.message : "문제 목록 조회 실패");
     } finally {
       setLoading(false);

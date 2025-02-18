@@ -9,10 +9,8 @@ const HeaderController = () => {
     console.log("선택된 아이:", selectedItem);
   }, []);
 
-  if (location.pathname === "/" || location.pathname === "/mypage") {
+  if (location.pathname === "/") {
     return <HeaderMain onChildSelect={handleChildSelect} />;
-  } else if (location.pathname.startsWith("/board")) {
-    return null; // 게시판 페이지에서는 헤더를 렌더링하지 않음
   } else {
     return <HeaderNormal />;
   }

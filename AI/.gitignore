@@ -20,7 +20,6 @@ ENV/
 # FastAPI 관련
 instance/
 *.db
-*.sqlite3
 
 # VSCode 관련 설정
 .vscode/
@@ -64,3 +63,6 @@ docker-compose.override.yml
 *.zip
 *.tar.gz
 *.rar
+
+# 모든 runs 디렉터리 무시
+**/runs/

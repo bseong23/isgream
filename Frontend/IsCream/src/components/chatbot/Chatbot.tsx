@@ -2,6 +2,7 @@ import React from "react";
 import { Send } from "lucide-react";
 import { useChatbot } from "../../hooks/chatbot/useChatbot";
 import chatbotImage from "../../assets/image/챗봇_곰.png";
+import Spinner from "../spinner";
 
 const Chatbot: React.FC = () => {
   const {
@@ -94,17 +95,15 @@ const Chatbot: React.FC = () => {
                  `}
                 >
                   {msg.content}
-
-                  {/* 챗봇 메시지에 꼬리 추가 */}
-                  {msg.sender === "bot" && (
-                    <div className="absolute -bottom-2 left-4 w-0 h-0 border-l-8 border-l-transparent border-r-8 border-r-transparent border-t-8 border-t-gray-200"></div>
-                  )}
                 </div>
               </div>
             ))}
 
             {isLoading && (
-              <div className="text-center text-gray-500">로딩 중...</div>
+              <div className="flex items-center justify-center space-x-2 text-gray-500 py-2">
+                <Spinner />
+                <span className="text-sm">답변을 생성하고 있어요...</span>
+              </div>
             )}
 
             {error && (

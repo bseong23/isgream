@@ -4,7 +4,7 @@ import lombok.Data;
 
 @Data
 public class MemoUpdateReq {
-    int memoId;
+    Integer memoId;
     String memo;
 
 }

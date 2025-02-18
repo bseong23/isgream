@@ -1,3 +1,4 @@
+// firebase.ts
 import { initializeApp } from "firebase/app";
 import { getMessaging } from "firebase/messaging";
 
@@ -11,7 +12,7 @@ const firebaseConfig = {
   measurementId: import.meta.env.VITE_FIREBASE_MEASUREMENT_ID
 };
 
-export const app = initializeApp(firebaseConfig);
+export const app = initializeApp(firebaseConfig); // named export로 변경
 
 export const messaging =
   typeof window !== "undefined" ? getMessaging(app) : null;

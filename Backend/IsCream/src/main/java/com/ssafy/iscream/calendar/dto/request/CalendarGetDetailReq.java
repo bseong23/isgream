@@ -7,6 +7,6 @@ import java.time.LocalDate;
 
 @Data
 public class CalendarGetDetailReq {
-    int childId;
+    Integer childId;
     LocalDate selectedDate;
 }

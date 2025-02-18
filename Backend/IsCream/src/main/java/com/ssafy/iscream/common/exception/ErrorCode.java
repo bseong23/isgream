@@ -16,6 +16,7 @@ public enum ErrorCode {
     DATA_DELETE_FAILED("E4003", "데이터 삭제에 실패했습니다."),
     DATA_FORBIDDEN_ACCESS("E4004", "데이터에 대한 접근 권한이 없습니다."),
     INVALID_PARAMETER("E4005", "파라미터 형식이 잘못되었습니다."),
+    DATA_FORBIDDEN_UPDATE("E4006", "데이터에 대한 수정/삭제 권한이 없습니다."),
 
     DUPLICATE_EMAIL("E5001", "이미 존재하는 이메일입니다."),
     DUPLICATE_NICKNAME("E5002", "이미 존재하는 닉네임입니다."),

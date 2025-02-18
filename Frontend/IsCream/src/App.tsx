@@ -25,7 +25,7 @@ import {
   VerifyEmailPage,
   ResetPasswordPage,
   ChatPage,
-  ChatRoomPage,
+  // ChatRoomPage,
   CenterPage,
   CanvasPage,
   AiAnalysisPage,
@@ -61,7 +61,7 @@ function App() {
     <QueryClientProvider client={queryClient}>
       <BrowserRouter>
         <Header />
-        <div className="w-[95%] mx-auto pb-20 bg-white pt-15 min-h-screen">
+        <div className="w-[95%] mx-auto pb-20 bg-white pt-20 min-h-screen">
           <Routes>
             {/* 인증이 필요 없는 라우트 */}
             {/* 메인 페이지 */}
@@ -120,7 +120,8 @@ function App() {
               path="/chat/room/:roomId"
               element={
                 <ProtectedRoute>
-                  <ChatRoomPage />
+                  <ChatPage />
+                  {/* <ChatRoomPage /> */}
                 </ProtectedRoute>
               }
             />

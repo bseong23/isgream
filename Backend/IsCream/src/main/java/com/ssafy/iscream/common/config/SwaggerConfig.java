@@ -21,8 +21,8 @@ import org.springframework.context.annotation.Configuration;
 
 @Configuration
 @OpenAPIDefinition(servers = {
-        @Server(url = "https://3.36.67.41:8081", description = "deploy server"),
-        @Server(url = "http://localhost:8080", description = "local server")
+        @Server(url = "http://localhost:8080/api", description = "local server"),
+        @Server(url = "https://i12a407.p.ssafy.io/api", description = "deploy server")
 })
 public class SwaggerConfig {
 
@@ -41,6 +41,36 @@ public class SwaggerConfig {
     }
 
     @Bean
+    GroupedOpenApi allApi() {
+        return GroupedOpenApi.builder()
+                .group("all") // 그룹 이름 지정
+                .pathsToMatch( "/users/**", "/htp-tests/**", "/board/**", "/comments/**",
+                        "/calendars/**", "/children/**", "/educations/**", "/pat-tests/**",
+                        "/big-five-tests/**", "/chatbot/**", "/notify/**")
+                .build();
+    }
+
+    @Bean
+    GroupedOpenApi notifyApi() {
+        return GroupedOpenApi.builder().group("notify").pathsToMatch("/notify/**").build();
+    }
+
+    @Bean
+    GroupedOpenApi chatbotApi() {
+        return GroupedOpenApi.builder().group("chatbot").pathsToMatch("/chatbot/**").build();
+    }
+
+    @Bean
+    GroupedOpenApi commentApi() {
+        return GroupedOpenApi.builder().group("comment").pathsToMatch("/comments/**").build();
+    }
+
+    @Bean
+    GroupedOpenApi boardApi() {
+        return GroupedOpenApi.builder().group("board").pathsToMatch("/board/**").build();
+    }
+
+    @Bean
     GroupedOpenApi userApi() {
         return GroupedOpenApi.builder().group("users").pathsToMatch("/users/**").build();
     }
@@ -51,17 +81,64 @@ public class SwaggerConfig {
     }
 
     @Bean
-    GroupedOpenApi allApi() {
-        return GroupedOpenApi.builder()
-                .group("all") // 그룹 이름 지정
-                .pathsToMatch( "/users/**")
-                .build();
-    }
-    @Bean
     GroupedOpenApi calendarApi() {
         return GroupedOpenApi.builder()
                 .group("calendar")
                 .pathsToMatch("/calendars/**")
+                .build();
+    }
+    @Bean
+    GroupedOpenApi childrenApi() {
+        return GroupedOpenApi.builder()
+                .group("children")
+                .pathsToMatch("/children/**")
+                .build();
+    }
+
+    @Bean
+    GroupedOpenApi patApi() {
+        return GroupedOpenApi.builder()
+                .group("pat")
+                .pathsToMatch("/pat-tests/**")
+                .build();
+    }
+
+    @Bean
+    GroupedOpenApi bigFiveApi() {
+        return GroupedOpenApi.builder()
+                .group("big-five")
+                .pathsToMatch("/big-five-tests/**")
+                .build();
+    }
+
+    @Bean
+    GroupedOpenApi htpTestApi() {
+        return GroupedOpenApi.builder()
+                .group("htp")
+                .pathsToMatch("/htp-tests/**")
+                .build();
+    }
+
+    @Bean
+    GroupedOpenApi educationApi() {
+        return GroupedOpenApi.builder()
+                .group("education")
+                .pathsToMatch("/educations/**")
+                .build();
+    }
+    @Bean
+    GroupedOpenApi chatRoomApi() {
+        return GroupedOpenApi.builder()
+                .group("chatrooms")
+                .pathsToMatch("/chatrooms/**")
+                .build();
+    }
+
+    @Bean
+    GroupedOpenApi chatApi() {
+        return GroupedOpenApi.builder()
+                .group("chat")
+                .pathsToMatch("/chat/**")
                 .build();
     }
 

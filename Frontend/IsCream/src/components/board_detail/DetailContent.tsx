@@ -123,8 +123,9 @@ const DetailContent: React.FC<DetailContentProps> = ({
       </div>
 
       <h2 className="text-xl font-bold mb-4">{post.title}</h2>
-      <p className="text-gray-800 whitespace-pre-line mb-15">{post.content}</p>
-
+      <p className="text-gray-800 whitespace-pre-line mb-15 break-words">
+        {post.content}
+      </p>
       {post.images && post.images.length > 0 && (
         <div className="overflow-x-auto">
           <div className="grid grid-flow-col auto-cols-max gap-2">

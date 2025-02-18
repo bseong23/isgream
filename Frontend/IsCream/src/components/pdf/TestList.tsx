@@ -16,7 +16,10 @@ interface TestListProps {
   nickname?: string;
 }
 
-const TestList: React.FC<TestListProps> = ({ testResults, onResultSelect, nickname }) => {
+const TestList: React.FC<TestListProps> = ({
+  testResults,
+  /*onResultSelect,*/ nickname
+}) => {
   const [selectedItems, setSelectedItems] = useState<string[]>([]);
 
   const formatDate = (dateString: string) => {
@@ -32,84 +35,100 @@ const TestList: React.FC<TestListProps> = ({ testResults, onResultSelect, nickna
     }
   };
 
-  const handleSelectItem = (testId: number) => {  // 매개변수 타입을 number로 변경
+  const handleSelectItem = (testId: number) => {
+    // 매개변수 타입을 number로 변경
     const testIdStr = testId.toString();
     setSelectedItems((prev) =>
       prev.includes(testIdStr)
-        ? prev.filter(item => item !== testIdStr)
+        ? prev.filter((item) => item !== testIdStr)
         : [...prev, testIdStr]
     );
   };
 
-  const getFileName = (type: string, childName: string | undefined, nickname: string | undefined, date: string) => {
-    const name = childName?.trim() || nickname || '미상';
+  const getFileName = (
+    type: string,
+    childName: string | undefined,
+    nickname: string | undefined,
+    date: string
+  ) => {
+    const name = childName?.trim() || nickname || "미상";
     return `${type}_결과_${name}_${date}.pdf`;
-};
+  };
 
   const downloadPDF = (blob: Blob, filename: string) => {
     const url = window.URL.createObjectURL(blob);
-    const link = document.createElement('a');
+    const link = document.createElement("a");
     link.href = url;
     link.download = filename;
     document.body.appendChild(link);
     link.click();
     document.body.removeChild(link);
     window.URL.revokeObjectURL(url);
-};
+  };
 
-const handleDownloadPDFs = async () => {
-  try {
+  const handleDownloadPDFs = async () => {
+    try {
       const downloadPromises = selectedItems.map(async (testIdStr) => {
-          const testId = parseInt(testIdStr);
-          const test = testResults.find(r => r.testId === testId);
-          
-          if (!test) return;
+        const testId = parseInt(testIdStr);
+        const test = testResults.find((r) => r.testId === testId);
 
-          let pdfBlob;
-          const fileName = getFileName(test.type, test.childName, nickname, test.date);
-          
-          switch(test.type) {
-              case 'HTP':
-                  pdfBlob = await pdfApi.pdfHTP(testId);
-                  downloadPDF(pdfBlob, fileName);
-                  break;
-              case 'PAT':
-                  pdfBlob = await pdfApi.pdfPat(testId);
-                  downloadPDF(pdfBlob, fileName);
-                  break;
-              case 'BFI':
-                  pdfBlob = await pdfApi.pdfBigFive(testId);
-                  downloadPDF(pdfBlob, fileName);
-                  break;
-          }
+        if (!test) return;
+
+        let pdfBlob;
+        const fileName = getFileName(
+          test.type,
+          test.childName,
+          nickname,
+          test.date
+        );
+
+        switch (test.type) {
+          case "HTP":
+            pdfBlob = await pdfApi.pdfHTP(testId);
+            downloadPDF(pdfBlob, fileName);
+            break;
+          case "PAT":
+            pdfBlob = await pdfApi.pdfPat(testId);
+            downloadPDF(pdfBlob, fileName);
+            break;
+          case "BFI":
+            pdfBlob = await pdfApi.pdfBigFive(testId);
+            downloadPDF(pdfBlob, fileName);
+            break;
+        }
       });
 
       await Promise.all(downloadPromises);
-  } catch (error) {
+    } catch (error) {
       console.error("PDF 다운로드 실패:", error);
-  }
-};
+    }
+  };
 
-const handleSingleDownload = async (testId: number, type: string, childName: string | undefined, date: string) => {
-  try {
+  const handleSingleDownload = async (
+    testId: number,
+    type: string,
+    childName: string | undefined,
+    date: string
+  ) => {
+    try {
       let pdfBlob;
       const fileName = getFileName(type, childName, nickname, date);
-      
-      switch(type) {
-          case 'HTP':
-              pdfBlob = await pdfApi.pdfHTP(testId);
-              downloadPDF(pdfBlob, fileName);
-              break;
-          case 'PAT':
-              pdfBlob = await pdfApi.pdfPat(testId);
-              downloadPDF(pdfBlob, fileName);
-              break;
-          case 'BFI':
-              pdfBlob = await pdfApi.pdfBigFive(testId);
-              downloadPDF(pdfBlob, fileName);
-              break;
+
+      switch (type) {
+        case "HTP":
+          pdfBlob = await pdfApi.pdfHTP(testId);
+          downloadPDF(pdfBlob, fileName);
+          break;
+        case "PAT":
+          pdfBlob = await pdfApi.pdfPat(testId);
+          downloadPDF(pdfBlob, fileName);
+          break;
+        case "BFI":
+          pdfBlob = await pdfApi.pdfBigFive(testId);
+          downloadPDF(pdfBlob, fileName);
+          break;
       }
-  } catch (error) {
+    } catch (error) {
       console.error("PDF 다운로드 실패:", error);
   }
 };
@@ -128,13 +147,13 @@ const handleSingleDownload = async (testId: number, type: string, childName: str
         <div className="font-medium text-gray-900 flex-1 cursor-pointer">
           전체선택
         </div>
-        <button 
+        <button
           onClick={handleDownloadPDFs}
           disabled={selectedItems.length === 0}
           className={`text-gray-400 hover:text-[#009E28] active:text-[#009E28] transition-colors"${
-            selectedItems.length === 0 ? 'opacity-50 cursor-not-allowed' : ''
+            selectedItems.length === 0 ? "opacity-50 cursor-not-allowed" : ""
           }`}
-          >
+        >
           <Download className="w-4 h-4" />
         </button>
       </div>
@@ -147,27 +166,42 @@ const handleSingleDownload = async (testId: number, type: string, childName: str
         >
           <input
             type="checkbox"
-            checked={selectedItems.includes(result.testId.toString())}  // testId 사용
-            onChange={() => handleSelectItem(result.testId)}  // testId 전달
+            checked={selectedItems.includes(result.testId.toString())} // testId 사용
+            onChange={() => handleSelectItem(result.testId)} // testId 전달
             style={checkboxStyle}
             className="w-4 h-4 border-gray-300 rounded mr-4"
           />
           <div
             className="flex-1 cursor-pointer"
-            onClick={() => handleSingleDownload(result.testId, result.type, result.childName || nickname, result.date)}
+            onClick={() =>
+              handleSingleDownload(
+                result.testId,
+                result.type,
+                result.childName || nickname,
+                result.date
+              )
+            }
           >
-            <div className="font-medium text-gray-900">
-              {result.title}
-            </div>
+            <div className="font-medium text-gray-900">{result.title}</div>
             <div className="gap-2 items-center mt-2">
-              <div className="text-sm text-gray-600">{formatDate(result.date)}</div>
+              <div className="text-sm text-gray-600">
+                {formatDate(result.date)}
+              </div>
               <div className="text-sm text-gray-500">
-                검사자 : {result.childName?.trim() ? result.childName : nickname}
+                검사자 :{" "}
+                {result.childName?.trim() ? result.childName : nickname}
               </div>
             </div>
           </div>
           <button
-            onClick={() => handleSingleDownload(result.testId, result.type, result.childName || nickname, result.date)}
+            onClick={() =>
+              handleSingleDownload(
+                result.testId,
+                result.type,
+                result.childName || nickname,
+                result.date
+              )
+            }
             className="text-gray-400 hover:text-[#009E28] active:text-[#009E28] transition-colors"
           >
             <Download className="w-4 h-4" />
