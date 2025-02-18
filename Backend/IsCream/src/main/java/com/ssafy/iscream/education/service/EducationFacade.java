@@ -10,9 +10,6 @@ import com.ssafy.iscream.common.response.ResponseData;
 import com.ssafy.iscream.education.domain.RecommendType;
 import com.ssafy.iscream.education.dto.req.EducationsGetReq;
 import com.ssafy.iscream.education.dto.res.EducationsGetRes;
-import com.ssafy.iscream.htpTest.domain.Emoji;
-import com.ssafy.iscream.htpTest.domain.HtpTest;
-import com.ssafy.iscream.htpTest.service.HtpTestService;
 import lombok.RequiredArgsConstructor;
 import org.springframework.stereotype.Service;
 
@@ -25,7 +22,6 @@ import java.util.Map;
 public class EducationFacade {
 
     private final EducationService educationService;
-    private final HtpTestService htpTestService;
     private final ChildrenService childrenService;
     private final BigFiveTestService bigFiveTestService;
 
