@@ -19,7 +19,7 @@ interface ChatRoom {
   newMessageCount: number;
   lastMessageTime: string;
   lastMessageUnread: string;
-  opponentId: string;
+  receiver: string;
 }
 
 const ChatPage = () => {
@@ -40,6 +40,7 @@ const ChatPage = () => {
       
       setChatRooms(response.data);
       console.log("chatRooms: ",chatRooms);
+      console.log("챗룸즈~~: ", chatRooms);
       
 
     }catch (error) {
@@ -72,7 +73,7 @@ const ChatPage = () => {
   }
   
   return (
-    <div className="flex flex-col h-screen bg-white">
+    <div className="flex flex-col bg-white">
       <div className="flex-1 overflow-y-auto">
       {chatRooms.length == 0 ? (
           <div className="flex items-center justify-center h-full text-gray-500">
@@ -88,7 +89,8 @@ const ChatPage = () => {
                 state: {
                   roomData: {
                     roomId: room.roomId,
-                    receiver: room.opponentId
+                    receiver: room.receiver, // 상대방 id
+                    opponentName: room.opponentName // 상대방 이름
                   }
                 }
               })}
