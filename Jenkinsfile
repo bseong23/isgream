@@ -3,9 +3,37 @@ pipeline {
 
     environment {
         DOCKER_COMPOSE_FILE = 'docker-compose.yml'
+         LOCAL_ENV_FILE = '/var/lib/jenkins/.env'
     }
 
     stages {
+
+        stage('Check Environment') {
+            steps {
+                sh 'whoami'            // 사용자 확인
+                sh 'git --version'     // Git 버전 확인
+                sh 'echo $PATH'        // PATH 확인
+            }
+        }
+        stage('Copy Local .env') {
+            steps {
+                script {
+                    def backendEnvFile = "${env.WORKSPACE}/Backend/IsCream/.env"
+                    def aiServerEnvFile = "${env.WORKSPACE}/AI/.env"
+                    def workspaceEnvFile = "${env.WORKSPACE}/.env"
+                    def frontendEnvFile = "${env.WORKSPACE}/Frontend/IsCream/.env"
+                    if (fileExists(env.LOCAL_ENV_FILE)) {
+                        sh "cp ${env.LOCAL_ENV_FILE} ${backendEnvFile}"
+                        sh "cp ${env.LOCAL_ENV_FILE} ${aiServerEnvFile}"
+                        sh "cp ${env.LOCAL_ENV_FILE} ${workspaceEnvFile}"
+                        sh "cp ${env.LOCAL_ENV_FILE} ${frontendEnvFile}"
+                        sh "ls -la ${backendEnvFile} ${aiServerEnvFile} ${workspaceEnvFile}"  // 🔹 복사 확인
+                    } else {
+                        error "Local .env file not found at ${env.LOCAL_ENV_FILE}!"
+                    }
+                }
+            }
+        }
         stage('Checkout') {
             steps {
                 checkout scm
@@ -26,7 +54,10 @@ pipeline {
         stage('Build Backend') {
             steps {
                 dir('Backend/IsCream') {
-                    sh './gradlew clean build'
+                    sh '''
+                    export $(grep -v '^#' .env | xargs)
+                    ./gradlew clean build -x test
+                    '''
                 }
             }
         }
@@ -45,10 +76,12 @@ pipeline {
             steps {
                 script {
                     sh '''
-                        docker ps -q --filter "name=backend-app" | xargs -r docker stop
-                        docker ps -aq --filter "name=backend-app" | xargs -r docker rm
-                        docker ps -q --filter "name=frontend-app" | xargs -r docker stop
-                        docker ps -aq --filter "name=frontend-app" | xargs -r docker rm
+                        docker ps -q --filter "name=nginx" | xargs -r docker stop
+                        docker ps -aq --filter "name=nginx" | xargs -r docker rm
+                        
+                        docker ps -q --filter "name=backend" | xargs -r docker stop
+                        docker ps -aq --filter "name=backend" | xargs -r docker rm
+                        
                         docker ps -q --filter "name=ai-server" | xargs -r docker stop
                         docker ps -aq --filter "name=ai-server" | xargs -r docker rm
                     '''
