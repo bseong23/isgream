@@ -1,25 +1,41 @@
-import React, { useState } from "react";
+import React, { useState, useEffect, useMemo } from "react";
 import usePatTestQuestions from "../../hooks/pat/usePatTestQuestions";
 import { useNavigate } from "react-router-dom";
-import { api } from "../../utils/common/axiosInstance"
+import { api } from "../../utils/common/axiosInstance";
 
 const ParentingTest: React.FC = () => {
   const { questions, loading, error } = usePatTestQuestions();
-  const questionList = questions?.data ?? [];
   const navigate = useNavigate();
+
+  // ✅ Ensure `questionList` is stable
+  const questionList = useMemo(() => questions?.data ?? [], [questions]);
 
   // ✅ 모달 상태
   const [isModalOpen, setIsModalOpen] = useState(true);
 
-  // ✅ 사용자가 선택한 답변 저장
-  const [selectedAnswers, setSelectedAnswers] = useState<number[]>(new Array(questionList.length).fill(0));
+  // ✅ 사용자가 선택한 답변 저장 (초기값: 질문 개수에 맞게 0으로 설정)
+  const [selectedAnswers, setSelectedAnswers] = useState<number[]>([]);
 
   // ✅ 결과 제출 로딩 상태
   const [isSubmitting, setIsSubmitting] = useState(false);
 
+  // ✅ 모든 질문 응답 여부 상태
+  const [allAnswered, setAllAnswered] = useState(false);
+
+  // ✅ 질문이 로드된 후 selectedAnswers 배열 초기화
+  useEffect(() => {
+    if (questionList.length > 0) {
+      setSelectedAnswers(new Array(questionList.length).fill(0));
+    }
+  }, [questionList]);
+
+  // ✅ 모든 질문이 응답되었는지 체크하는 useEffect
+  useEffect(() => {
+    setAllAnswered(selectedAnswers.length === questionList.length && !selectedAnswers.includes(0));
+  }, [selectedAnswers, questionList.length]);
+
   // ✅ 답변 선택 핸들러
   const handleSelectAnswer = (questionIndex: number, answerIndex: number) => {
-    if (selectedAnswers[questionIndex] === answerIndex + 1) return; // ✅ 이미 선택한 값이면 변경 안 함
     setSelectedAnswers((prev) => {
       const newAnswers = [...prev];
       newAnswers[questionIndex] = answerIndex + 1;
@@ -27,34 +43,40 @@ const ParentingTest: React.FC = () => {
     });
   };
 
-  // ✅ 백엔드로 결과 제출 (POST 요청)
-    // ✅ 백엔드로 결과 제출 (POST 요청)
-    const handleSubmit = async () => {
-      setIsSubmitting(true);
+  // ✅ 검사 결과 제출
+  const handleSubmit = async () => {
+    if (!allAnswered) return;
+    setIsSubmitting(true);
 
-      try {
-        const response = await api.post("/pat-tests", {
-      scoreA: selectedAnswers.filter((ans) => ans === 1).length,
-      scoreB: selectedAnswers.filter((ans) => ans === 2).length,
-      scoreC: selectedAnswers.filter((ans) => ans === 3).length,
-      });
-      console.log("✅ 결과 전송 성공:", response.data);
-      navigate("/pat-test-result"); // ✅ 결과 페이지로 이동
-      } catch (err) {
-        console.error("❌ 결과 전송 오류:", err);
-        alert("결과 전송에 실패했습니다. 다시 시도해 주세요.");
-      } finally {
-        setIsSubmitting(false);
-      }
-    };
+    console.log("📡 검사 결과 준비 중...");
+    console.log("선택된 답변:", selectedAnswers);
 
+    const scoreA = selectedAnswers.filter((ans) => ans === 1).length;
+    const scoreB = selectedAnswers.filter((ans) => ans === 2).length;
+    const scoreC = selectedAnswers.filter((ans) => ans === 3).length;
+
+    console.log("요청 데이터:", { scoreA, scoreB, scoreC });
+
+    try {
+      console.log("📡 검사 결과 전송 중...");
+      await api.post("/pat-tests", { scoreA, scoreB, scoreC });
+
+      console.log("✅ 검사 결과 서버 반영 완료");
+      await new Promise((resolve) => setTimeout(resolve, 1000));
+
+      // ✅ 검사 결과 페이지로 이동
+      navigate("/pat-test-result");
+    } finally {
+      setIsSubmitting(false);
+    }
+  };
 
   if (loading) return <p className="text-center text-lg font-semibold">Loading...</p>;
   if (error) return <p className="text-center text-red-500 font-semibold">Error: {error}</p>;
 
   return (
     <div className="max-w-3xl mx-auto p-6 bg-white rounded-lg shadow-md relative">
-      {/* ✅ 기본 HTML 모달 */}
+      {/* ✅ 모달 창 */}
       {isModalOpen && (
         <div className="fixed inset-0 flex items-center justify-center bg-white bg-opacity-50">
           <div className="bg-white p-6 rounded-lg shadow-lg w-3/4 max-w-md">
@@ -93,7 +115,7 @@ const ParentingTest: React.FC = () => {
                     selectedAnswers[index] === answerIndex + 1 ? "bg-blue-500 text-white scale-100" : "bg-white hover:bg-blue-100"
                   }`}
                   onClick={() => handleSelectAnswer(index, answerIndex)}
-                  style={{ transition: "transform 0.1s ease-in-out" }} // ✅ 반응 속도 빠르게 조정
+                  style={{ transition: "transform 0.1s ease-in-out" }}
                 >
                   {answer}
                 </li>
@@ -103,16 +125,18 @@ const ParentingTest: React.FC = () => {
         ))}
       </div>
 
-      {/* ✅ 결과 제출 버튼 */}
-      {selectedAnswers.every((val) => val !== 0) && (
-        <button
-          className="w-full mt-6 p-3 bg-green-500 text-white font-regular rounded-md hover:bg-green-600 transition"
-          onClick={handleSubmit}
-          disabled={isSubmitting}
-        >
-          {isSubmitting ? "제출 중..." : "결과 제출"}
-        </button>
-      )}
+      {/* ✅ 결과 제출 버튼 (모든 질문 응답해야 활성화) */}
+      <button
+        className={`w-full mt-6 p-3 font-regular rounded-md transition ${
+          allAnswered
+            ? "bg-green-500 text-white hover:bg-green-600"
+            : "bg-gray-300 text-gray-600 cursor-not-allowed"
+        }`}
+        onClick={handleSubmit}
+        disabled={!allAnswered || isSubmitting}
+      >
+        {isSubmitting ? "제출 중..." : "결과 제출"}
+      </button>
     </div>
   );
 };
