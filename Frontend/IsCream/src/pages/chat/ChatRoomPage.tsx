@@ -32,6 +32,32 @@ const ChatRoomPage = () => {
   const [chatData, setChatData] = useState<ChatRoomData | null>(null);
   const [isConnected, setIsConnected] = useState(false);
   const [isLoading, setIsLoading] = useState(true);
+  const [currentUserId, setCurrentUserId] = useState<string | null>(null);
+
+  const decodeToken = (token: string) => {
+    try {
+      const base64Payload = token.split('.')[1];
+      const payload = atob(base64Payload);
+      return JSON.parse(payload);
+    } catch (error) {
+      console.error('토큰 디코딩 실패:', error);
+      return null;
+    }
+  };
+
+  useEffect(() => {
+    const token = localStorage.getItem('accessToken');
+    console.log("내가바로토큰이다 ", token);
+    
+    if (token) {
+      const decodedToken = decodeToken(token);
+      if (decodedToken?.userId) {
+        setCurrentUserId(decodedToken.userId);
+        console.log("디코딩된 토큰:", decodedToken);
+        console.log("현재 유저 ID:", decodedToken.userId);
+      }
+    }
+  }, []);
 
   useEffect(() => {
     const initializeChatRoom = async () => {
@@ -41,8 +67,11 @@ const ChatRoomPage = () => {
         setIsLoading(true);
         // 1. 채팅방 입장 및 초기 메시지 로드
         const response = await chatApi.openChatroom(roomId, 0);
+        if (response.data && response.data.length > 0) {
+          console.log("첫 번째 메시지의 sender:", response.data[0].sender);
+          console.log("첫 번째 메시지의 receiver:", response.data[0].receiver);
+        }
         setChatData({chats: response.data});
-        console.log("ChatRoomPage / 챗데이터: ", response.data);
         
         // 2. 웹소켓 연결
         const token = localStorage.getItem("access");
@@ -112,19 +141,21 @@ const ChatRoomPage = () => {
         {chatData?.chats.map((chat) => (
           <div
             key={chat.id}
-            className={`flex ${chat.sender === localStorage.getItem('userId') ? "justify-end" : "justify-start"}`}
+            className={`flex ${chat.sender == currentUserId ? "justify-end" : "justify-start"}`}
           >
-            <div
-              className={`max-w-[70%] p-3 rounded-lg ${
-                chat.sender === localStorage.getItem('userId')
-                  ? "bg-white text-black border"
-                  : "bg-green-500 text-white"
-              }`}
-            >
-              {chat.content}
-            </div>
-            <div className="text-xs text-gray-500 mt-1">
-              {chat.timestamp}
+            <div>
+              <div
+                className={`max-w-[70%] p-3 rounded-lg ${
+                  chat.sender == currentUserId
+                    ? "bg-white text-black border"
+                    : "bg-green-500 text-white"
+                }`}
+              >
+                {chat.content}
+              </div>
+              <div className="text-xs text-gray-500 mt-1">
+                {chat.timestamp}
+              </div>
             </div>
           </div>
         ))}
