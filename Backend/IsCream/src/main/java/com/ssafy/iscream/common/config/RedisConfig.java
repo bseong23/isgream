@@ -1,6 +1,7 @@
 package com.ssafy.iscream.common.config;
 
 import com.fasterxml.jackson.databind.ObjectMapper;
+import com.fasterxml.jackson.datatype.jsr310.JavaTimeModule;
 import com.ssafy.iscream.chat.listener.RedisSubscriber;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.beans.factory.annotation.Value;
@@ -38,13 +39,21 @@ public class RedisConfig {
 
     @Bean
     public RedisTemplate<String, Object> redisTemplate(RedisConnectionFactory redisConnectionFactory) {
+
+        // ✅ (추가) ObjectMapper 생성 및 JavaTimeModule 등록
+        ObjectMapper objectMapper = new ObjectMapper();
+        objectMapper.registerModule(new JavaTimeModule()); // ✅ LocalDateTime 직렬화 가능하게 설정
+
+        // ✅ (변경) 기존 GenericJackson2JsonRedisSerializer에서 ObjectMapper 포함
+        GenericJackson2JsonRedisSerializer serializer = new GenericJackson2JsonRedisSerializer(objectMapper);
+
         RedisTemplate<String, Object> template = new RedisTemplate<>();
         template.setConnectionFactory(redisConnectionFactory);
 
-        template.setKeySerializer(new StringRedisSerializer());
-        template.setValueSerializer(new GenericJackson2JsonRedisSerializer());
+        template.setKeySerializer(new StringRedisSerializer()); // Key는 String으로 직렬화
+        template.setValueSerializer(serializer); // Value 직렬화 (LocalDateTime 지원)
         template.setHashKeySerializer(new StringRedisSerializer());
-        template.setHashValueSerializer(new GenericJackson2JsonRedisSerializer());
+        template.setHashValueSerializer(serializer);
 
         return template;
     }
@@ -89,6 +98,8 @@ public class RedisConfig {
      */
     @Bean
     public RedisSubscriber redisSubscriber(ObjectMapper objectMapper, SimpMessagingTemplate messagingTemplate) {
+        // ✅ ObjectMapper에 JavaTimeModule 등록
+        objectMapper.registerModule(new JavaTimeModule());
         return new RedisSubscriber(objectMapper, messagingTemplate);
     }
 
