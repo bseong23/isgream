@@ -35,14 +35,15 @@ public class ChatRoomFacade {
                         .count();
                 lastMessage = chatMessages.get(0).getContent();
             }
-
-            UserInfo userInfo = userService.getUser(userId.equals(chatRoom.getParticipantIds().get(0)) ? Integer.valueOf(chatRoom.getParticipantIds().get(0)): Integer.valueOf(chatRoom.getParticipantIds().get(1)));
+            Integer receiver = userId.equals(chatRoom.getParticipantIds().get(0)) ? Integer.valueOf(chatRoom.getParticipantIds().get(0)): Integer.valueOf(chatRoom.getParticipantIds().get(1));
+            UserInfo userInfo = userService.getUser(receiver);
             ChatRoomsGetRes chatRoomsGetRes = ChatRoomsGetRes.builder()
                     .roomId(chatRoom.getId())
                     .LastMessageTime(chatRoom.getLastMessageTimestamp())
                     .newMessageCount((int)unreadCount)
                     .lastMessageUnread(lastMessage)
                     .opponentName(userInfo.nickname())
+                    .receiver(String.valueOf(receiver))
                     .build();
             chatRoomsGetResList.add(chatRoomsGetRes);
         }
