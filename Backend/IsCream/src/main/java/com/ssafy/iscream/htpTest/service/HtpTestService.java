@@ -6,6 +6,7 @@ import com.ssafy.iscream.children.service.ChildrenService;
 import com.ssafy.iscream.htpTest.domain.HtpTest;
 import com.ssafy.iscream.htpTest.dto.request.HtpTestDiagnosisReq;
 import com.ssafy.iscream.htpTest.dto.request.HtpTestReq;
+import com.ssafy.iscream.htpTest.dto.response.HtpTestImageAndDiagnosis;
 import com.ssafy.iscream.htpTest.repository.HtpTestRepository;
 import com.ssafy.iscream.htpTest.repository.RedisService;
 import com.ssafy.iscream.pdf.service.HtpTestPdfService;
@@ -39,7 +40,7 @@ public class HtpTestService {
     }
 
     // ✅ 전체 HTP 테스트 사이클 실행
-    public String htpTestCycle(User user, HtpTestReq req) {
+    public HtpTestImageAndDiagnosis htpTestCycle(User user, HtpTestReq req) {
         Integer childId = req.getChildId();
 
         // 🔥 기존 HashMap → LinkedHashMap 사용하여 API 순서 유지
@@ -56,12 +57,21 @@ public class HtpTestService {
         }
 
         processHtpDrawing(user, req, imageMap, req.getType());
-
+        HtpTestImageAndDiagnosis response  = new HtpTestImageAndDiagnosis();
         if (req.getIndex().equals(4) && (req.getType().equals("male") || req.getType().equals("female"))) {
-            return sendToAiServer(user, childId, saveOrGetHtpTest(user.getUserId(), childId), imageMap);
+            sendToAiServer(user, childId, saveOrGetHtpTest(user.getUserId(), childId), imageMap);
+            HtpTest htpTest = saveOrGetHtpTest(user.getUserId(), req.getChildId());
+            response.setHtpTestId(htpTest.getHtpTestId());
+            response.setResult(htpTest.getAnalysisResult());
+            response.setHouseDrawingUrl(htpTest.getHouseDrawingUrl());
+            response.setTreeDrawingUrl(htpTest.getTreeDrawingUrl());
+            response.setMaleDrawingUrl(htpTest.getMaleDrawingUrl());
+            response.setFemaleDrawingUrl(htpTest.getFemaleDrawingUrl());
+
+            return response;
         }
 
-        return "";
+        return response;
     }
 
     // ✅ 그림 데이터 처리 (중복 제거 및 순서 유지)
