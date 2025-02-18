@@ -33,6 +33,9 @@ const NotificationModal: React.FC<NotificationModalProps> = ({
           navigate(`/board/detail/${notification.postId}`);
           break;
       }
+    } else if (notification.chatId) {
+      // 채팅방으로 이동 추가
+      navigate(`/chat/room/${notification.chatId}`);
     }
 
     onClose();
@@ -99,11 +102,18 @@ const NotificationModal: React.FC<NotificationModalProps> = ({
         <div className="overflow-y-auto max-h-[calc(80vh-4rem)]">
           <div className="p-4">
             {notifications.length > 0 ? (
-              notifications.map((notification) => (
-                <div
-                  key={notification.notifyId}
-                  onClick={() => handleNotificationClick(notification)}
-                  className={`group relative p-4 mb-3 rounded-xl cursor-pointer transition-all duration-200
+              // 최신 순으로 정렬
+              [...notifications]
+                .sort(
+                  (a, b) =>
+                    new Date(b.createdAt).getTime() -
+                    new Date(a.createdAt).getTime()
+                )
+                .map((notification) => (
+                  <div
+                    key={notification.notifyId}
+                    onClick={() => handleNotificationClick(notification)}
+                    className={`group relative p-4 mb-3 rounded-xl cursor-pointer transition-all duration-200
                    ${
                      notification.read
                        ? "bg-gray-50 hover:bg-gray-100"
@@ -111,68 +121,68 @@ const NotificationModal: React.FC<NotificationModalProps> = ({
                    }
                    border border-transparent hover:border-gray-200
                    hover:shadow-md`}
-                >
-                  {/* 읽지 않은 알림 표시 */}
-                  {!notification.read && (
-                    <span className="absolute top-4 right-4 w-2 h-2 bg-blue-500 rounded-full" />
-                  )}
+                  >
+                    {/* 읽지 않은 알림 표시 */}
+                    {!notification.read && (
+                      <span className="absolute top-4 right-4 w-2 h-2 bg-blue-500 rounded-full" />
+                    )}
 
-                  {/* 알림 유형 아이콘 */}
-                  <div className="flex items-start gap-3">
-                    <div
-                      className={`p-2 rounded-full 
+                    {/* 알림 유형 아이콘 */}
+                    <div className="flex items-start gap-3">
+                      <div
+                        className={`p-2 rounded-full 
                      ${notification.read ? "bg-gray-100" : "bg-blue-100"}`}
-                    >
-                      {notification.type === "NOTIFY_COMMENT" ? (
-                        <svg
-                          className="w-4 h-4 text-gray-600"
-                          fill="none"
-                          stroke="currentColor"
-                          viewBox="0 0 24 24"
-                        >
-                          <path
-                            strokeLinecap="round"
-                            strokeLinejoin="round"
-                            strokeWidth="2"
-                            d="M8 10h.01M12 10h.01M16 10h.01M9 16H5a2 2 0 01-2-2V6a2 2 0 012-2h14a2 2 0 012 2v8a2 2 0 01-2 2h-5l-5 5v-5z"
-                          />
-                        </svg>
-                      ) : (
-                        <svg
-                          className="w-4 h-4 text-gray-600"
-                          fill="none"
-                          stroke="currentColor"
-                          viewBox="0 0 24 24"
-                        >
-                          <path
-                            strokeLinecap="round"
-                            strokeLinejoin="round"
-                            strokeWidth="2"
-                            d="M4.318 6.318a4.5 4.5 0 000 6.364L12 20.364l7.682-7.682a4.5 4.5 0 00-6.364-6.364L12 7.636l-1.318-1.318a4.5 4.5 0 00-6.364 0z"
-                          />
-                        </svg>
-                      )}
-                    </div>
-
-                    <div className="flex-1">
-                      <h3 className="font-medium text-gray-900 group-hover:text-blue-600">
-                        {notification.title}
-                      </h3>
-                      <p className="text-gray-600 text-sm mt-1">
-                        {notification.content}
-                      </p>
-                      <p className="text-gray-400 text-xs mt-2 flex items-center gap-2">
-                        <span>{formatDate(notification.createdAt)}</span>
-                        {notification.read && (
-                          <span className="px-2 py-0.5 rounded-full bg-gray-100 text-gray-500">
-                            읽음
-                          </span>
+                      >
+                        {notification.type === "NOTIFY_COMMENT" ? (
+                          <svg
+                            className="w-4 h-4 text-gray-600"
+                            fill="none"
+                            stroke="currentColor"
+                            viewBox="0 0 24 24"
+                          >
+                            <path
+                              strokeLinecap="round"
+                              strokeLinejoin="round"
+                              strokeWidth="2"
+                              d="M8 10h.01M12 10h.01M16 10h.01M9 16H5a2 2 0 01-2-2V6a2 2 0 012-2h14a2 2 0 012 2v8a2 2 0 01-2 2h-5l-5 5v-5z"
+                            />
+                          </svg>
+                        ) : (
+                          <svg
+                            className="w-4 h-4 text-gray-600"
+                            fill="none"
+                            stroke="currentColor"
+                            viewBox="0 0 24 24"
+                          >
+                            <path
+                              strokeLinecap="round"
+                              strokeLinejoin="round"
+                              strokeWidth="2"
+                              d="M4.318 6.318a4.5 4.5 0 000 6.364L12 20.364l7.682-7.682a4.5 4.5 0 00-6.364-6.364L12 7.636l-1.318-1.318a4.5 4.5 0 00-6.364 0z"
+                            />
+                          </svg>
                         )}
-                      </p>
+                      </div>
+
+                      <div className="flex-1">
+                        <h3 className="font-medium text-gray-900 group-hover:text-blue-600">
+                          {notification.title}
+                        </h3>
+                        <p className="text-gray-600 text-sm mt-1">
+                          {notification.content}
+                        </p>
+                        <p className="text-gray-400 text-xs mt-2 flex items-center gap-2">
+                          <span>{formatDate(notification.createdAt)}</span>
+                          {notification.read && (
+                            <span className="px-2 py-0.5 rounded-full bg-gray-100 text-gray-500">
+                              읽음
+                            </span>
+                          )}
+                        </p>
+                      </div>
                     </div>
                   </div>
-                </div>
-              ))
+                ))
             ) : (
               <div className="text-center py-12">
                 <svg
@@ -185,7 +195,7 @@ const NotificationModal: React.FC<NotificationModalProps> = ({
                     strokeLinecap="round"
                     strokeLinejoin="round"
                     strokeWidth="2"
-                    d="M15 17h5l-1.405-1.405A2.032 2.032 0 0118 14.158V11a6.002 6.002 0 00-4-5.659V5a2 2 0 10-4 0v.341C7.67 6.165 6 8.388 6 11v3.159c0 .538-.214 1.055-.595 1.436L4 17h5m6 0v1a3 3 0 11-6 0v-1m6 0H9"
+                    d="M15 17h5l-1.405-1.405A2.032 2.035 0 0118 14.158V11a6.002 6.002 0 00-4-5.659V5a2 2 0 10-4 0v.341C7.67 6.165 6 8.388 6 11v3.159c0 .538-.214 1.055-.595 1.436L4 17h5m6 0v1a3 3 0 11-6 0v-1m6 0H9"
                   />
                 </svg>
                 <p className="text-gray-500">알림이 없습니다</p>
