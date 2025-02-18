@@ -31,23 +31,32 @@ const Banner = () => {
   const [isPaused, setIsPaused] = useState(false);
   const [isTransitioning, setIsTransitioning] = useState(false);
 
-  const moveToSlide = useCallback((index: number) => {
-    setCurrentSlide(index);
-    setIsTransitioning(true);
-  }, []);
+  const moveToSlide = useCallback(
+    (index: number) => {
+      // 애니메이션 중 추가 슬라이드 이동 방지
+      if (isTransitioning) return;
+
+      setCurrentSlide(index);
+      setIsTransitioning(true);
+    },
+    [isTransitioning]
+  );
 
   const handleTransitionEnd = () => {
     setIsTransitioning(false);
 
     // 첫 번째 가짜 슬라이드일 때 (맨 마지막 실제 슬라이드로 이동)
     if (currentSlide === 0) {
+      // 트랜지션 없이 즉시 마지막 실제 슬라이드로 이동
       setCurrentSlide(slides.length - 2);
     }
     // 마지막 가짜 슬라이드일 때 (맨 첫 번째 실제 슬라이드로 이동)
     else if (currentSlide === slides.length - 1) {
+      // 트랜지션 없이 즉시 첫 번째 실제 슬라이드로 이동
       setCurrentSlide(1);
     }
   };
+
   useEffect(() => {
     if (isPaused) return;
 

@@ -13,7 +13,9 @@ const AICard = () => {
                 <img
                   src={AIRobot}
                   alt="AI 로봇"
-                  className="w-full h-auto object-contain transition-transform duration-300 transform hover:scale-110 group-hover:scale-110"
+                  className="w-full h-auto object-contain transition-all duration-300 transform 
+                    group-hover:-translate-y-2 
+                    group-hover:scale-115"
                 />
               </div>
 
