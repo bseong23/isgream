@@ -47,6 +47,7 @@ const BoardMain = () => {
       thumbnail: apiPost.thumbnail || "",
       createdAt: formattedDate,
       authorName: apiPost.authorName,
+      authorId: apiPost.authorId,
       likes: apiPost.likes || 0,
       userLiked: apiPost.userLiked,
       hits: apiPost.viewCount || 0

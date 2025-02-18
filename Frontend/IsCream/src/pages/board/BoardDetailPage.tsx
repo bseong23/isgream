@@ -25,6 +25,9 @@ const BoardDetailPage = () => {
   const deleteCommentMutation = useDeleteComment();
   const updateCommentMutation = useUpdateComment();
 
+
+  console.log("작가아이디 있는지 확인 ", postData);
+  
   const [isCommentFormVisible, setIsCommentFormVisible] =
     useState<boolean>(false);
   const { isAuthenticated, user } = useAuth();
