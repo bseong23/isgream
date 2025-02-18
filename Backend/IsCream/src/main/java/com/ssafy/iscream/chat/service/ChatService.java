@@ -46,11 +46,6 @@ public class ChatService {
             throw new IllegalArgumentException("🚨 유효하지 않은 채팅방 ID 또는 참가자 불일치");
         }
 
-        // 1. 상대방 유저 ID를 opponentId
-        // 2. 채팅방id chatRoomId
-
-
-
         ChatMessage chatMessage = ChatMessage.builder()
                 .roomId(chatMessageDto.getRoomId())
                 .sender(chatMessageDto.getSender())
@@ -69,6 +64,7 @@ public class ChatService {
         log.info("📤 Redis Pub/Sub 발행 (messageId 포함): {}", chatMessageDto);
 
         redisTemplate.convertAndSend("chatroom-" + chatMessageDto.getRoomId(), chatMessageDto);
+
     }
 
     public void handleAck(MessageAckDto ackDto) {
@@ -135,5 +131,17 @@ public class ChatService {
                 userId, roomId, page, messagePage.getNumberOfElements());
 
         return messagePage.getContent();
+    }
+    public boolean checkReceiverOnline(String receiverId, String chatRoomId) {
+        String redisKey = "chatroom-" + chatRoomId;
+
+        // ✅ 레디스에서 상대방이 현재 채팅방에 있는지 확인
+        Boolean isOpponentActive = redisTemplate.opsForSet().isMember(redisKey, receiverId);
+        if(isOpponentActive)
+            return true;
+
+        log.info("📢 상대방({})이 채팅방({})에 없음 -> 알림 전송", receiverId, chatRoomId);
+        return false;
+
     }
 }
