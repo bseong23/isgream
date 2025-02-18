@@ -70,23 +70,16 @@ public class FirebaseConfig {
 
     @PostConstruct
     public void init() {
-        System.out.println("@PostConstruct 메소드 시작입니다!!!");
         try {
+            System.out.println("@PostConstruct 메소드 시작입니다!!!");
 
             ClassPathResource classPathResource = new ClassPathResource("firebase/serviceAccountKey.json");
             if (!classPathResource.exists()) {
-                throw new RuntimeException("Firebase JSON 파일을 찾을 수 없습니다.");
+                throw new RuntimeException("❌ Firebase JSON 파일을 찾을 수 없습니다.");
             }
 
             InputStream serviceAccount = classPathResource.getInputStream();
-            System.out.println("================================================");
-            System.out.println(serviceAccount);
-            System.out.println("================================================");
-
-
-            if (serviceAccount == null) {
-                throw new FileNotFoundException("Firebase serviceAccountKey.json 파일을 찾을 수 없습니다.");
-            }
+            System.out.println("✅ Firebase JSON 파일이 정상적으로 로드되었습니다.");
 
             FirebaseOptions options = FirebaseOptions.builder()
                     .setCredentials(GoogleCredentials.fromStream(serviceAccount))
@@ -97,11 +90,14 @@ public class FirebaseConfig {
             }
 
             this.firestore = FirestoreClient.getFirestore();
-            System.out.println("@PostConstruct 메소드 종료입니다!!!");
+            System.out.println("✅ Firebase Firestore 설정 완료!");
+
         } catch (Exception e) {
-            throw new RuntimeException("Firestore 초기화 실패: " + e.getMessage());
+            e.printStackTrace(); // 예외 전체 스택 출력
+            throw new RuntimeException("❌ Firestore 초기화 실패: " + e.getMessage());
         }
     }
+
 
     @Bean
     public Firestore getFirestore() {

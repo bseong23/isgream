@@ -58,7 +58,8 @@ dependencies {
     annotationProcessor "jakarta.annotation:jakarta.annotation-api"
     annotationProcessor "jakarta.persistence:jakarta.persistence-api"
 
-    implementation 'com.google.firebase:firebase-admin:9.4.3'
+    implementation("com.google.firebase:firebase-admin:9.2.0") // Firebase Admin SDK
+    implementation("com.google.protobuf:protobuf-java:3.21.12") // Protobuf 명시적 추가
 
     // Firebase Firestore
 //    implementation 'com.google.firebase:firebase-firestore:24.6.0'
