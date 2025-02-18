@@ -128,11 +128,6 @@ public class HtpTestService {
         return htpTestRepository.findByChildIdAndDate(childId, selectedDate).orElse(null);
     }
 
-    // ✅ 최근 HTP 테스트 조회
-    public HtpTest getLastHtpTest(Integer childId) {
-        return htpTestRepository.findFirstByChildIdOrderByCreatedAtDesc(childId).orElse(null);
-    }
-
     // ✅ PDF URL 생성 및 반환
     public Map<String, String> getHtpTestPdfUrl(User user, Integer htpTestId) {
         HtpTest htpTest = htpTestRepository.findByHtpTestId(htpTestId);
