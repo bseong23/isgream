@@ -6,7 +6,7 @@ export const childApi = {
   async getChildren(): Promise<Child[]> {
     try {
       console.log("자녀목록조회시도중");
-      
+
       const response = await api.get("/children");
       console.log("자녀목록조회완전잘돼: ", response);
 

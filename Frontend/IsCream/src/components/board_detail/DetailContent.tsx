@@ -93,6 +93,17 @@ const DetailContent: React.FC<DetailContentProps> = ({
 
           {showDropdown && (
             <div className="absolute right-0 mt-2 w-32 bg-white rounded-lg shadow-lg border border-gray-200 z-10">
+              {onChat && (
+                <button
+                  onClick={() => {
+                    onChat(post.author.id);
+                    setShowDropdown(false);
+                  }}
+                  className="w-full px-4 py-2 text-left text-sm hover:bg-gray-100 rounded-b-lg"
+                >
+                  채팅하기
+                </button>
+              )}
               <button
                 onClick={handleEditClick}
                 className="w-full px-4 py-2 text-left text-sm hover:bg-gray-100 rounded-t-lg"
@@ -108,15 +119,6 @@ const DetailContent: React.FC<DetailContentProps> = ({
               >
                 삭제하기
               </button>
-              {onChat && (
-                <button
-                  onClick={handleChatClick}
-                  disabled={isCreatingChat}
-                  className="w-full px-4 py-2 text-left text-sm hover:bg-gray-100 rounded-b-lg"
-                >
-                  채팅하기
-                </button>
-              )}
             </div>
           )}
         </div>
