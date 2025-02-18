@@ -22,7 +22,7 @@ const MainPage = () => {
           <div className="grid grid-cols-4 mt-2 gap-2 justify-items-center">
             <MainCard
               image={ParentingAttitude}
-              title="부모양육태도 검사"
+              title="양육태도 검사"
               to="/parenting-test"
             />
             <MainCard image={Big5} title="성격5요인 검사" to="/big5-test" />

@@ -7,6 +7,12 @@ interface MainCardProps {
 }
 
 const MainCard = ({ image, title, to }: MainCardProps) => {
+  // 양육태도검사일 경우 더 큰 스케일 적용
+  const imageScaleClass =
+    title === "양육태도검사"
+      ? "scale-140" // 기본 스케일을 125%로 고정
+      : "scale-100"; // 다른 카드들은 기본 크기 유지
+
   return (
     <Link to={to} className="h-full no-underline mt-2 group">
       <div className="w-full h-full border border-[#009E28] rounded-[15px] bg-white hover:bg-gray-50 hover:border-3 p-1 flex flex-col items-center justify-between hover:shadow-xl transition-all duration-200">
@@ -15,7 +21,7 @@ const MainCard = ({ image, title, to }: MainCardProps) => {
           <img
             src={image}
             alt={title}
-            className="max-w-[95%] max-h-full w-auto h-auto object-contain transition-transform duration-300 transform hover:scale-110 group-hover:scale-110"
+            className={`max-w-[95%] max-h-full w-auto h-auto object-contain transition-transform duration-300 transform ${imageScaleClass}`}
           />
         </div>
         {/* 텍스트 영역 */}
@@ -28,5 +34,4 @@ const MainCard = ({ image, title, to }: MainCardProps) => {
     </Link>
   );
 };
-
 export default MainCard;

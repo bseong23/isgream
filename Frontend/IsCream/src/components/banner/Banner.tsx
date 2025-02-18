@@ -38,13 +38,16 @@ const Banner = () => {
 
   const handleTransitionEnd = () => {
     setIsTransitioning(false);
+
+    // 첫 번째 가짜 슬라이드일 때 (맨 마지막 실제 슬라이드로 이동)
     if (currentSlide === 0) {
       setCurrentSlide(slides.length - 2);
-    } else if (currentSlide === slides.length - 1) {
+    }
+    // 마지막 가짜 슬라이드일 때 (맨 첫 번째 실제 슬라이드로 이동)
+    else if (currentSlide === slides.length - 1) {
       setCurrentSlide(1);
     }
   };
-
   useEffect(() => {
     if (isPaused) return;
 
