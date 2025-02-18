@@ -46,3 +46,14 @@ export interface BigFiveRecentResultResponse {
     analysis: string; // 참고: 'analysys' 오타 수정
   };
 }
+
+export interface GetTestListResponse {
+  code: "S0000" | "E4001";
+  message: string;
+  data: {
+    date: string;
+    id: string;
+    status: string;
+    testType: string;
+  }[];
+}

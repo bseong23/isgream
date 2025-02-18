@@ -9,7 +9,7 @@ const HeaderController = () => {
     console.log("선택된 아이:", selectedItem);
   }, []);
 
-  if (location.pathname === "/" || location.pathname === "/mypage") {
+  if (location.pathname === "/") {
     return <HeaderMain onChildSelect={handleChildSelect} />;
   } else {
     return <HeaderNormal />;

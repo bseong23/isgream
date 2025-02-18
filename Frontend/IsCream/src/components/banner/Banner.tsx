@@ -1,30 +1,55 @@
-import React, { useState, useEffect } from "react";
+import React, { useState, useEffect, useCallback } from "react";
 import { Link } from "react-router-dom";
-import HTPimage from "../../assets/image/HTP검사.png";
-import ParentingAttitude from "../../assets/image/육아양육태도검사.png";
+import ParentingAttitude from "../../assets/image/부모양육태도.png";
 import Big5 from "../../assets/image/성격5요인검사.png";
-import HTP from "../../assets/image/htp.jpg";
+import HTP from "../../assets/image/그림일기.png";
+
+interface SlideType {
+  image: string;
+  to: string;
+  isVertical?: boolean;
+}
 
 const Banner = () => {
-  const slides = [
-    { image: HTPimage, to: "/ai-analysis" },
-    { image: ParentingAttitude, to: "/parenting-test" },
-    { image: Big5, to: "/big5-test" },
-    { image: HTP, to: "/ai-analysis" }
+  const originalSlides: SlideType[] = [
+    { image: HTP, to: "/ai-analysis", isVertical: true },
+    { image: ParentingAttitude, to: "/parenting-test", isVertical: true },
+    { image: Big5, to: "/big5-test" }
   ];
 
-  const [currentSlide, setCurrentSlide] = useState(0);
+  const slides = [
+    originalSlides[originalSlides.length - 1],
+    ...originalSlides,
+    originalSlides[0]
+  ];
+
+  const [currentSlide, setCurrentSlide] = useState(1);
   const [isPaused, setIsPaused] = useState(false);
+  const [isTransitioning, setIsTransitioning] = useState(false);
+
+  const moveToSlide = useCallback((index: number) => {
+    setCurrentSlide(index);
+    setIsTransitioning(true);
+  }, []);
+
+  const handleTransitionEnd = () => {
+    setIsTransitioning(false);
+    if (currentSlide === 0) {
+      setCurrentSlide(slides.length - 2);
+    } else if (currentSlide === slides.length - 1) {
+      setCurrentSlide(1);
+    }
+  };
 
   useEffect(() => {
     if (isPaused) return;
 
     const timer = setInterval(() => {
-      setCurrentSlide((prev) => (prev === slides.length - 1 ? 0 : prev + 1));
+      moveToSlide(currentSlide + 1);
     }, 5000);
 
     return () => clearInterval(timer);
-  }, [isPaused]);
+  }, [isPaused, currentSlide, moveToSlide]);
 
   const [touchStart, setTouchStart] = useState<number | null>(null);
   const [touchEnd, setTouchEnd] = useState<number | null>(null);
@@ -47,44 +72,73 @@ const Banner = () => {
     const isRightSwipe = distance < -50;
 
     if (isLeftSwipe) {
-      setCurrentSlide((prev) => (prev === slides.length - 1 ? 0 : prev + 1));
+      moveToSlide(currentSlide + 1);
     }
     if (isRightSwipe) {
-      setCurrentSlide((prev) => (prev === 0 ? slides.length - 1 : prev - 1));
+      moveToSlide(currentSlide - 1);
     }
 
     setTouchStart(null);
     setTouchEnd(null);
   };
 
+  const getSlideStyle = (index: number) => {
+    const isActive = index === currentSlide;
+    const diff = index - currentSlide;
+
+    return {
+      transformStyle: "preserve-3d" as const,
+      transform: `
+        scale(${isActive ? 1 : 0.85}) 
+        translateX(${diff * 10}%) 
+        translateZ(${isActive ? 0 : -100}px)
+        rotateY(${diff * 5}deg)
+      `,
+      transition: isTransitioning ? "all 0.5s ease-out" : "none",
+      opacity: isActive ? 1 : 0.8,
+      zIndex: isActive ? 1 : 0
+    };
+  };
+
   return (
-    <div className="w-full bg-white py-6">
-      <div className="mx-auto relative px-4">
+    <div className="w-full bg-white">
+      <div className="max-w-screen-md mx-auto relative">
         <div
-          className="w-full relative overflow-hidden rounded-xl shadow-lg"
-          style={{ aspectRatio: "16/9" }}
+          className="w-full relative overflow-hidden rounded-lg sm:rounded-xl"
+          style={{
+            aspectRatio: "16/9",
+            perspective: "1000px"
+          }}
           onMouseEnter={() => setIsPaused(true)}
           onMouseLeave={() => setIsPaused(false)}
         >
           <div
-            className="absolute inset-0 w-full h-full transition-transform duration-500 ease-out flex"
-            style={{ transform: `translateX(-${currentSlide * 100}%)` }}
+            className="absolute inset-0 w-full h-full flex transform-gpu"
+            style={{
+              transform: `translateX(-${currentSlide * 100}%)`,
+              transformStyle: "preserve-3d",
+              transition: isTransitioning ? "transform 0.5s ease-out" : "none"
+            }}
             onTouchStart={handleTouchStart}
             onTouchMove={handleTouchMove}
             onTouchEnd={handleTouchEnd}
+            onTransitionEnd={handleTransitionEnd}
           >
             {slides.map((slide, index) => (
               <Link
                 key={index}
                 to={slide.to}
                 className="min-w-full h-full relative bg-white flex items-center justify-center"
+                style={getSlideStyle(index)}
               >
-                <div className="w-full h-full relative overflow-hidden">
+                <div className="relative w-auto h-full flex items-center justify-center">
                   <img
                     src={slide.image}
-                    alt="배너 이미지"
-                    className="w-full h-full object-contain absolute inset-0"
-                    loading="lazy"
+                    alt={`배너 이미지 ${index}`}
+                    className={`h-full rounded-lg ${
+                      slide.isVertical ? "max-w-[90%" : "w-full"
+                    } object-contain`}
+                    loading={index <= 1 ? "eager" : "lazy"}
                   />
                 </div>
               </Link>
@@ -92,14 +146,16 @@ const Banner = () => {
           </div>
         </div>
 
-        <div className="flex justify-center space-x-3 mt-4">
-          {slides.map((_, index) => (
+        <div className="absolute bottom-4 left-0 right-0 flex justify-center space-x-2 sm:space-x-3">
+          {originalSlides.map((_, index) => (
             <button
               key={index}
-              onClick={() => setCurrentSlide(index)}
-              className={`w-3 h-3 rounded-full transition-all duration-300 
+              onClick={() => moveToSlide(index + 1)}
+              className={`w-2 h-2 sm:w-3 sm:h-3 rounded-full transition-all duration-300 
                 ${
-                  currentSlide === index
+                  currentSlide === index + 1 ||
+                  (currentSlide === slides.length - 1 && index === 0) ||
+                  (currentSlide === 0 && index === originalSlides.length - 1)
                     ? "bg-blue-500 scale-110"
                     : "bg-gray-300 hover:bg-gray-400"
                 }`}

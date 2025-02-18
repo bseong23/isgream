@@ -49,13 +49,14 @@ const PostItem = ({ post }: PostItemProps) => {
           </h3>
           <div className="min-w-0">
             <p
-              className={`text-gray-600 overflow-hidden text-ellipsis ${
-                isMobile ? "text-base" : "text-lg"
-              }`}
+              className={`text-gray-600 ${isMobile ? "text-base" : "text-lg"}`}
               style={{
+                overflow: "hidden",
+                textOverflow: "ellipsis",
                 display: "-webkit-box",
-                WebkitLineClamp: 1,
-                WebkitBoxOrient: "vertical"
+                WebkitLineClamp: 2,
+                WebkitBoxOrient: "vertical",
+                wordBreak: "break-word"
               }}
             >
               {content}
