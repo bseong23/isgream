@@ -31,8 +31,13 @@ import {
   AiAnalysisPage,
   CameraPage,
   PhotoCapturePage,
-  // HTPResultsPage,
-  Education
+  HTPResultsPage,
+  Education,
+  ParentingTestPage,
+  PatTestResultPage,
+  BigFivePage,
+  BigFiveQuestionPage,
+  BigFiveResultPage
 } from "./pages";
 import { useFCM } from "./hooks/notification/useFCM";
 
@@ -40,7 +45,7 @@ import { useFCM } from "./hooks/notification/useFCM";
 const setupAxiosInterceptors = () => {
   const token = localStorage.getItem("accessToken");
   if (token) {
-    api.defaults.headers.common["Authorization"] = `Bearer ${token}`;
+    api.defaults.headers.common["access"] = token;
   }
 };
 
@@ -56,7 +61,7 @@ function App() {
     <QueryClientProvider client={queryClient}>
       <BrowserRouter>
         <Header />
-        <div className="w-[95%] mx-auto pb-20 bg-white pt-15 min-h-screen">
+        <div className="w-[95%] mx-auto pb-20 bg-white pt-20 min-h-screen">
           <Routes>
             {/* 인증이 필요 없는 라우트 */}
             {/* 메인 페이지 */}
@@ -180,6 +185,41 @@ function App() {
                 </ProtectedRoute>
               }
             />
+            <Route
+              path="/htp-results/:htpTestId"
+              element={
+                <ProtectedRoute>
+                  <HTPResultsPage />
+                </ProtectedRoute>
+              }
+            />
+
+            {/* BIG 5 */}
+            <Route
+              path="/big5-test"
+              element={
+                <ProtectedRoute>
+                  <BigFivePage />
+                </ProtectedRoute>
+              }
+            />
+            <Route
+              path="/big-five/question"
+              element={
+                <ProtectedRoute>
+                  <BigFiveQuestionPage />
+                </ProtectedRoute>
+              }
+            />
+            <Route
+              path="/big-five/result"
+              element={
+                <ProtectedRoute>
+                  <BigFiveResultPage />
+                </ProtectedRoute>
+              }
+            />
+
             {/* 기타 기능 */}
             <Route
               path="/ai-analysis"
@@ -193,15 +233,15 @@ function App() {
               path="/parenting-test"
               element={
                 <ProtectedRoute>
-                  <div>부모양육태도 검사</div>
+                  <ParentingTestPage />
                 </ProtectedRoute>
               }
             />
             <Route
-              path="/big5-test"
+              path="/pat-test-result"
               element={
                 <ProtectedRoute>
-                  <div>성격5요인 검사</div>
+                  <PatTestResultPage />
                 </ProtectedRoute>
               }
             />

@@ -72,6 +72,7 @@ const ChatRoomItem = ({
           </div>
         )}
       </div>
+
       {/* 채팅방이 존재할 때만 옵션 버튼 표시 */}
       {opponentName && (
         <button

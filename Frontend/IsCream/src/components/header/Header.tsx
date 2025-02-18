@@ -5,15 +5,12 @@ import HeaderNormal from "./Header_Normal";
 
 const HeaderController = () => {
   const location = useLocation();
-
   const handleChildSelect = useCallback((selectedItem: string) => {
     console.log("선택된 아이:", selectedItem);
   }, []);
 
-  if (location.pathname === "/" || location.pathname === "/mypage") {
+  if (location.pathname === "/") {
     return <HeaderMain onChildSelect={handleChildSelect} />;
-  } else if (location.pathname.startsWith("/board")) {
-    return null; // 게시판 페이지에서는 헤더를 렌더링하지 않음
   } else {
     return <HeaderNormal />;
   }

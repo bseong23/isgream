@@ -37,6 +37,7 @@ interface GetTestListResponse {
         id: string;
         status: string;
         testType: string;
+
     }[]
 }
 
@@ -80,7 +81,7 @@ export const patApi = {
 
             console.log("pat검사결과조회", response);
             if(response.data.code === "S0000"){
-                
+             
                 return response.data;
             }
             throw new Error(response.data.message || "PAT 검사 조회 실패");
@@ -104,5 +105,4 @@ export const patApi = {
             throw error;
         }
     }
-
 }

@@ -27,7 +27,8 @@ public class LoginFilter extends UsernamePasswordAuthenticationFilter {
     private final TokenService tokenService;
 
     public LoginFilter(AuthenticationManager authenticationManager, TokenProvider tokenProvider, TokenService tokenService) {
-        super.setFilterProcessesUrl("/users/login"); // 기본 경로 변경
+        //super.setFilterProcessesUrl("/users/login"); // 기본 경로 변경
+        super.setFilterProcessesUrl("/api/users/login"); // 기본 경로 변경
 
         this.authenticationManager = authenticationManager;
         this.tokenProvider = tokenProvider;

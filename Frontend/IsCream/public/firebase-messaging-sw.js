@@ -7,6 +7,7 @@ importScripts(
   "https://www.gstatic.com/firebasejs/9.0.0/firebase-messaging-compat.js"
 );
 
+// Firebase 설정 및 초기화 로직
 const firebaseConfig = {
   apiKey: "AIzaSyCP8mGauQdH-F9Wb6_r6ZDH7CcANiOEmjE",
   authDomain: "ssafy-449307.firebaseapp.com",
@@ -19,22 +20,10 @@ const firebaseConfig = {
 firebase.initializeApp(firebaseConfig);
 const messaging = firebase.messaging();
 
-self.addEventListener("push", function (event) {
-  if (event.data) {
-    const data = event.data.json();
-    const options = {
-      body: data.notification.body,
-      icon: "/firebase-logo.png",
-      badge: "/firebase-logo.png"
-    };
-    event.waitUntil(
-      self.registration.showNotification(data.notification.title, options)
-    );
-  }
-});
+// 메시지 핸들링 로직
+messaging.onBackgroundMessage((payload) => {
+  console.log("백그라운드 메시지 수신:", payload);
 
-messaging.onBackgroundMessage(function (payload) {
-  console.log("Received background message:", payload);
   const notificationTitle = payload.notification.title;
   const notificationOptions = {
     body: payload.notification.body,
@@ -45,4 +34,20 @@ messaging.onBackgroundMessage(function (payload) {
     notificationTitle,
     notificationOptions
   );
+});
+
+// 추가적인 메시지 리스너 및 로직
+self.addEventListener("push", function (event) {
+  if (event.data) {
+    const data = event.data.json();
+    const options = {
+      body: data.notification.body,
+      icon: "/firebase-logo.png",
+      badge: "/firebase-logo.png"
+    };
+
+    event.waitUntil(
+      self.registration.showNotification(data.notification.title, options)
+    );
+  }
 });

@@ -3,7 +3,8 @@ export interface NotifyItem {
   title: string;
   content: string;
   type: string;
-  isRead: boolean;
+  read: boolean;
+  createdAt: string;
   postId?: number;
   chatId?: number;
 }

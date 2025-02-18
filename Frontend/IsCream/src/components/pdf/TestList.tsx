@@ -41,61 +41,78 @@ const TestList: React.FC<TestListProps> = ({ testResults, onResultSelect, nickna
     );
   };
 
-  const handleDownloadPDFs = async () => {
-    try {
+  const getFileName = (type: string, childName: string | undefined, nickname: string | undefined, date: string) => {
+    const name = childName?.trim() || nickname || '미상';
+    return `${type}_결과_${name}_${date}.pdf`;
+};
+
+  const downloadPDF = (blob: Blob, filename: string) => {
+    const url = window.URL.createObjectURL(blob);
+    const link = document.createElement('a');
+    link.href = url;
+    link.download = filename;
+    document.body.appendChild(link);
+    link.click();
+    document.body.removeChild(link);
+    window.URL.revokeObjectURL(url);
+};
+
+const handleDownloadPDFs = async () => {
+  try {
       const downloadPromises = selectedItems.map(async (testIdStr) => {
-        const testId = parseInt(testIdStr);
-        const test = testResults.find(r => r.testId === testId);
-        
-        if (!test) return;
+          const testId = parseInt(testIdStr);
+          const test = testResults.find(r => r.testId === testId);
+          
+          if (!test) return;
 
-        // 테스트 타입에 따른 API 호출
-        switch(test.type) {
-          case 'HTP':
-            return await pdfApi.pdfHTP(testId);
-          case 'PAT':
-            return await pdfApi.pdfPat(testId);
-          case 'BFI':
-            return await pdfApi.pdfBigFive(testId);
-        }
+          let pdfBlob;
+          const fileName = getFileName(test.type, test.childName, nickname, test.date);
+          
+          switch(test.type) {
+              case 'HTP':
+                  pdfBlob = await pdfApi.pdfHTP(testId);
+                  downloadPDF(pdfBlob, fileName);
+                  break;
+              case 'PAT':
+                  pdfBlob = await pdfApi.pdfPat(testId);
+                  downloadPDF(pdfBlob, fileName);
+                  break;
+              case 'BFI':
+                  pdfBlob = await pdfApi.pdfBigFive(testId);
+                  downloadPDF(pdfBlob, fileName);
+                  break;
+          }
       });
 
-      const responses = await Promise.all(downloadPromises);
-      
-      // 각 URL로 PDF 다운로드
-      responses.forEach(response => {
-        if (response?.data?.url) {
-          window.open(response.data.url, '_blank');
-        }
-      });
-    } catch (error) {
+      await Promise.all(downloadPromises);
+  } catch (error) {
       console.error("PDF 다운로드 실패:", error);
-    }
-  };
+  }
+};
 
-  const handleSingleDownload = async (testId: number, type: string) => {
-    try {
-      let response;
+const handleSingleDownload = async (testId: number, type: string, childName: string | undefined, date: string) => {
+  try {
+      let pdfBlob;
+      const fileName = getFileName(type, childName, nickname, date);
+      
       switch(type) {
-        case 'HTP':
-          response = await pdfApi.pdfHTP(testId);
-          break;
-        case 'PAT':
-          response = await pdfApi.pdfPat(testId);
-          break;
-        case 'BFI':
-          response = await pdfApi.pdfBigFive(testId);
-          break;
+          case 'HTP':
+              pdfBlob = await pdfApi.pdfHTP(testId);
+              downloadPDF(pdfBlob, fileName);
+              break;
+          case 'PAT':
+              pdfBlob = await pdfApi.pdfPat(testId);
+              downloadPDF(pdfBlob, fileName);
+              break;
+          case 'BFI':
+              pdfBlob = await pdfApi.pdfBigFive(testId);
+              downloadPDF(pdfBlob, fileName);
+              break;
       }
-      
-      if (response?.data?.url) {
-        window.open(response.data.url, '_blank');
-      }
-    } catch (error) {
+  } catch (error) {
       console.error("PDF 다운로드 실패:", error);
     }
   };
-
 
   return (
     <div className="my-5">
@@ -137,7 +154,7 @@ const TestList: React.FC<TestListProps> = ({ testResults, onResultSelect, nickna
           />
           <div
             className="flex-1 cursor-pointer"
-            onClick={() => handleSingleDownload(result.testId, result.type) }
+            onClick={() => handleSingleDownload(result.testId, result.type, result.childName || nickname, result.date)}
           >
             <div className="font-medium text-gray-900">
               {result.title}
@@ -150,7 +167,7 @@ const TestList: React.FC<TestListProps> = ({ testResults, onResultSelect, nickna
             </div>
           </div>
           <button
-            onClick={() => handleSingleDownload(result.testId, result.type)}
+            onClick={() => handleSingleDownload(result.testId, result.type, result.childName || nickname, result.date)}
             className="text-gray-400 hover:text-[#009E28] active:text-[#009E28] transition-colors"
           >
             <Download className="w-4 h-4" />

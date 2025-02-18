@@ -47,4 +47,12 @@ public class ResponseUtil {
                         .build());
     }
 
+    public static <T> ResponseEntity<ResponseData<T>> failure(ErrorCode errorCode) {
+        return ResponseEntity.status(HttpStatus.OK)
+                .body(ResponseData.<T>builder()
+                        .code(errorCode.getCode())
+                        .message(errorCode.getMessage())
+                        .build());
+    }
+
 }

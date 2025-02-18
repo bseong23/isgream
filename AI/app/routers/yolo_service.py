@@ -2,10 +2,10 @@ from fastapi import APIRouter, HTTPException
 import requests
 from PIL import Image
 from io import BytesIO
+import pandas as pd
 from app.schemas.image import PredictionRequest
 from app.model.yolo_models import house_model, tree_model, male_model, female_model
 from app.core.core import diagnose
-
 router = APIRouter()
 
 # 기본 모델 설정 (house_model 사용)
@@ -33,11 +33,34 @@ async def predict(request: PredictionRequest):
             image = Image.open(BytesIO(response.content))
             width, height = image.size
 
-            # 모델 예측 실행
-            results = selected_model(image)
+            # 모델 예측 실행 (YOLOv8)
+            results = selected_model.predict(image)
+
+            # YOLOv8의 결과를 YOLOv5 형식(pandas DataFrame)으로 변환
+            detected_objects = []
+            for result in results:
+                boxes = result.boxes.xyxy.cpu().numpy()  # 객체 좌표
+                confidences = result.boxes.conf.cpu().numpy()  # 신뢰도 점수
+                class_ids = result.boxes.cls.cpu().numpy()  # 클래스 ID
+                class_names = result.names  # 클래스 이름
+
+                data = []
+                for i in range(len(boxes)):
+                    xmin, ymin, xmax, ymax = boxes[i]
+                    data.append({
+                        "xmin": float(xmin),
+                        "ymin": float(ymin),
+                        "xmax": float(xmax),
+                        "ymax": float(ymax),
+                        "confidence": float(confidences[i]),
+                        "class": int(class_ids[i]),
+                        "name": class_names[int(class_ids[i])]
+                    })
+
+                # YOLOv5의 `pandas().xyxy[0].to_dict(orient="records")`와 동일한 구조
+                detected_objects = pd.DataFrame(data).to_dict(orient="records")
 
             # 결과 데이터 변환 및 정규화
-            detected_objects = results.pandas().xyxy[0].to_dict(orient="records")
             for obj in detected_objects:
                 obj["cx"] = (obj["xmin"] + obj["xmax"]) / 2
                 obj["cy"] = (obj["ymin"] + obj["ymax"]) / 2
@@ -64,7 +87,3 @@ async def predict(request: PredictionRequest):
     # 진단 함수 실행
     diagnose_result = diagnose(predictions)
     return diagnose_result
-
-@router.get("/status")
-async def status():
-    return {"status": "AI service is operational"}

@@ -65,7 +65,6 @@ const CalendarGrid: React.FC<CalendarGridProps> = ({
           </div>
         ))}
       </div>
-
       <div className="grid grid-cols-7 gap-1">
         {getDaysInMonth().map((day, index) => {
           const dayData = day ? calendarData[day] : null;
