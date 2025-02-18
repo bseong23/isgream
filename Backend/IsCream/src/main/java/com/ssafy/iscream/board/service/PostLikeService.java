@@ -31,8 +31,17 @@ public class PostLikeService {
 
     // 게시글 삭제 시 Redis에 저장된 좋아요 정보 삭제
     public void removeLikeCount(Integer postId) {
-        redisTemplate.delete(getLikesCountKey(postId));
-        redisTemplate.opsForSet().remove(getLikeKey(postId));
+        String countKey = getLikeKey(postId);
+
+        if (redisTemplate.opsForValue().get(countKey) == null) {
+            redisTemplate.delete(getLikesCountKey(postId));
+        }
+
+        String likeCountKey = getLikesCountKey(postId);
+
+        if (Boolean.TRUE.equals(redisTemplate.opsForSet().isMember(likeCountKey, postId.toString()))) {
+            redisTemplate.opsForSet().remove(getLikeKey(postId));
+        }
     }
 
     // 게시글 좋아요 개수 조회
