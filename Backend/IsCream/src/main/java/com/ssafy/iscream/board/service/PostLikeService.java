@@ -40,17 +40,17 @@ public class PostLikeService {
         String countKey = getLikesCountKey(postId);
         Integer count = (Integer) redisTemplate.opsForValue().get(countKey);
 
-        return count == null ? 0 : count;
+//        return count == null ? 0 : count;
 
-//        if (count == null) {
-//            count = postLikeRepository.countById_PostId(postId);
-//
-//            if (count != 0) {
-//                redisTemplate.opsForValue().set(countKey, count);
-//            }
-//        }
-//
-//        return count;
+        if (count == null) {
+            count = postLikeRepository.countById_PostId(postId);
+
+            if (count != 0) {
+                redisTemplate.opsForValue().set(countKey, count);
+            }
+        }
+
+        return count;
     }
 
     // 게시글 좋아요
@@ -96,7 +96,7 @@ public class PostLikeService {
         return exist;
     }
 
-    @Scheduled(cron = "0 */30 * * * ?")
+    @Scheduled(cron = "0 */15 * * * ?")
 //    @Scheduled(cron = "0/10 * * * * ?")
     @Transactional
     public void updateLikeToDatabase() {
@@ -126,17 +126,17 @@ public class PostLikeService {
 
             Object likeCount = redisTemplate.opsForValue().get(key);
 
-            if (likeCount == null) {
-                likeCount = 0;
-            }
-
 //            if (likeCount == null) {
-//                likeCount = postLikeRepository.countById_PostId(postId);
-//
-//                if (Integer.parseInt(likeCount.toString()) != 0) {
-//                    redisTemplate.opsForValue().set(key, likeCount);
-//                }
+//                likeCount = 0;
 //            }
+
+            if (likeCount == null) {
+                likeCount = postLikeRepository.countById_PostId(postId);
+
+                if (Integer.parseInt(likeCount.toString()) != 0) {
+                    redisTemplate.opsForValue().set(key, likeCount);
+                }
+            }
 
             Optional<Post> post = postRepository.findById(postId);
 
