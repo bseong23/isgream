@@ -101,8 +101,9 @@ export const chatApi = {
     // 채팅방 입장하기
     async openChatroom(roomId: string, page: number): Promise<openChatroomResponse> {
         try{
-            const response = await api.get(`/chat/${roomId}/message/${page}`);
+            const response = await api.get(`/chat/${roomId}/messages?page=${page}`);
             if(response.data.code === 'S0000'){
+                console.log("채팅방 입장 성공");
                 return response.data;
             }
             throw new Error(response.data.massage || "채팅방 입장 실패");
@@ -112,15 +113,55 @@ export const chatApi = {
         }
     },
 
-    // // 메시지 보내기
-    // async sendMessage(): Promise<> {
+    // 채팅방 입장시, 소켓 통신 연결
+    async connectChatroom(roomId: string, token: string): Promise<void> {
+        try {
+            stompClient = new Client({
+              brokerURL: 'ws://i12a407.p.ssafy.io:8080/ws',
+              connectHeaders: {
+                "roomId": roomId,
+                "Authorization": token
+              },
+              onConnect: () => {
+                console.log('웹소켓 연결 성공');
+              },
+              onDisconnect: () => {
+                console.log('웹소켓 연결 해제');
+              },
+              onStompError: (frame) => {
+                console.error('Stomp 에러:', frame);
+              }
+            });
+      
+            await stompClient.activate();
+        } catch (error) {
+            console.error('웹소켓 연결 실패:', error);
+            throw error;
+        }
+    },
 
-    // },
+    // 메시지 보내기
+    async sendMessage(roomId: string, sender: string, receiver: string, content: string): Promise<void> {
+        if (!stompClient) {
+          throw new Error('웹소켓이 연결되지 않았습니다.');
+        }
+    
+        try {
+          await stompClient.publish({
+            destination: '/pub/chat/send',
+            body: JSON.stringify({
+              roomId,
+              sender,
+              receiver,
+              content
+            })
+          });
+        } catch (error) {
+          console.error('메시지 전송 실패:', error);
+          throw error;
+        }
+      },
 
-    // // 채팅방 입장시, 소켓 통신 연결
-    // async connectChatroom(): Promise<> {
-
-    // },
 
     // // 채팅방 입장시 연결 성공 직후후, 구독
     // async subscribeChatroom(): Promise<> {
