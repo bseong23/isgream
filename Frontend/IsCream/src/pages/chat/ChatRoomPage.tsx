@@ -74,9 +74,11 @@ const ChatRoomPage = () => {
         setChatData({chats: response.data});
         
         // 2. 웹소켓 연결
-        const token = localStorage.getItem("access");
+        const token = localStorage.getItem("accessToken");
         console.log("token: ", token);
         
+        if(token === null) return;
+
         await chatApi.connectChatroom(roomId, token);
         setIsConnected(true);
 
@@ -112,7 +114,7 @@ const ChatRoomPage = () => {
     if (!newMessage.trim() || !isConnected || !roomId) return;
     
     try {
-      await chatApi.sendMessage(roomId, newMessage);
+      await chatApi.sendMessage(roomId, currentUserId, newMessage);
       setNewMessage("");
     } catch (error) {
       console.error("메시지 전송 실패:", error);

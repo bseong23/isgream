@@ -115,29 +115,36 @@ export const chatApi = {
 
     // 채팅방 입장시, 소켓 통신 연결
     async connectChatroom(roomId: string, token: string): Promise<void> {
-        try {
-            stompClient = new Client({
-              brokerURL: 'ws://i12a407.p.ssafy.io:8080/ws',
-              connectHeaders: {
-                "roomId": roomId,
-                "Authorization": token
-              },
-              onConnect: () => {
-                console.log('웹소켓 연결 성공');
-              },
-              onDisconnect: () => {
-                console.log('웹소켓 연결 해제');
-              },
-              onStompError: (frame) => {
-                console.error('Stomp 에러:', frame);
-              }
+        return new Promise((resolve, reject) => {
+            try {
+                stompClient = new Client({
+                brokerURL: 'ws://localhost:8080/ws',
+                connectHeaders: {
+                    roomId: roomId,
+                    Authorization: `Bearer ${token}`,
+                    'accept-version': '1.1,1.0'
+                },
+                debug: (str) => {
+                    console.log('STOMP Debug:', str);
+                },
+                reconnectDelay: 5000,
+                onConnect: () => {
+                    console.log('웹소켓 연결 성공');
+                    resolve();
+                },
+                onDisconnect: () => {
+                    console.log('웹소켓 연결 해제');
+                },
+                onStompError: (frame) => {
+                    console.error('Stomp 에러:', frame);
+                    reject(new Error('STOMP 연결 실패'));
+                }
             });
-      
-            await stompClient.activate();
+            stompClient.activate();
         } catch (error) {
-            console.error('웹소켓 연결 실패:', error);
-            throw error;
+            reject(error);
         }
+    });
     },
 
     // 메시지 보내기
@@ -156,6 +163,8 @@ export const chatApi = {
               content
             })
           });
+          console.log("보낸 메시지 내용: ", content);
+          
         } catch (error) {
           console.error('메시지 전송 실패:', error);
           throw error;
@@ -164,12 +173,52 @@ export const chatApi = {
 
 
     // // 채팅방 입장시 연결 성공 직후후, 구독
-    // async subscribeChatroom(): Promise<> {
-
-    // }, 
+    async subscribeChatroom(roomId: string, onMessageReceived: (message: any) => void): Promise<() => void> {
+        if (!stompClient) {
+            throw new Error('웹소켓이 연결되지 않았습니다.');
+        }
+    
+        try {
+            const subscription = stompClient.subscribe(
+                `/sub/chat/room/${roomId}`,
+                (message) => {
+                    console.log('새로운 메시지 수신:', message);
+                    const receivedMessage = JSON.parse(message.body);
+                    onMessageReceived(receivedMessage);
+                }
+            );
+    
+            return () => {
+                subscription.unsubscribe();
+            };
+        } catch (error) {
+            console.error('채팅방 구독 실패:', error);
+            throw error;
+        }
+    }, 
 
     // // 채팅방 안에서, 메시지 읽음 처리
-    // async ackMessage(): Promist<> {
-
+    // async messageRead(roomId: string, content: string): Promise<void> {
+    //     if (!stompClient) {
+    //         throw new Error('웹소켓이 연결되지 않았습니다.');
+    //     }
+    
+    //     try {
+    //         const token = localStorage.getItem('access');
+    //         const decodedToken = decodeToken(token!);
+    //         const senderId = decodedToken.userId;
+    
+    //         await stompClient.publish({
+    //             destination: '/pub/chat/send',
+    //             body: JSON.stringify({
+    //                 roomId,
+    //                 sender: senderId,
+    //                 content
+    //             })
+    //         });
+    //     } catch (error) {
+    //         console.error('메시지 전송 실패:', error);
+    //         throw error;
+    //     }
     // }
 }
