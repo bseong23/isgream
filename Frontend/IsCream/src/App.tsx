@@ -25,7 +25,7 @@ import {
   VerifyEmailPage,
   ResetPasswordPage,
   ChatPage,
-  ChatRoomPage,
+  // ChatRoomPage,
   CenterPage,
   CanvasPage,
   AiAnalysisPage,
@@ -120,7 +120,8 @@ function App() {
               path="/chat/room/:roomId"
               element={
                 <ProtectedRoute>
-                  <ChatRoomPage />
+                  <ChatPage />
+                  {/* <ChatRoomPage /> */}
                 </ProtectedRoute>
               }
             />

@@ -1,6 +1,6 @@
 import React from "react";
 import { useNavigate } from "react-router-dom";
-import { NotificationItem as NotificationItemType } from "../../types/notification";
+import { NotifyItem as NotificationItemType } from "../../types/notification";
 
 interface NotificationItemProps {
   notification: NotificationItemType;
@@ -15,7 +15,7 @@ const NotificationItem: React.FC<NotificationItemProps> = ({
 
   const handleClick = () => {
     // 알림 읽음 처리
-    if (!notification.isRead) {
+    if (!notification.read) {
       onReadClick(notification.notifyId);
     }
 
@@ -33,7 +33,7 @@ const NotificationItem: React.FC<NotificationItemProps> = ({
     <div
       className={`
         p-4 border-b last:border-b-0 cursor-pointer 
-        ${notification.isRead ? "bg-gray-50" : "bg-blue-50"}
+        ${notification.read ? "bg-gray-50" : "bg-blue-50"}
         hover:bg-gray-100 transition-colors
       `}
       onClick={handleClick}
@@ -43,7 +43,7 @@ const NotificationItem: React.FC<NotificationItemProps> = ({
           <h3 className="font-semibold text-gray-800">{notification.title}</h3>
           <p className="text-sm text-gray-600">{notification.content}</p>
         </div>
-        {!notification.isRead && (
+        {!notification.read && (
           <span className="w-2 h-2 bg-blue-500 rounded-full"></span>
         )}
       </div>
