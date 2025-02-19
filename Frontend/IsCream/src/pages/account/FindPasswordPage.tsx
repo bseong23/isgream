@@ -1,10 +1,10 @@
 import { useState } from "react";
-import { useNavigate } from "react-router-dom";
+// import { useNavigate } from "react-router-dom";
 import FindPasswordForm from "../../components/account/FindPasswordForm";
 import { api } from "../../utils/common/axiosInstance"; // 기존 api 인스턴스 가져오기
 
 const FindPasswordPage = () => {
-  const navigate = useNavigate();
+  // const navigate = useNavigate();
   const [errorMessage, setErrorMessage] = useState("");
 
   const handleFindPassword = async (formData: {
