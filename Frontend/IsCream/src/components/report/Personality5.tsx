@@ -35,11 +35,11 @@ const Personality5 = () => {
               data={
                 bigFiveData
                   ? [
-                      bigFiveData.data.conscientiousness,
-                      bigFiveData.data.agreeableness,
-                      bigFiveData.data.emotionalStability,
-                      bigFiveData.data.extraversion,
-                      bigFiveData.data.openness
+                      bigFiveData.data.agreeableness, // 우호성
+                      bigFiveData.data.emotionalStability, // 정서적 안정성
+                      bigFiveData.data.extraversion, // 외향성
+                      bigFiveData.data.conscientiousness, // 성실성
+                      bigFiveData.data.openness // 개방성
                     ]
                   : [-5, -5, -5, -5, -5]
               }

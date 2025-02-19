@@ -36,12 +36,12 @@ const DetailContent: React.FC<DetailContentProps> = ({
   };
 
   const handleChatClick = async () => {
-    if (isCreatingChat) return;
+    if (isCreatingChat || !post.userId) return;
 
     try {
       setIsCreatingChat(true);
 
-      const response = await chatApi.createChatroom(post.userId);
+      const response = await chatApi.createChatroom(post.userId.toString());
       console.log("채팅방 생성하기 버튼 눌렀을 때의 응답: ",response);
       
       if (response.code === "S0000") {

@@ -5,6 +5,7 @@ import MemoEditor from "./MemoEditor";
 import { format } from "date-fns";
 import type { DayInfo } from "@/types/calendar";
 import { CalendarResponse } from "../../types/calendar";
+import HTPSlider from "./HtpSlider";
 
 interface DetailViewProps {
   childId: number;
@@ -118,84 +119,30 @@ const DetailView: React.FC<DetailViewProps> = ({
         </button>
       </div>
 
-      <div className="border border-[#E6E6E6] bg-white -mt-[1px] rounded-b-[15px] h-[700px] rounded-r-[15px]">
+      <div className="border border-[#E6E6E6] bg-white -mt-[1px] rounded-b-[15px] rounded-r-[15px]">
         {activeTab === "htp" && (
           <div className="p-6 h-full overflow-y-auto">
             {detail?.isHtp ? (
               <>
-                <h3 className="font-medium mb-6">
-                  {selectedDate.year}년 {selectedDate.month}월{" "}
-                  {selectedDate.day}일의 HTP 검사
-                </h3>
                 {detail.report &&
                 detail.houseUrl &&
                 detail.treeUrl &&
                 detail.maleUrl &&
                 detail.femaleUrl ? (
-                  <div>
-                    <h4 className="font-medium mb-2">검사 결과</h4>
-                    <div>
-                      {processedReport.map((section, idx) => {
-                        // 검사 유형 찾기
-                        const typeInfo = section.find((line) =>
-                          line.includes("검사 유형:")
-                        );
-                        const type = typeInfo?.split(":")?.[1]?.trim();
-
-                        return (
-                          <div key={idx} className="mb-8">
-                            {/* 검사 유형에 따른 이미지 표시 */}
-                            {type === "House" && detail.houseUrl && (
-                              <div className="mb-4 w-full sm:w-2/3 md:w-1/2 lg:w-1/3 mx-auto">
-                                <img
-                                  src={detail.houseUrl}
-                                  alt="House"
-                                  className="w-full h-auto border border-[#BEBEBE] rounded-lg"
-                                />
-                              </div>
-                            )}
-                            {type === "Tree" && detail.treeUrl && (
-                              <div className="mb-4 w-full sm:w-2/3 md:w-1/2 lg:w-1/3 mx-auto">
-                                <img
-                                  src={detail.treeUrl}
-                                  alt="Tree"
-                                  className="w-full h-auto border border-[#BEBEBE] rounded-lg"
-                                />
-                              </div>
-                            )}
-                            {type === "Male" && detail.maleUrl && (
-                              <div className="mb-4 w-full sm:w-2/3 md:w-1/2 lg:w-1/3 mx-auto">
-                                <img
-                                  src={detail.maleUrl}
-                                  alt="Male"
-                                  className="w-full h-auto border border-[#BEBEBE] rounded-lg"
-                                />
-                              </div>
-                            )}
-                            {type === "Female" && detail.femaleUrl && (
-                              <div className="mb-4 w-full sm:w-2/3 md:w-1/2 lg:w-1/3 mx-auto">
-                                <img
-                                  src={detail.femaleUrl}
-                                  alt="Female"
-                                  className="w-full h-auto border border-[#BEBEBE] rounded-lg"
-                                />
-                              </div>
-                            )}
-
-                            {/* 텍스트 표시 */}
-                            {section.map((paragraph, pIdx) => (
-                              <p
-                                key={pIdx}
-                                className="text-gray-600 mb-2 text-2xl whitespace-pre-line"
-                              >
-                                {paragraph}
-                              </p>
-                            ))}
-                          </div>
-                        );
-                      })}
-                    </div>
-                  </div>
+                  <HTPSlider
+                    houseUrl={detail.houseUrl}
+                    treeUrl={detail.treeUrl}
+                    maleUrl={detail.maleUrl}
+                    femaleUrl={detail.femaleUrl}
+                    processedReport={processedReport}
+                    date={
+                      selectedDate as {
+                        year: number;
+                        month: number;
+                        day: number;
+                      }
+                    }
+                  />
                 ) : (
                   <div className="text-gray-500 text-center py-8">
                     아직 검사를 모두 진행하지 않으셨습니다!

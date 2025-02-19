@@ -53,6 +53,8 @@ const setupAxiosInterceptors = () => {
 function App() {
   const { initializeFCM } = useFCM();
 
+  const isLoginPage = location.pathname === "/login";
+
   useEffect(() => {
     setupAxiosInterceptors();
     initializeFCM();
@@ -62,14 +64,17 @@ function App() {
     <QueryClientProvider client={queryClient}>
       <BrowserRouter>
         <Header />
-        <div className="w-[95%] mx-auto pb-20 bg-white pt-20 min-h-screen">
+
+        <div
+          className={`w-[95%] mx-auto pb-20 bg-white min-h-screen ${!isLoginPage ? "pt-20" : ""}`}
+        >
           <Routes>
+            <Route path="/login" element={<LoginPage />} />
             {/* 인증이 필요 없는 라우트 */}
             {/* 메인 페이지 */}
             <Route path="/" element={<MainPage />} />
 
             {/* 인증 관련 */}
-            <Route path="/login" element={<LoginPage />} />
             <Route path="/signup" element={<SignUpPage />} />
             <Route path="/find-password" element={<FindPasswordPage />} />
             <Route path="/verify-email" element={<VerifyEmailPage />} />

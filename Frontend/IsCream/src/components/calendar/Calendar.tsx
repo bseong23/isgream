@@ -79,7 +79,7 @@ const Calendar: React.FC<CalendarProps> = ({ className }) => {
         selectedDay={selectedDay}
       />
 
-      <div className="mt-4 min-h-[700px] p-4 px-1">
+      <div className="mt-4 p-4 px-1">
         <DetailView
           childId={Number(selectedChild.childId)}
           selectedDate={{

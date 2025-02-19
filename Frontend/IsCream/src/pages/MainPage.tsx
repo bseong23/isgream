@@ -17,7 +17,7 @@ const MainPage = () => {
         <Banner />
       </div>
       <AICard />
-      <div className="w-full bg-white px-4">
+      <div className="w-full bg-white">
         <div className="mx-auto max-w-[706px]">
           <div className="grid grid-cols-2 md:grid-cols-4 gap-2 md:gap-4 mt-4">
             <MainCard
