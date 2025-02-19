@@ -1,13 +1,3 @@
-
-// const ChatPage = () => {
-//   return(
-//     <div>
-//       채팅페이지
-//     </div>
-//   );
-// };
-// export default ChatPage;
-
 import { useNavigate } from "react-router-dom";
 import { useEffect, useState } from "react";
 import ChatRoomItem from "../components/chat/ChatRoomItem";
@@ -37,8 +27,14 @@ const ChatPage = () => {
       const response = await chatApi.getChatList();
       console.log("프론트엔드데이터: ",response);
       console.log("채팅목록길이: ",response);
+
+      // 서버 응답 데이터에 receiver 필드 추가
+      const roomsWithReceiver = response.data.map(room => ({
+        ...room,
+        receiver: room.opponentId  // opponentId를 receiver로 사용
+      }));
       
-      setChatRooms(response.data);
+      setChatRooms(roomsWithReceiver);
       console.log("chatRooms: ",chatRooms);
       console.log("챗룸즈~~: ", chatRooms);
       
