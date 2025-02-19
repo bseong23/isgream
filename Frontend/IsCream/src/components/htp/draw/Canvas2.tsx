@@ -4,6 +4,7 @@ import characterImage from "../../../assets/image/character2.png"; // 캐릭터 
 import { useUploadDrawing } from "../../../hooks/htp/useUploadDrawing";
 import { DrawingType, UploadDrawingResponse } from "../../../types/htp";
 import { createUploadFormData } from "../../../utils/common/formDataHelper"; // ✅ FormData 변환 함수 임포트
+import { useNavigate } from "react-router-dom"; // 추가된 부분
 
 interface Canvas2Props {
   type: DrawingType;
@@ -22,6 +23,7 @@ const Canvas2: React.FC<Canvas2Props> = ({
   onSaveComplete,
   onSaveStart
 }) => {
+  const navigate = useNavigate(); // 추가된 부분
   const canvasRef = useRef<ReactSketchCanvasRef | null>(null);
   const [startTime, setStartTime] = useState<number | null>(null);
   const { mutate: uploadDrawing } = useUploadDrawing();
@@ -86,13 +88,13 @@ const Canvas2: React.FC<Canvas2Props> = ({
     });
   };
 
-  return (
-    <div className="fixed inset-0 flex flex-col items-center bg-[#EAF8E6] overflow-hidden">
-      <div className="w-full h-[60px] flex items-center justify-center bg-white border-b shadow-md">
-        <h1 className="text-lg font-bold">심리검사</h1>
-      </div>
+  const handleGoBack = () => {
+    navigate("/ai-analysis"); // 뒤로가기 버튼 클릭 시 /ai-analysis로 이동
+  };
 
-      <div className="flex-grow w-[90%] bg-white border-[1.5px] border-gray-400 border-opacity-50 rounded-lg mt-4 p-2">
+  return (
+    <div className="fixed inset-0 flex flex-col items-center justify-center bg-[#EAF8E6] overflow-hidden">
+      <div className="w-[95%] h-[90%] mt-[2.5%] bg-white border-[1.5px] border-gray-400 border-opacity-50 rounded-lg p-2">
         <ReactSketchCanvas
           ref={canvasRef}
           style={{ width: "100%", height: "100%" }}
@@ -100,22 +102,29 @@ const Canvas2: React.FC<Canvas2Props> = ({
           strokeColor="black"
         />
       </div>
-
+  
       <div className="w-full max-w-lg flex justify-between items-center mt-4 p-4">
         <button
           onClick={handleClear}
-          className="w-[45%] h-[50px] bg-green-600 text-white font-semibold rounded-lg text-lg shadow-md"
+          className="w-[30%] h-[50px] bg-green-600 text-white font-semibold rounded-lg text-lg shadow-md"
         >
           다시그리기
         </button>
         <button
+          onClick={handleGoBack}
+          className="w-[30%] h-[50px] bg-green-600 text-white font-semibold rounded-lg text-lg shadow-md"
+        >
+          뒤로가기
+        </button>
+        <button
           onClick={handleSave}
-          className="w-[45%] h-[50px] bg-green-600 text-white font-semibold rounded-lg text-lg shadow-md"
+          className="w-[30%] h-[50px] bg-green-600 text-white font-semibold rounded-lg text-lg shadow-md"
         >
           저장하기
         </button>
-      </div>
 
+      </div>
+  
       <img
         src={characterImage}
         alt="캐릭터"

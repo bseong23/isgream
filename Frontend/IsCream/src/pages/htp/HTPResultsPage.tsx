@@ -107,6 +107,10 @@ export default function HTPResultPage({
     navigate("/ai-analysis");
   };
 
+  const handleGoHome = () => {
+    navigate("/");
+  };
+
   if (isLoading) {
     return (
       <div className="fixed inset-0 backdrop-blur-sm bg-black/30 flex items-center justify-center z-50">
@@ -176,6 +180,13 @@ export default function HTPResultPage({
         onClick={handleRetry}
       >
         다시하기
+      </button>
+
+      <button
+        className="w-[90%] max-w-md mt-4 p-3 bg-blue-500 text-white font-semibold text-lg rounded-lg shadow-md hover:bg-blue-600 transition"
+        onClick={handleGoHome}
+      >
+        홈으로
       </button>
     </div>
   );
