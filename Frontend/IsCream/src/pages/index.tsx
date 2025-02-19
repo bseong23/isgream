@@ -39,6 +39,7 @@ export { default as CameraPage } from "./htp/PhotoCapturePage";
 export { default as PhotoCapturePage } from "./htp/PhotoCapturePage";
 export { default as HTPResultsPage } from "./htp/HTPResultsPage";
 // 🌟 부모 양육 태도 검사 (Parenting Test)
+export { default as ParentingIntroPage } from "./pat/ParentingIntroPage";
 export { default as ParentingTestPage } from "./pat/ParentingTest"; // ✅ 추가
 export { default as PatTestResultPage } from "./pat/PatTestResultPage";
 

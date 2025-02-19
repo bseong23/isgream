@@ -118,7 +118,7 @@ const DetailView: React.FC<DetailViewProps> = ({
         </button>
       </div>
 
-      <div className="border border-[#E6E6E6] bg-white -mt-[1px] rounded-b-[15px] rounded-r-[15px] h-[700px]">
+      <div className="border border-[#E6E6E6] bg-white -mt-[1px] rounded-b-[15px] h-[700px] rounded-r-[15px]">
         {activeTab === "htp" && (
           <div className="p-6 h-full overflow-y-auto">
             {detail?.isHtp ? (

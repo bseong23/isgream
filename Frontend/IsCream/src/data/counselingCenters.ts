@@ -6,6 +6,8 @@ interface CounselingCenter {
   lng: number;
 }
 
+// 주석
+
 export const counselingCenters: CounselingCenter[] = [
   {
     name: "엠브레스마인드 심리상담센터 은평직영점",

@@ -36,49 +36,61 @@ const DRAWING_GUIDE: Record<"house" | "tree" | "person", string[]> = {
 const DRAWING_IMAGES: Record<"house" | "tree" | "person", string> = {
   house: houseImage,
   tree: treeImage,
-  person: personImage,
+  person: personImage
 };
 
 const DrawingIntro: React.FC<DrawingIntroProps> = ({ type, onStart }) => {
-  // 🏷 `male`과 `female`은 `person`과 동일하게 처리
   const displayType = type === "male" || type === "female" ? "person" : type;
 
   return (
-    <div className="flex flex-col items-center justify-center w-full min-h-screen bg-white px-4">
-      {/* 🏷 제목 (고정 없이 자연스럽게 배치) */}
-      <h1 className="text-3xl font-bold text-green-700 mt-6 mb-4">
+    <div className="flex flex-col items-center mt-15 justify-center w-full min-h-screen bg-white px-4 py-8 md:py-12">
+      {/* 제목 */}
+      <h1 className="text-3xl md:text-4xl lg:text-5xl font-bold text-green-700 mb-8 md:mb-12">
         {type === "house"
           ? "집 (HOUSE)"
           : type === "tree"
-          ? "나무 (TREE)"
-          : "사람 (PERSON)"} {/* 🔥 남성/여성 상관없이 '사람 (PERSON)'으로 고정 */}
+            ? "나무 (TREE)"
+            : "사람 (PERSON)"}
       </h1>
 
-      {/* 💡 내용 박스 */}
-      <div className="w-full max-w-lg bg-[#EAF8E6] p-6 rounded-[15px] shadow-md flex flex-col items-center border border-green-300">
-        {/* ✨ 그림 이미지 (크기를 더 키움) */}
-        <img src={DRAWING_IMAGES[displayType]} alt={type} className="h-[250px] object-contain mb-4" />
+      {/* 내용 박스 */}
+      <div className="w-full max-w-xl md:max-w-2xl lg:max-w-3xl bg-[#EAF8E6] p-6 md:p-8 lg:p-10 rounded-[20px] shadow-lg flex flex-col items-center border-2 border-green-300">
+        {/* 그림 이미지 */}
+        <div className="w-full flex justify-center mb-6 md:mb-8">
+          <img
+            src={DRAWING_IMAGES[displayType]}
+            alt={type}
+            className="h-[250px] md:h-[300px] lg:h-[350px] object-contain 
+                       transition-transform duration-300 hover:scale-105"
+          />
+        </div>
 
-        {/* 🔹 가이드 텍스트 */}
-        <div className="text-lg text-gray-700 text-left mb-6 w-full">
+        {/* 가이드 텍스트 */}
+        <div className="text-lg md:text-xl lg:text-2xl text-gray-700 text-left w-full space-y-4">
           {DRAWING_GUIDE[displayType].map((guide, index) => (
-            <p key={index} className="mb-2" dangerouslySetInnerHTML={{ __html: guide }}></p>
+            <p
+              key={index}
+              className="leading-relaxed"
+              dangerouslySetInnerHTML={{ __html: guide }}
+            />
           ))}
         </div>
       </div>
 
-      {/* 🎨 그림 시작 버튼 */}
-      <div className="relative mt-6 flex justify-center w-full max-w-lg">
+      {/* 그림 시작 버튼 영역 */}
+      <div className="relative mt-8 md:mt-10 flex justify-center w-full max-w-xl md:max-w-2xl lg:max-w-3xl">
         <button
           onClick={onStart}
-          className="bg-green-600 text-white px-6 py-3 rounded-lg text-lg shadow-md hover:bg-green-700"
+          className="bg-green-600 text-white px-8 py-4 rounded-xl text-xl md:text-2xl font-bold
+                     shadow-lg hover:bg-green-700 transform hover:scale-105 transition-all duration-200"
         >
           그림 시작하기
         </button>
         <img
           src={characterImage}
           alt="캐릭터"
-          className="absolute right-[-10px] bottom-0 w-28 h-auto"
+          className="absolute right-0 bottom-0 w-28 md:w-32 lg:w-36 h-auto
+                     transform translate-x-1/2 hover:scale-110 transition-transform duration-200"
         />
       </div>
     </div>

@@ -9,19 +9,22 @@ export interface UploadDrawingParams {
 }
 
 export interface UploadDrawingResponse {
-  code: "S0000" | "E7003" | "E4002";
-  message: string;
   data?: {
-    testId: number;
+    houseDrawingUrl?: string;
+    treeDrawingUrl?: string;
+    maleDrawingUrl?: string;
+    femaleDrawingUrl?: string;
+    result?: string;
   };
 }
+
 export interface GetTestListResponse {
-  code: 'S0000' | 'E4001';
-    message: string;
-    data: {
-        date: string;
-        id: string;
-        status: string;
-        testType: string;
-    }[]
+  code: "S0000" | "E4001";
+  message: string;
+  data: {
+    date: string;
+    id: string;
+    status: string;
+    testType: string;
+  }[];
 }
