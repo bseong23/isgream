@@ -10,7 +10,8 @@ interface Canvas2Props {
   gender?: "male" | "female";
   index: number;
   childId: number;
-  onSaveComplete: (data: UploadDrawingResponse) => void; // ✅ 타입 변경
+  onSaveComplete: (data: UploadDrawingResponse) => void;
+  onSaveStart: () => void;
 }
 
 const Canvas2: React.FC<Canvas2Props> = ({
@@ -18,12 +19,11 @@ const Canvas2: React.FC<Canvas2Props> = ({
   gender,
   index,
   childId,
-  onSaveComplete
+  onSaveComplete,
+  onSaveStart
 }) => {
   const canvasRef = useRef<ReactSketchCanvasRef | null>(null);
   const [startTime, setStartTime] = useState<number | null>(null);
-
-  // ✅ useUploadDrawing 훅 사용
   const { mutate: uploadDrawing } = useUploadDrawing();
 
   useEffect(() => {
@@ -36,6 +36,9 @@ const Canvas2: React.FC<Canvas2Props> = ({
 
   const handleSave = async () => {
     if (!canvasRef.current || !startTime) return;
+
+    // 저장 시작 시 로딩 상태 활성화
+    onSaveStart();
 
     const timeTaken = ((Date.now() - startTime) / 1000).toFixed(2);
     const dataUrl = await canvasRef.current.exportImage("png");
@@ -66,7 +69,6 @@ const Canvas2: React.FC<Canvas2Props> = ({
           return;
         }
 
-        // ✅ API 응답 데이터를 JSON 형태로 부모 컴포넌트로 전달
         onSaveComplete({
           data: {
             result: apiResponse.data.result ?? "",
@@ -86,12 +88,10 @@ const Canvas2: React.FC<Canvas2Props> = ({
 
   return (
     <div className="fixed inset-0 flex flex-col items-center bg-[#EAF8E6] overflow-hidden">
-      {/* 🔷 헤더 */}
       <div className="w-full h-[60px] flex items-center justify-center bg-white border-b shadow-md">
         <h1 className="text-lg font-bold">심리검사</h1>
       </div>
 
-      {/* 🎨 그림판 */}
       <div className="flex-grow w-[90%] bg-white border-[1.5px] border-gray-400 border-opacity-50 rounded-lg mt-4 p-2">
         <ReactSketchCanvas
           ref={canvasRef}
@@ -101,7 +101,6 @@ const Canvas2: React.FC<Canvas2Props> = ({
         />
       </div>
 
-      {/* 🛠 버튼 + 캐릭터 컨테이너 */}
       <div className="w-full max-w-lg flex justify-between items-center mt-4 p-4">
         <button
           onClick={handleClear}
@@ -117,7 +116,6 @@ const Canvas2: React.FC<Canvas2Props> = ({
         </button>
       </div>
 
-      {/* 🐻 캐릭터 아이콘 (우측 하단 고정) */}
       <img
         src={characterImage}
         alt="캐릭터"

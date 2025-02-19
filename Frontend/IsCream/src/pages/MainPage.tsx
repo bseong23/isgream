@@ -17,9 +17,9 @@ const MainPage = () => {
         <Banner />
       </div>
       <AICard />
-      <div className="w-full bg-white">
-        <div className="mx-auto max-w-[710px] relative">
-          <div className="grid grid-cols-4 mt-2 gap-2 justify-items-center">
+      <div className="w-full bg-white px-4">
+        <div className="mx-auto max-w-[706px]">
+          <div className="grid grid-cols-2 md:grid-cols-4 gap-2 md:gap-4 mt-4">
             <MainCard
               image={ParentingAttitude}
               title="양육태도 검사"
@@ -34,8 +34,6 @@ const MainPage = () => {
       <div className="w-full bg-[#F9F9F9] my-8">
         <MainPageBoards />
       </div>
-
-      {/* 챗봇 컴포넌트 추가 */}
       <Chatbot />
     </>
   );
