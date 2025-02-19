@@ -36,29 +36,41 @@ const CAMERA_GUIDE: Record<"house" | "tree" | "person", string[]> = {
 const CAMERA_IMAGES: Record<"house" | "tree" | "person", string> = {
   house: houseImage,
   tree: treeImage,
-  person: personImage,
+  person: personImage
 };
 
 const CameraIntro: React.FC<CameraIntroProps> = ({ type, onStart }) => {
   const displayType = type === "male" || type === "female" ? "person" : type;
 
   return (
-    <div className="flex flex-col items-center justify-center w-full min-h-screen bg-white px-4">
-      <h1 className="text-3xl font-bold text-green-700 mt-6 mb-4">
-        {type === "house" ? "집 (HOUSE)" : type === "tree" ? "나무 (TREE)" : "사람 (PERSON)"}
+    <div className="flex flex-col items-center w-full bg-white px-4 py-8">
+      <h1 className="text-3xl font-bold text-green-700 mb-4">
+        {type === "house"
+          ? "집 (HOUSE)"
+          : type === "tree"
+            ? "나무 (TREE)"
+            : "사람 (PERSON)"}
       </h1>
 
-      <div className="w-full max-w-lg bg-[#EAF2FF] p-6 rounded-[15px] shadow-md flex flex-col items-center border border-green-300">
-        <img src={CAMERA_IMAGES[displayType]} alt={type} className="h-[250px] object-contain mb-4" />
+      <div className="w-full max-w-lg bg-[#ebffe5] p-6 rounded-[15px] shadow-md flex flex-col items-center border border-green-300">
+        <img
+          src={CAMERA_IMAGES[displayType]}
+          alt={type}
+          className="h-[250px] object-contain mb-4"
+        />
 
         <div className="text-lg text-gray-700 text-left mb-6 w-full">
           {CAMERA_GUIDE[displayType].map((guide, index) => (
-            <p key={index} className="mb-2" dangerouslySetInnerHTML={{ __html: guide }}></p>
+            <p
+              key={index}
+              className="mb-2"
+              dangerouslySetInnerHTML={{ __html: guide }}
+            ></p>
           ))}
         </div>
       </div>
 
-      <div className="relative mt-6 flex justify-center w-full max-w-lg">
+      <div className="relative mt-6 flex justify-center w-full max-w-lg mb-8">
         <button
           onClick={onStart}
           className="bg-green-600 text-white px-6 py-3 rounded-lg text-lg shadow-md hover:bg-green-700"

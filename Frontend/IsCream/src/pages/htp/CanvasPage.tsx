@@ -1,11 +1,12 @@
-import React, { useState, useEffect, useCallback, useMemo } from "react";
+import React, { useState, useCallback, useMemo } from "react";
 import DrawingIntro from "../../components/htp/draw/DrawingIntro";
 import Canvas from "../../components/htp/draw/Canvas";
 import Canvas2 from "../../components/htp/draw/Canvas2";
 import GenderSelectionModal from "../../components/htp/draw/GenderSelectionModal";
 import { useChild } from "../../hooks/child/useChild";
-import HTPResultPage from "../../pages/htp/HTPResultsPage"; // ✅ 결과 페이지 추가
-import { UploadDrawingResponse } from "../../types/htp"; // Import 타입
+import HTPResultPage from "../../pages/htp/HTPResultsPage";
+import { UploadDrawingResponse } from "../../types/htp";
+import LoadingGIF from "../../assets/loading.gif";
 
 type DrawingType = "house" | "tree" | "male" | "female";
 
@@ -20,7 +21,8 @@ const CanvasPage: React.FC = () => {
   const [index, setIndex] = useState(1);
   const [resultData, setResultData] = useState<UploadDrawingResponse | null>(
     null
-  ); // ✅ 타입 변경
+  );
+  const [isAnalyzing, setIsAnalyzing] = useState(false);
 
   const { selectedChild } = useChild(useCallback(() => {}, []));
   const childId = useMemo(() => selectedChild?.childId || 0, [selectedChild]);
@@ -49,8 +51,8 @@ const CanvasPage: React.FC = () => {
   const handleSaveComplete = useCallback(
     (data: UploadDrawingResponse) => {
       console.log("📌 handleSaveComplete 호출됨! 전달된 데이터:", data);
+      setIsAnalyzing(false);
 
-      // ✅ `data.data`가 존재하지 않거나 비어 있으면 오류 로그 출력
       if (!data?.data || Object.keys(data.data).length === 0) {
         console.error(
           "❌ handleSaveComplete에서 받은 데이터가 올바르지 않습니다!",
@@ -73,8 +75,6 @@ const CanvasPage: React.FC = () => {
         setStep("intro");
       } else {
         console.log("✅ 모든 그림 완료! 결과 표시 중...");
-
-        // ✅ `data.data` 내부의 값을 안전하게 `setResultData`에 저장
         setResultData({
           data: {
             houseDrawingUrl: data.data?.houseDrawingUrl ?? "",
@@ -84,20 +84,18 @@ const CanvasPage: React.FC = () => {
             result: data.data?.result ?? ""
           }
         });
-
-        setStep("result"); // ✅ 검사 결과 페이지로 변경
+        setStep("result");
       }
     },
     [currentType, firstGender]
   );
 
-  useEffect(() => {
-    console.log("📌 CanvasPage 렌더링됨! 현재 단계:", step);
-    console.log("📌 현재 resultData 값:", resultData);
-  }, [step, resultData]);
+  const handleSaveStart = useCallback(() => {
+    setIsAnalyzing(true);
+  }, []);
 
   return (
-    <div className="w-screen h-screen flex flex-col justify-center items-center bg-gray-100 overflow-hidden fixed top-0 left-0">
+    <div className="relative w-full flex flex-col items-center bg-white pb-20">
       {step === "intro" && (
         <DrawingIntro type={currentType} onStart={handleStartDrawing} />
       )}
@@ -107,14 +105,16 @@ const CanvasPage: React.FC = () => {
             type={currentType}
             index={index}
             childId={childId}
-            onSaveComplete={handleSaveComplete} // ✅ 정상적으로 데이터 전달 확인
+            onSaveComplete={handleSaveComplete}
+            onSaveStart={handleSaveStart}
           />
         ) : (
           <Canvas2
             type={currentType}
             index={index}
             childId={childId}
-            onSaveComplete={handleSaveComplete} // ✅ 정상적으로 데이터 전달 확인
+            onSaveComplete={handleSaveComplete}
+            onSaveStart={handleSaveStart}
           />
         ))}
       {step === "gender" && (
@@ -123,17 +123,25 @@ const CanvasPage: React.FC = () => {
           onClose={() => setStep("intro")}
         />
       )}
+      {step === "result" && resultData && (
+        <HTPResultPage resultData={resultData} />
+      )}
 
-      {/* ✅ 검사 결과 표시 (페이지 이동 없이 렌더링) */}
-      {step === "result" && resultData ? (
-        <>
-          {console.log("✅ HTPResultPage 렌더링 준비 완료!")}
-          <HTPResultPage resultData={resultData} />
-        </>
-      ) : (
-        step === "result" && (
-          <p className="text-center text-gray-500">검사 결과가 없습니다.</p>
-        )
+      {/* AI 분석 중 로딩 스피너 */}
+      {isAnalyzing && (
+        <div className="fixed inset-0 backdrop-blur-sm bg-black/30 flex items-center justify-center z-50">
+          <div className="bg-white backdrop-blur-md p-8 rounded-2xl flex flex-col items-center">
+            <img
+              src={LoadingGIF}
+              alt="로딩 중"
+              className="w-32 h-32 object-contain"
+            />
+            <p className="text-lg font-semibold text-gray-700 mt-4">
+              AI가 그림을 분석하고 있어요
+            </p>
+            <p className="text-sm text-gray-500 mt-2">잠시만 기다려주세요!</p>
+          </div>
+        </div>
       )}
     </div>
   );

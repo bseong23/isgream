@@ -2,6 +2,7 @@ import React, { useState, useEffect } from "react";
 import { useNavigate } from "react-router-dom";
 import { useBigFiveTest } from "../../hooks/bigfive/useBigFiveTest";
 import confetti from "canvas-confetti";
+import AudioQuestionPlayer from "./AudioQuestionPlayer";
 
 // 초록 공룡 컴포넌트
 const Dinosaur = () => (
@@ -257,6 +258,7 @@ const BigFiveQuestionPage: React.FC = () => {
             isAnimating ? "scale-95 opacity-80" : "scale-100 opacity-100"
           }`}
         >
+          <AudioQuestionPlayer questionIndex={currentQuestionIndex} />
           <h1 className="text-2xl font-bold mb-6 text-center text-gray-800">
             Big5 성격검사
           </h1>
@@ -291,8 +293,8 @@ const BigFiveQuestionPage: React.FC = () => {
                       : "bg-gray-50 border border-gray-200 hover:bg-green-50 hover:text-green-700 hover:border-green-300"
                   }`}
                 >
-                  {score === 1 && "못해!"}
-                  {score === 2 && "모르겠어.."}
+                  {score === 1 && "아니!!"}
+                  {score === 2 && "아닐껄!?"}
                   {score === 3 && "아마도?"}
                   {score === 4 && "그럴껄?"}
                   {score === 5 && "당연하지!"}
