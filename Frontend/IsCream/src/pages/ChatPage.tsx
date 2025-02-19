@@ -29,12 +29,15 @@ const ChatPage = () => {
       console.log("채팅목록길이: ",response);
 
       // 서버 응답 데이터에 receiver 필드 추가
-      const roomsWithReceiver = response.data.map(room => ({
-        ...room,
-        receiver: room.opponentId  // opponentId를 receiver로 사용
-      }));
+      // const roomsWithReceiver = response.data.map(room => ({
+      //   ...room
+      //   ,receiver: room.opponentId  // opponentId를 receiver로 사용
+      // }));
+      // console.log("roomsWithReceiver: ", roomsWithReceiver);
       
-      setChatRooms(roomsWithReceiver);
+      // setChatRooms(roomsWithReceiver);
+      setChatRooms(response.data);
+
       console.log("chatRooms: ",chatRooms);
       console.log("챗룸즈~~: ", chatRooms);
       

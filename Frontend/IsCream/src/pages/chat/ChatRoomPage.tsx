@@ -21,6 +21,8 @@ const ChatRoomPage = () => {
   const { roomId } = useParams();
   const location = useLocation();
   const receiver = location.state?.roomData?.receiver;
+  console.log("receiver: ", receiver);
+  
   const opponentName = location.state?.roomData?.opponentName;
   
   const navigate = useNavigate();
@@ -38,20 +40,63 @@ const ChatRoomPage = () => {
 
   // 읽지 않은 메시지 필터링
   const getUnreadMessages = () => {
-    if (!chatData?.chats || !currentUserId) return [];
-    return chatData.chats.filter(
-      chat => !chat.read && chat.receiver === currentUserId
-    );
+    if (!chatData?.chats || !currentUserId) {
+      console.log("getUnreadMessages - missing data:", { 
+        hasChats: !!chatData?.chats, 
+        currentUserId 
+      });
+      return [];
+    }
+    
+    console.log("Checking messages:", {
+      allMessages: chatData.chats,
+      currentUserId: currentUserId,
+      receivedMessages: chatData.chats.filter(chat => chat.receiver == currentUserId),
+      unreadMessages: chatData.chats.filter(chat => !chat.read),
+    });
+  
+    const unread = chatData.chats.filter(chat => {
+      const isUnread = !chat.read;
+      const isForCurrentUser = chat.receiver == currentUserId;
+      console.log("Message check:", {
+        messageId: chat.id,
+        read: chat.read,
+        receiver: chat.receiver,
+        currentUserId,
+        isUnread,
+        isForCurrentUser,
+        willBeIncluded: isUnread && isForCurrentUser
+      });
+      return isUnread && isForCurrentUser;
+    });
+  
+    console.log("Found unread messages:", unread);
+    return unread;
   };
+  // const getUnreadMessages = () => {
+  //   if (!chatData?.chats || !currentUserId) return [];
+  //   return chatData.chats.filter(
+  //     chat => !chat.read && chat.receiver === currentUserId
+  //   );
+  // };
 
   // 읽음 처리 함수
   const handleReadMessages = async () => {
-    if (!roomId || !currentUserId) return;
+    if (!roomId || !currentUserId) {
+      console.log("handleReadMessages - missing data:", { roomId, currentUserId });
+      return;
+    }
     
     const unreadMessages = getUnreadMessages();
-    if (unreadMessages.length === 0) return;
+    console.log("Unread messages:", unreadMessages);
+
+    if (unreadMessages.length === 0) {
+    console.log("No unread messages");
+    return;
+  }
 
     try {
+      console.log("Attempting to read messages:", unreadMessages);
       await Promise.all(
         unreadMessages.map(chat => 
           chatApi.messageRead(chat.id, currentUserId, roomId)
@@ -76,6 +121,24 @@ const ChatRoomPage = () => {
     }
   };
   
+  // 채팅방 가시성에 따른 읽음 처리
+  useEffect(() => {
+    if (document.visibilityState === 'visible') {
+      handleReadMessages();
+    }
+
+    const handleVisibilityChange = () => {
+      if (document.visibilityState === 'visible') {
+        handleReadMessages();
+      }
+    };
+
+    document.addEventListener('visibilitychange', handleVisibilityChange);
+    return () => {
+      document.removeEventListener('visibilitychange', handleVisibilityChange);
+    };
+  }, [chatData?.chats, currentUserId, roomId]);
+
   const scrollToBottom = (smooth: boolean = true) => {
     if (messagesEndRef.current) {
       messagesEndRef.current.scrollIntoView({ 
@@ -232,6 +295,7 @@ const ChatRoomPage = () => {
           
           // 초기 로드 시 읽음 처리
           if (document.visibilityState === 'visible') {
+            console.log("Tab became visible, checking for unread messages");
             handleReadMessages();
           }
 
@@ -250,6 +314,14 @@ const ChatRoomPage = () => {
         await chatApi.subscribeChatroom(roomId, (message) => {
           console.log("새 메시지 수신:", message);
 
+          // 메시지가 현재 사용자가 받는 것이고, 읽지 않은 상태라면
+          if (message.receiver === currentUserId && !message.read) {
+            console.log("New message received, triggering read:", message);
+            if(!currentUserId) return;
+
+            // 읽음 처리 신호 보내기
+            chatApi.messageRead(message.id, currentUserId, roomId);
+          }
           // 읽음 상태 업데이트 메시지인 경우
           if (message.type === 'ACK') {
             setChatData(prevData => {
