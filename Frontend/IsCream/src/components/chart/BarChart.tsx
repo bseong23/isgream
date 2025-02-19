@@ -46,6 +46,7 @@ const BarChart: React.FC<BarChartProps> = ({
 
   const options = {
     responsive: true,
+    aspectRatio: 1.2,
     plugins: {
       title: {
         display: true,
@@ -90,7 +91,7 @@ const BarChart: React.FC<BarChartProps> = ({
   };
 
   return (
-    <div  className="w-full flex justify-center">
+    <div  className="w-full flex justify-center ">
       <div
         className={`w-[80%] h-full bg-white flex justify-center ${className}`}
       >
