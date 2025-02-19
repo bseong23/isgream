@@ -8,7 +8,11 @@ interface SlideData {
 }
 
 interface HTPSliderProps {
-  slides: SlideData[];
+  houseUrl?: string;
+  treeUrl?: string;
+  maleUrl?: string;
+  femaleUrl?: string;
+  processedReport: string[][];
   date: {
     year: number;
     month: number;
@@ -16,8 +20,54 @@ interface HTPSliderProps {
   };
 }
 
-const HTPSlider: React.FC<HTPSliderProps> = ({ slides, date }) => {
+const typeToKorean = {
+  House: "집",
+  Tree: "나무",
+  Male: "남자",
+  Female: "여자"
+} as const;
+
+const HTPSlider: React.FC<HTPSliderProps> = ({
+  houseUrl,
+  treeUrl,
+  maleUrl,
+  femaleUrl,
+  processedReport,
+  date
+}) => {
   const [currentSlide, setCurrentSlide] = useState(0);
+
+  // 데이터 가공
+  const slides: SlideData[] = processedReport.reduce(
+    (acc: SlideData[], section) => {
+      const typeInfo = section.find((line) => line.includes("검사 유형:"));
+      const type = typeInfo?.split(":")?.[1]?.trim();
+
+      let imageUrl = "";
+      if (type === "House" && houseUrl) imageUrl = houseUrl;
+      if (type === "Tree" && treeUrl) imageUrl = treeUrl;
+      if (type === "Male" && maleUrl) imageUrl = maleUrl;
+      if (type === "Female" && femaleUrl) imageUrl = femaleUrl;
+
+      if (type && imageUrl) {
+        acc.push({
+          type,
+          imageUrl,
+          report: section.filter((line) => !line.includes("검사 유형:"))
+        });
+      }
+      return acc;
+    },
+    []
+  );
+
+  if (slides.length === 0) {
+    return (
+      <div className="text-gray-500 text-center py-8">
+        표시할 데이터가 없습니다.
+      </div>
+    );
+  }
 
   const goToNextSlide = () => {
     setCurrentSlide((prev) => (prev === slides.length - 1 ? 0 : prev + 1));
@@ -29,37 +79,46 @@ const HTPSlider: React.FC<HTPSliderProps> = ({ slides, date }) => {
 
   return (
     <div className="relative h-full">
-      <h3 className="font-medium mb-6">
+      <h3 className="font-medium mb-6 text-lg md:text-xl px-4 md:px-0">
         {date.year}년 {date.month}월 {date.day}일의 HTP 검사
       </h3>
 
       <div className="relative h-[calc(100%-4rem)]">
         {/* Navigation Dots */}
         <div className="absolute top-0 left-0 right-0 flex justify-center gap-2 mb-4 z-10">
-          {slides.map((_, index) => (
+          {slides.map((slide, index) => (
             <button
               key={index}
               onClick={() => setCurrentSlide(index)}
               className={`w-2 h-2 rounded-full transition-all ${
                 currentSlide === index ? "bg-blue-500 w-4" : "bg-gray-300"
               }`}
+              title={typeToKorean[slide.type as keyof typeof typeToKorean]}
             />
           ))}
         </div>
 
         {/* Slide Content */}
-        <div className="h-full overflow-y-auto px-8 pt-6">
+        <div className="h-full overflow-y-auto px-4 md:px-8 pt-6">
           <div className="flex flex-col items-center">
+            <div className="mb-4 text-lg font-medium">
+              {
+                typeToKorean[
+                  slides[currentSlide].type as keyof typeof typeToKorean
+                ]
+              }{" "}
+              그림
+            </div>
             <img
               src={slides[currentSlide].imageUrl}
-              alt={slides[currentSlide].type}
-              className="w-full sm:w-2/3 md:w-1/2 lg:w-1/3 mx-auto mb-6 border border-[#BEBEBE] rounded-lg"
+              alt={`${typeToKorean[slides[currentSlide].type as keyof typeof typeToKorean]} 그림`}
+              className="w-full sm:w-4/5 md:w-3/5 lg:w-1/2 mx-auto mb-6 border border-[#BEBEBE] rounded-lg"
             />
             <div className="w-full">
               {slides[currentSlide].report.map((paragraph, idx) => (
                 <p
                   key={idx}
-                  className="text-gray-600 mb-2 text-2xl whitespace-pre-line"
+                  className="text-gray-600 mb-2 text-base md:text-lg lg:text-2xl whitespace-pre-line"
                 >
                   {paragraph}
                 </p>
@@ -71,15 +130,15 @@ const HTPSlider: React.FC<HTPSliderProps> = ({ slides, date }) => {
         {/* Navigation Buttons */}
         <button
           onClick={goToPrevSlide}
-          className="absolute left-2 top-1/3 transform -translate-y-1/2 bg-white/80 hover:bg-white rounded-full p-2 shadow-md transition-all"
+          className="absolute left-2 md:left-4 top-1/3 transform -translate-y-1/2 bg-white/80 hover:bg-white rounded-full p-1 md:p-2 transition-all"
         >
-          <ChevronLeft className="w-6 h-6" />
+          <ChevronLeft className="w-4 h-4 md:w-6 md:h-6" />
         </button>
         <button
           onClick={goToNextSlide}
-          className="absolute right-2 top-1/3 transform -translate-y-1/2 bg-white/80 hover:bg-white rounded-full p-2 shadow-md transition-all"
+          className="absolute right-2 md:right-4 top-1/3 transform -translate-y-1/2 bg-white/80 hover:bg-white rounded-full p-1 md:p-2 transition-all"
         >
-          <ChevronRight className="w-6 h-6" />
+          <ChevronRight className="w-4 h-4 md:w-6 md:h-6" />
         </button>
       </div>
     </div>
