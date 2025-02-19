@@ -5,22 +5,24 @@ import { useUploadDrawing } from "../../../hooks/htp/useUploadDrawing";
 import { DrawingType, UploadDrawingResponse } from "../../../types/htp";
 import { createUploadFormData } from "../../../utils/common/formDataHelper";
 
+const HEADER_HEIGHT = 60; // 헤더 높이 (px)
+
 interface CanvasProps {
   type: DrawingType;
   gender?: "male" | "female";
   index: number;
   childId: number;
-  onSaveComplete: (data: UploadDrawingResponse) => void; // ✅ 수정 완료
+  onSaveComplete: (data: UploadDrawingResponse) => void;
+  onSaveStart: () => void;
 }
-
-const HEADER_HEIGHT = 60; // 헤더 높이 (px)
 
 const Canvas: React.FC<CanvasProps> = ({
   type,
   gender,
   index,
   childId,
-  onSaveComplete
+  onSaveComplete,
+  onSaveStart
 }) => {
   const canvasRef = useRef<ReactSketchCanvasRef | null>(null);
   const [startTime, setStartTime] = useState<number | null>(null);
@@ -36,6 +38,9 @@ const Canvas: React.FC<CanvasProps> = ({
 
   const handleSave = async () => {
     if (!canvasRef.current || !startTime) return;
+
+    // 저장 시작 시 로딩 상태 활성화
+    onSaveStart();
 
     const timeTaken = ((Date.now() - startTime) / 1000).toFixed(2);
     const dataUrl = await canvasRef.current.exportImage("png");
@@ -66,7 +71,7 @@ const Canvas: React.FC<CanvasProps> = ({
           return;
         }
 
-        // ✅ API 응답 데이터를 JSON 형태로 부모 컴포넌트로 전달
+        // API 응답 데이터를 JSON 형태로 부모 컴포넌트로 전달
         onSaveComplete({
           data: {
             result: apiResponse.data.result ?? "",
@@ -90,10 +95,12 @@ const Canvas: React.FC<CanvasProps> = ({
       style={{ height: `calc(100vh - ${HEADER_HEIGHT}px)` }}
     >
       <div
-        className={`flex w-[95%] h-[95%] ${type === "house" ? "flex-row" : "flex-col"} justify-between items-center relative`}
+        className={`flex w-full h-full px-4 ${
+          type === "house" ? "flex-row" : "flex-col"
+        } justify-between items-center relative`}
       >
-        {/* 🎨 그림판 */}
-        <div className="border-[1.5px] border-gray-400 border-opacity-50 rounded-[15px] overflow-hidden w-[88%] h-full">
+        {/* 그림판 */}
+        <div className="border-[1.5px] border-gray-400 border-opacity-50 rounded-[15px] overflow-hidden w-[90%] h-full">
           <ReactSketchCanvas
             ref={canvasRef}
             style={{ width: "100%", height: "100%" }}
@@ -102,10 +109,9 @@ const Canvas: React.FC<CanvasProps> = ({
           />
         </div>
 
-        {/* 🛠 버튼 + 캐릭터 컨테이너 */}
-        <div className="flex flex-col items-center justify-between h-full w-[12%] ml-4">
-          {/* 버튼 그룹 */}
-          <div className="flex flex-col gap-4 w-full">
+        {/* 버튼 + 캐릭터 컨테이너 */}
+        <div className="flex flex-col items-center justify-between h-full w-[10%] ml-2">
+          <div className="flex flex-col gap-2 w-full">
             <button
               onClick={handleClear}
               className="w-full h-[40px] bg-green-600 text-white font-semibold rounded-lg text-sm shadow-md"
@@ -120,12 +126,12 @@ const Canvas: React.FC<CanvasProps> = ({
             </button>
           </div>
 
-          {/* 🐻 캐릭터 (하단 정렬) */}
+          {/* 캐릭터 */}
           <div className="flex justify-center w-full">
             <img
               src={characterImage}
               alt="캐릭터"
-              className="w-[160px] h-auto mb-4"
+              className="w-full max-w-[100px] h-auto mb-4"
             />
           </div>
         </div>
