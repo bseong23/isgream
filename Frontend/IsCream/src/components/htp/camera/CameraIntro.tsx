@@ -1,4 +1,5 @@
 import React from "react";
+import { useNavigate } from "react-router-dom";
 import houseImage from "../../../assets/image/house.png";
 import treeImage from "../../../assets/image/tree.png";
 import personImage from "../../../assets/image/person.png";
@@ -40,7 +41,12 @@ const CAMERA_IMAGES: Record<"house" | "tree" | "person", string> = {
 };
 
 const CameraIntro: React.FC<CameraIntroProps> = ({ type, onStart }) => {
+  const navigate = useNavigate();
   const displayType = type === "male" || type === "female" ? "person" : type;
+
+  const handleGoBack = () => {
+    navigate(-1);
+  };
 
   return (
     <div className="flex flex-col items-center w-full bg-white px-4 py-8">
@@ -72,8 +78,14 @@ const CameraIntro: React.FC<CameraIntroProps> = ({ type, onStart }) => {
 
       <div className="relative mt-6 flex justify-center w-full max-w-lg mb-8">
         <button
+          onClick={handleGoBack}
+          className="bg-gray-500 text-white px-6 py-3 rounded-lg text-lg shadow-md hover:bg-gray-600 mr-4 w-[150px]"
+        >
+          뒤로가기
+        </button>
+        <button
           onClick={onStart}
-          className="bg-green-600 text-white px-6 py-3 rounded-lg text-lg shadow-md hover:bg-green-700"
+          className="bg-green-600 text-white px-6 py-3 rounded-lg text-lg shadow-md hover:bg-green-700 w-[150px]"
         >
           촬영 시작하기
         </button>
