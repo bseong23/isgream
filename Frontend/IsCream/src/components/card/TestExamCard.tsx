@@ -3,8 +3,8 @@ import document_icon from "../../assets/icons/document_icon.png";
 import clock_icon from "../../assets/icons/clock_icon.png";
 import pen_icon from "../../assets/icons/edit-pen.png";
 import user_icon from "../../assets/icons/user_icon.png";
-import bigfiveImage from "../../assets/image/big-o.png";
 import character from "../../assets/image/character.png";
+import bigfiveImage from "../../assets/image/big-o.png";
 import LongButton from "../button/LongButton";
 
 interface PATExamCardProps {
@@ -15,6 +15,7 @@ interface PATExamCardProps {
   resultPeriod?: string;
   examTarget?: string;
   onStartExam?: () => void;
+  showButton?: boolean; // 버튼 표시 여부를 제어하는 prop 추가
 }
 
 const PATExamCard: React.FC<PATExamCardProps> = ({
@@ -24,7 +25,8 @@ const PATExamCard: React.FC<PATExamCardProps> = ({
   examTime = "최대 10분",
   resultPeriod = "검사 종료일부터 1년",
   examTarget = "자녀",
-  onStartExam
+  onStartExam,
+  showButton = true // 기본값은 true로 설정
 }) => {
   return (
     <>
@@ -72,8 +74,8 @@ const PATExamCard: React.FC<PATExamCardProps> = ({
           </div>
         </div>
 
-        {/* 버튼 */}
-        <LongButton onClick={onStartExam}>검사 시작</LongButton>
+        {/* 버튼 (showButton이 true일 때만 표시) */}
+        {showButton && <LongButton onClick={onStartExam}>검사 시작</LongButton>}
       </div>
     </>
   );

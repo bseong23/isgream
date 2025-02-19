@@ -1,14 +1,6 @@
 import React from "react";
 import { CalendarGridProps } from "./types";
-
-// 감정 상태에 따른 이모티콘 매핑
-const emotionToEmoji = {
-  HAPPY: "😄", // 기쁨
-  SAD: "😢", // 슬픔
-  MAD: "😡", // 화남
-  FEAR: "😨", // 두려움
-  NORMAL: "😐" // 보통/중립
-};
+import seal from "../../assets/icons/도장.png";
 
 const CalendarGrid: React.FC<CalendarGridProps> = ({
   currentDate,
@@ -73,47 +65,40 @@ const CalendarGrid: React.FC<CalendarGridProps> = ({
             <div
               key={index}
               className={`
-              aspect-square rounded-[15px] p-1 
-              ${!day ? "border-white" : "border text-[#333333] cursor-pointer"}
-              ${isSunday(index) ? "text-red-400" : ""}
-              ${isSaturday(index) ? "text-blue-400" : ""}
-              relative
-              ${selectedDay === day ? "border-2 border-green-700" : ""}
-            `}
+               aspect-square rounded-[15px] p-1 relative
+               ${!day ? "border-white" : "border text-[#333333] cursor-pointer"}
+               ${isSunday(index) ? "text-red-400" : ""}
+               ${isSaturday(index) ? "text-blue-400" : ""}
+               ${selectedDay === day ? "border-2 border-green-700" : ""}
+             `}
               onClick={() => day && onSelectDay(day)}
             >
-              <div className={`relative w-full h-full flex items-start`}>
-                <span
-                  className={`absolute top-0 left-0 
-                  text-xs 
-                  sm:text-sm 
-                  md:text-base 
-                  lg:text-lg 
-                  xl:text-xl
-                `}
-                >
+              <div className="relative w-full h-full flex items-start">
+                {/* 날짜 */}
+                <span className="absolute text-sm sm:text-base md:text-lg lg:text-xl">
                   {day}
                 </span>
 
-                {dayData?.isHtp && dayData.emoji && (
-                  <div
-                    className="absolute bottom-0 right-0 
-                    text-base 
-                    sm:text-xl 
-                    md:text-2xl 
-                    lg:text-3xl 
-                    xl:text-4xl
-                  "
-                  >
-                    {emotionToEmoji[
-                      dayData.emoji as keyof typeof emotionToEmoji
-                    ] || "😐"}
+                {/* 도장 이미지와 점 표시 */}
+                {dayData?.isHtp && (
+                  <div className="absolute bottom-0 right-0 w-[90%] h-[90%] md:flex items-center justify-center hidden">
+                    <img
+                      src={seal}
+                      alt="도장"
+                      className="w-full h-full object-contain transition-transform duration-200 hover:scale-105"
+                    />
                   </div>
                 )}
 
+                {/* 점 표시 (작은 화면) */}
                 <div className="absolute top-1 right-1 flex gap-1">
                   {dayData?.isMemo && (
                     <div className="w-2 h-2 bg-red-500 rounded-full" />
+                  )}
+                  {dayData?.isHtp && (
+                    <div className="md:hidden">
+                      <div className="w-2 h-2 bg-blue-500 rounded-full" />
+                    </div>
                   )}
                 </div>
               </div>
