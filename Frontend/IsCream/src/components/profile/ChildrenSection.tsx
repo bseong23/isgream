@@ -76,20 +76,22 @@ const ChildrenSection: React.FC<ChildrenSectionProps> = () => {
             )}
           </div>
         </div>
-        <div className="flex">
-          {children.map((child, index) => (
-            <div key={index} className="m-2">
-              <ChildInfo
-                key={index}
-                childId={child.childId}
-                childNickName={child.nickname}
-                childGender={child.gender === "M" ? "남자아이" : "여자아이"}
-                childBirth={child.birthDate}
-                onUpdateSuccess={fetchChildren}
-                onDeleteSuccess={fetchChildren}
-              />
-            </div>
-          ))}
+        <div className="overflow-x-auto">
+          <div className="flex min-w-max">
+            {children.map((child, index) => (
+              <div key={index} className="m-2">
+                <ChildInfo
+                  key={index}
+                  childId={child.childId}
+                  childNickName={child.nickname}
+                  childGender={child.gender === "M" ? "남자아이" : "여자아이"}
+                  childBirth={child.birthDate}
+                  onUpdateSuccess={fetchChildren}
+                  onDeleteSuccess={fetchChildren}
+                />
+              </div>
+            ))}
+          </div>
         </div>
         {/* 자녀 추가 모달 */}
         {isAddModalOpen && (
