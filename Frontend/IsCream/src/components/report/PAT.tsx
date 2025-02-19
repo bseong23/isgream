@@ -32,7 +32,7 @@ const PAT: React.FC = () => {
 
   return (
     <div className="w-full flex justify-center">
-      <div className="w-full max-w-[706px] min-h-[400px] p-3 my-2 bg-white border border-gray-300 rounded items-center">
+      <div className="w-full max-w-[706px] p-3 my-2 bg-white border border-gray-300 rounded items-center">
         <div>
           <div className="m-3 text-xl">부모 양육 태도 검사(PAT)</div>
           <div>
