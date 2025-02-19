@@ -32,21 +32,46 @@ const ChatRoomPage = () => {
   const [page, setPage] = useState(0);
   const [isLoadingMore, setIsLoadingMore] = useState(false);
   const chatContainerRef = useRef<HTMLDivElement>(null);
-
   const messagesEndRef = useRef<HTMLDivElement>(null);
 
-  // 읽음 처리 로직 추가
-  const handleReadMessages = () => {
-    if (chatData?.chats && currentUserId) {
-      // 채팅 내용 중 읽지 않은 메시지에 대해 읽음 처리
-      chatData.chats.forEach(chat => {
-        if (!chat.read && chat.receiver === currentUserId) {
-          chatApi.messageRead(chat.id, currentUserId, roomId)
-            .catch(error => console.error("메시지 읽음 처리 실패:", error));
-        }
-      });
-    }
+  // [신규 추가] 읽지 않은 메시지 필터링 함수
+  const getUnreadMessages = () => {
+    if (!chatData?.chats || !currentUserId) return [];
+    return chatData.chats.filter(
+      chat => !chat.read && chat.receiver === currentUserId
+    );
   };
+  
+// [변경] 읽음 처리 로직 개선
+const handleReadMessages = async () => {
+  if (!roomId || !currentUserId) return;
+  
+  const unreadMessages = getUnreadMessages();
+  if (unreadMessages.length === 0) return;
+
+  try {
+    // 읽지 않은 메시지들에 대해 병렬로 읽음 처리 요청
+    await Promise.all(
+      unreadMessages.map(chat => 
+        chatApi.messageRead(chat.id, currentUserId, roomId)
+      )
+    );
+
+    // [신규 추가] 성공적으로 읽음 처리된 후 UI 업데이트
+    setChatData(prevData => {
+      if (!prevData) return null;
+      return {
+        chats: prevData.chats.map(chat => {
+          if (!chat.read && chat.receiver === currentUserId) {
+            return { ...chat, read: true };
+          }
+          return chat;
+        })
+      };
+    });
+  } catch (error) {
+    console.error("메시지 읽음 처리 실패:", error);
+  }
   
   const scrollToBottom = () => {
     messagesEndRef.current?.scrollIntoView({ behavior: 'smooth' });

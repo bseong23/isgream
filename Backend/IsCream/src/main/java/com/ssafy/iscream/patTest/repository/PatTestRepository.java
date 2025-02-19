@@ -10,7 +10,7 @@ import java.util.List;
 import java.util.Optional;
 
 public interface PatTestRepository extends JpaRepository<PatTest, Integer> {
-    @Query("SELECT p FROM PatTest p WHERE p.userId = :userId ORDER BY p.testDate DESC LIMIT 1")
+    @Query("SELECT p FROM PatTest p WHERE p.userId = :userId ORDER BY p.testDate DESC, p.patTestId DESC LIMIT 1")
     Optional<PatTest> findLatestByUserId(@Param("userId") Integer userId);
 
     @Query("SELECT p FROM PatTest p " +

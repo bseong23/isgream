@@ -5,6 +5,7 @@ import com.ssafy.iscream.board.service.PostService;
 import com.ssafy.iscream.comment.domain.Comment;
 import com.ssafy.iscream.comment.dto.request.CommentCreateReq;
 import com.ssafy.iscream.comment.dto.response.CommentList;
+import com.ssafy.iscream.noti.service.NotifyService;
 import com.ssafy.iscream.user.domain.User;
 import com.ssafy.iscream.user.service.UserService;
 import lombok.RequiredArgsConstructor;
@@ -19,7 +20,7 @@ public class CommentFacade {
     private final PostService postService;
     private final CommentService commentService;
     private final UserService userService;
-//    private final NotifyService notifyService;
+    private final NotifyService notifyService;
 
     // 댓글 목록 조회
     public CommentList getCommentList(Integer postId) {
@@ -41,7 +42,7 @@ public class CommentFacade {
         Integer commentId = commentService.saveComment(user, req);
 
         Post post = postService.getPost(req.getPostId(), user, null);
-//        notifyService.sendCommentNotify(post.getUserId(), req.getPostId()); // 게시글 작성자에게 알림 전송
+        notifyService.sendCommentNotify(post.getUserId(), req.getPostId()); // 게시글 작성자에게 알림 전송
 
         return commentId;
     }

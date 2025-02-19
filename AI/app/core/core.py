@@ -23,6 +23,7 @@ def diagnose(predictions):
 
         if prediction["type"] in type_to_function:
             analysis_result = type_to_function[prediction["type"]](prediction)
+            
             return f"{header}\n{process_predictions(analysis_result)}"
         return None
 
@@ -50,14 +51,10 @@ def classify_size(obj_width, obj_height, image_width, image_height):
     size_ratio = ((obj_width / image_width) + (obj_height / image_height)) / 2
     return "작음" if size_ratio <= 0.33 else "중간" if size_ratio <= 0.66 else "큼"
 
-def analyze_object(obj, category, image_width, image_height):
-    """개별 객체의 위치, 크기 및 심리적 해석"""
-    x_pos, y_pos = classify_position(obj["cx_norm"], obj["cy_norm"])
-    size = classify_size(
-        obj["xmax"] - obj["xmin"], obj["ymax"] - obj["ymin"],
-        image_width, image_height
-    )
 
+def analyze_object(obj, category, image_width, image_height):
+    """개별 객체의 위치 및 심리적 해석 (크기가 중요하지 않은 객체 제외)"""
+    x_pos, y_pos = classify_position(obj["cx_norm"], obj["cy_norm"])
     interpretations = {
         "왼쪽": "과거 지향적 경향",
         "가운데": "현재의 안정과 집중",
@@ -65,16 +62,28 @@ def analyze_object(obj, category, image_width, image_height):
         "상단": "이상적이고 희망적인 사고",
         "중간": "현실적이고 중립적인 태도",
         "하단": "기초적이고 안정감 있는 기반",
-        "작음": "자신감 부족 또는 위축된 성향",
-        "중간": "평균적이고 균형 잡힌 상태",
-        "큼": "자신감 넘치는 표현"
     }
 
-    return (
+    result = (
         f"- {obj['name']} ({category}) 존재\n"
-        f"  위치: {x_pos} / {y_pos} → {interpretations[x_pos]}과 {interpretations[y_pos]} 의미\n"
-        f"  크기: {size} → {interpretations[size]} 의미"
+        f"  위치: {x_pos} / {y_pos} → {interpretations[x_pos]}과 {interpretations[y_pos]} 의미"
     )
+
+    if obj["name"] not in ["울타리", "길", "연못", "산", "꽃", "잔디", "태양", "나뿌리", "나뭇잎", "열매", "새", "구름", "별"]:
+        if category not in ["남자 사람", "여자 사람"] or obj["name"] == "상체":
+            size = classify_size(
+                obj["xmax"] - obj["xmin"], obj["ymax"] - obj["ymin"],
+                image_width, image_height
+            )
+            size_interpretations = {
+                "작음": "자신감 부족 또는 위축된 성향",
+                "중간": "평균적이고 균형 잡힌 상태",
+                "큼": "자신감 넘치는 표현"
+            }
+            result += f"\n  크기: {size} → {size_interpretations[size]} 의미"
+
+    return result
+
 
 def analyze_missing_objects(prediction, category, expected_objects):
     """존재하지 않는 객체를 분석하여 추가 정보 제공"""
