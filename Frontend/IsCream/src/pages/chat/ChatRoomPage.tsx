@@ -34,6 +34,7 @@ const ChatRoomPage = () => {
   const [shouldScrollToBottom, setShouldScrollToBottom] = useState(true);
   const chatContainerRef = useRef<HTMLDivElement>(null);
   const messagesEndRef = useRef<HTMLDivElement>(null);
+  const [isSocketConnecting, setIsSocketConnecting] = useState(true); 
 
   // 읽지 않은 메시지 필터링
   const getUnreadMessages = () => {
@@ -197,6 +198,7 @@ const ChatRoomPage = () => {
 
       try {
         setIsLoading(true);
+        
         const response = await chatApi.openChatroom(roomId, page);
         if (response.data && response.data.length > 0) {
           const messagesWithOpponentName = response.data.map(message => ({
@@ -221,7 +223,7 @@ const ChatRoomPage = () => {
           console.log("새 메시지 수신:", message);
 
           // 읽음 상태 업데이트 메시지인 경우
-          if (message.type === 'READ_ACK') {
+          if (message.type === 'ACK') {
             setChatData(prevData => {
               if (!prevData) return null;
               return {
@@ -264,7 +266,7 @@ const ChatRoomPage = () => {
         });
       } catch (error) {
         console.error("채팅방 초기화 실패:", error);
-        alert("채팅방 연결에 실패했습니다.");
+        // alert("채팅방 연결에 실패했습니다.");
       } finally {
         setIsLoading(false);
       }
@@ -276,6 +278,9 @@ const ChatRoomPage = () => {
   const handleSendMessage = async () => {
     if (!newMessage.trim() || !isConnected || !roomId || !currentUserId) return;
     
+    const messageToSend = newMessage.trim(); // 현재 메시지 저장
+    setNewMessage(""); // 즉시 input 비우기
+
     try {
         await chatApi.sendMessage(roomId, currentUserId, receiver, newMessage);
 
@@ -284,7 +289,7 @@ const ChatRoomPage = () => {
           roomId: roomId,
           sender: currentUserId,
           receiver: receiver,
-          content: newMessage.trim(),
+          content: messageToSend,
           timestamp: new Date().toISOString(),
           read: false,
           opponentName: opponentName
@@ -299,11 +304,11 @@ const ChatRoomPage = () => {
           };
         });
         
-        setNewMessage("");
         scrollToBottom(); // 메시지 전송 후 스크롤
-    } catch (error) {
+      } catch (error) {
         console.error("메시지 전송 실패:", error);
         alert("메시지 전송에 실패했습니다.");
+        setNewMessage(messageToSend);
     }
   };
 

@@ -242,6 +242,8 @@ export const chatApi = {
 
                 // 서버 응답을 기다림
                 const subscription = stompClient?.subscribe(`/sub/chat/room/${roomId}`, (message) => {
+                    console.log("읽음처리: ",subscription);
+                     
                     const responseData = JSON.parse(message.body);
                     subscription?.unsubscribe(); // 응답을 받은 후 구독 해제
                     resolve(responseData);
