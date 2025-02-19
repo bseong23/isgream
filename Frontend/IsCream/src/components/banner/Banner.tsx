@@ -25,7 +25,7 @@ const Banner = () => {
     originalSlides[originalSlides.length - 1],
     ...originalSlides,
     originalSlides[0]
-  ];
+  ]; 
 
   const [currentSlide, setCurrentSlide] = useState(1);
   const [isPaused, setIsPaused] = useState(false);

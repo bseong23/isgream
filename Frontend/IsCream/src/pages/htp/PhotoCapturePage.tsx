@@ -1,48 +1,22 @@
-import React, { useState, useEffect, useCallback, useMemo } from "react";
+import React, { useState, useCallback, useMemo } from "react";
 import CameraIntro from "../../components/htp/camera/CameraIntro";
 import Camera from "../../components/htp/camera/Camera";
 import Camera2 from "../../components/htp/camera/Camera2";
 import GenderSelectionModal from "../../components/htp/draw/GenderSelectionModal";
+import HTPResultPage from "../../pages/htp/HTPResultsPage"; // ✅ 결과 페이지 추가
 import { useChild } from "../../hooks/child/useChild";
-import { useNavigate } from "react-router-dom";
 
 type PhotoType = "house" | "tree" | "male" | "female";
 
 const CameraPage: React.FC = () => {
-  const [step, setStep] = useState<"intro" | "camera" | "gender">("intro");
+  const [step, setStep] = useState<"intro" | "camera" | "gender" | "result">("intro");
   const [currentType, setCurrentType] = useState<PhotoType>("house");
   const [firstGender, setFirstGender] = useState<"male" | "female" | null>(null);
   const [index, setIndex] = useState(1);
-  const [htpTestId, setHtpTestId] = useState<string | null>(null);
-  const navigate = useNavigate();
+  const [resultData, setResultData] = useState<string | null>(null); // ✅ 검사 결과 상태 추가
 
   const { selectedChild } = useChild(useCallback(() => {}, []));
   const childId = useMemo(() => selectedChild?.childId || 0, [selectedChild]);
-
-  useEffect(() => {
-    console.log("📸 현재 단계:", step, "| 현재 촬영 대상:", currentType, "| 현재 index:", index, "| 첫 성별:", firstGender);
-  }, [step, currentType, index, firstGender]);
-
-  // ✅ 페이지 로드 시 localStorage에서 htpTestId 복구
-  useEffect(() => {
-    const storedHtpTestId = localStorage.getItem("htpTestId");
-    if (storedHtpTestId) {
-      setHtpTestId(storedHtpTestId);
-    } else {
-      // API에서 새로운 htpTestId 요청
-      const fetchTestId = async () => {
-        try {
-          const response = await fetch("/api/htp-tests/start", { method: "POST" });
-          const result = await response.json();
-          setHtpTestId(result.htpTestId);
-          localStorage.setItem("htpTestId", result.htpTestId); // ✅ 저장
-        } catch (error) {
-          console.error("Error fetching HTP Test ID:", error);
-        }
-      };
-      fetchTestId();
-    }
-  }, []);
 
   const handleStartCamera = useCallback(() => {
     if (currentType === "male" || currentType === "female") {
@@ -62,7 +36,14 @@ const CameraPage: React.FC = () => {
     setStep("camera");
   }, []);
 
-  const handleSaveComplete = useCallback(() => {
+ const handleSaveComplete = useCallback((data: any) => {
+    console.log("📌 handleSaveComplete 호출됨! 전달된 데이터:", data);
+
+    if (!data || Object.keys(data).length === 0) {
+      console.error("❌ handleSaveComplete에서 받은 데이터가 올바르지 않습니다!", data);
+      return;
+  }
+  
     if (currentType === "house") {
       setCurrentType("tree");
       setIndex(2);
@@ -76,20 +57,13 @@ const CameraPage: React.FC = () => {
       setIndex(4);
       setStep("intro");
     } else {
-      console.log("✅ 모든 촬영 완료!");
-      if (htpTestId) {
-        navigate(`/htp-results/${htpTestId}`);
-      } else {
-        console.error("❌ htpTestId가 없음! localStorage에서 복구 시도");
-        const storedHtpTestId = localStorage.getItem("htpTestId");
-        if (storedHtpTestId) {
-          navigate(`/htp-results/${storedHtpTestId}`);
-        } else {
-          console.error("🚨 htpTestId를 찾을 수 없음!");
-        }
-      }
+      console.log("✅ 모든 그림 완료! 결과 표시 중...");
+
+      setResultData(data); // ✅ 검사 결과 저장
+      setStep("result"); // ✅ 검사 결과 페이지로 변경
     }
-  }, [currentType, firstGender, navigate, htpTestId]);
+    
+  }, [currentType, firstGender]);
 
   return (
     <div className="w-screen h-screen flex flex-col justify-center items-center bg-gray-100 overflow-hidden fixed top-0 left-0">
@@ -117,6 +91,9 @@ const CameraPage: React.FC = () => {
           onClose={() => setStep("intro")}
         />
       )}
+
+      {/* ✅ 검사 결과 표시 (페이지 이동 없이 렌더링) */}
+      {step === "result" && resultData && <HTPResultPage resultData={resultData} />}
     </div>
   );
 };
