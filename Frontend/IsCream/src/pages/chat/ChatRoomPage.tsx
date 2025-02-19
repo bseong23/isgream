@@ -34,7 +34,6 @@ const ChatRoomPage = () => {
   const [shouldScrollToBottom, setShouldScrollToBottom] = useState(true);
   const chatContainerRef = useRef<HTMLDivElement>(null);
   const messagesEndRef = useRef<HTMLDivElement>(null);
-  const [isSocketConnecting, setIsSocketConnecting] = useState(true); 
 
   // 읽지 않은 메시지 필터링
   const getUnreadMessages = () => {

@@ -151,7 +151,7 @@ const BoardDetailPage = () => {
         <DetailContent
           post={post}
           onDelete={handleDelete} // 삭제 버튼 핸들러
-          onChat={(authorId) => console.log("Chat with:", authorId)}
+          onChat={(userId) => console.log("Chat with:", userId)}
         />
         <DetailActions
           onLike={handleLike}

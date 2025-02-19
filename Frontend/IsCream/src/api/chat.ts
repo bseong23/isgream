@@ -67,7 +67,9 @@ export const chatApi = {
     // 채팅방 생성하기
     async createChatroom(receiverId: string): Promise<CreateChatroomResponse>{
         try{
-            const response = await api.post(`/chatrooms/create?=${receiverId}`);
+            const response = await api.post(`/chatrooms/create?receiverId=${receiverId}`);
+            console.log("채팅방 생성하기 api 호출: ", response);
+            
             if(response.data.code === 'S0000'){
                 return response.data;
             }
