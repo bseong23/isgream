@@ -36,7 +36,7 @@ public class HtpTestService {
     public List<HtpTest> getByYearMonth(Integer userId, CalendarGetReq calendarGetReq) {
         LocalDateTime startDate = LocalDateTime.of(calendarGetReq.getYear(), calendarGetReq.getMonth(), 1, 0, 0);
         LocalDateTime endDate = startDate.plusMonths(1);
-        return htpTestRepository.findByChildIdAndCreatedAtBetween(calendarGetReq.getChildId(), startDate, endDate);
+        return htpTestRepository.findByChildIdAndCreatedAtBetweenAndValid(calendarGetReq.getChildId(), startDate, endDate);
     }
 
     // ✅ 전체 HTP 테스트 사이클 실행
