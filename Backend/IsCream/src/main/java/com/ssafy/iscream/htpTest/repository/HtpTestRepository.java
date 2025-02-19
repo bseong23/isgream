@@ -34,12 +34,14 @@ public interface HtpTestRepository extends JpaRepository<HtpTest, Integer> {
     @Query("SELECT h FROM HtpTest h " +
             "WHERE h.userId = :userId " +
             "AND h.testDate BETWEEN :startDate AND :endDate " +
+            "AND h.analysisResult IS NOT NULL " +  // NULL이 아닌 데이터만 조회
             "ORDER BY h.testDate DESC")
     List<HtpTest> findByUserIdAndDate(
             @Param("userId") Integer userId,
             @Param("startDate") LocalDate startDate,
             @Param("endDate") LocalDate endDate
     );
+
 
     HtpTest findByHtpTestId(Integer htpTestId);
 
