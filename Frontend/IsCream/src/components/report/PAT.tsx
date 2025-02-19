@@ -30,28 +30,6 @@ const PAT: React.FC = () => {
     fetchPATData();
   }, []);
 
-  // // 로딩 중일 때
-  // if (isLoading) {
-  //   return (
-  //     <div className="w-full flex justify-center">
-  //       <div className="w-full max-w-[706px] p-3 my-2 bg-white border border-gray-300 rounded items-center">
-  //         로딩 중...
-  //       </div>
-  //     </div>
-  //   );
-  // }
-
-  // // 에러가 있을 때
-  // if (error) {
-  //   return (
-  //     <div className="w-full flex justify-center">
-  //       <div className="w-full max-w-[706px] p-3 my-2 bg-white border border-gray-300 rounded items-center text-red-500">
-  //         {error}
-  //       </div>
-  //     </div>
-  //   );
-  // }
-
   return (
     <div className="w-full flex justify-center">
       <div className="w-full max-w-[706px] p-3 my-2 bg-white border border-gray-300 rounded items-center">
@@ -68,7 +46,7 @@ const PAT: React.FC = () => {
             />
           </div>
           <div>
-            <Report text={patData?.result || "보고서가 없습니다."} />
+            <Report text={patData?.result || "아직 검사 결과가 없습니다. 검사를 진행해주세요."} />
           </div>
         </div>
       </div>

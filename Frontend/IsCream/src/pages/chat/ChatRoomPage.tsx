@@ -32,6 +32,7 @@ const ChatRoomPage = () => {
   const [page, setPage] = useState(0);
   const [isLoadingMore, setIsLoadingMore] = useState(false);
   const [shouldScrollToBottom, setShouldScrollToBottom] = useState(true);
+  const [hasMore, setHasMore] = useState(true); // 추가: 더 불러올 데이터가 있는지 확인
   const chatContainerRef = useRef<HTMLDivElement>(null);
   const messagesEndRef = useRef<HTMLDivElement>(null);
 
@@ -84,11 +85,14 @@ const ChatRoomPage = () => {
   };
 
   const loadMoreMessages = async () => {
-    if (isLoadingMore || !roomId) return;
-    
+    if (isLoadingMore || !roomId || !hasMore) return;
+    // if (isLoadingMore || !roomId) return;
+    console.log("페이지 하나 더 추가 (+1), try문 바깥");
     try {
       setIsLoadingMore(true);
       const nextPage = page + 1;
+      console.log("페이지 하나 더 추가 (+1)");
+      
       const response = await chatApi.openChatroom(roomId, nextPage);
       
       if (response.data && response.data.length > 0) {
@@ -103,18 +107,26 @@ const ChatRoomPage = () => {
       const previousScrollTop = container?.scrollTop || 0;
 
       // 스크롤 하단에서 100px 이내인 경우에만 자동 스크롤
-      setShouldScrollToBottom(
-        container ? 
-        container.scrollHeight - container.scrollTop <= container.clientHeight + 100 
-        : true
-      );
+      // setShouldScrollToBottom(
+      //   container ? 
+      //   container.scrollHeight - container.scrollTop <= container.clientHeight + 100 
+      //   : true
+      // );
 
       setChatData(prevData => {
         if (!prevData) return { chats: messagesWithOpponentName };
         return {
-          chats: [...messagesWithOpponentName, ...prevData.chats]
+          // chats: [...messagesWithOpponentName, ...prevData.chats]
+          chats: [...prevData.chats, ...messagesWithOpponentName]
         };
       });
+
+      setPage(nextPage);
+
+      // 데이터가 50개 미만이면 더 이상 데이터가 없다고 판단
+      if (response.data.length < 50) {
+        setHasMore(false);
+      }
 
       console.log("챗데이터: ", chatData);
 
@@ -126,7 +138,8 @@ const ChatRoomPage = () => {
         });
       }
 
-      setPage(nextPage);
+    }else{
+      setHasMore(false); // 더 이상 데이터가 없음
     }
   } catch (error) {
     console.error("추가 메시지 로드 실패:", error);
@@ -139,7 +152,14 @@ const ChatRoomPage = () => {
     const container = chatContainerRef.current;
     if (!container) return;
 
-    if (container.scrollTop <= container.clientHeight * 0.1) {
+    // 스크롤이 맨 위에 가까워졌을 때 추가 메시지 로드
+    const scrollTop = container.scrollTop;
+    const threshold = 100; // 스크롤 임계값
+
+    console.log('Scroll position:', scrollTop); // 스크롤 위치 디버깅
+    
+    if (scrollTop <= threshold) {
+      console.log('Triggering loadMoreMessages');
       loadMoreMessages();
     }
 
@@ -346,10 +366,11 @@ const ChatRoomPage = () => {
   };
 
   return (
-    <div className="flex flex-col bg-white">
+    // 무한스크롤위한 페이지 사이즈 설정 
+    <div className="flex flex-col bg-white h-[calc(100vh-120px)]"> 
       <div 
         ref={chatContainerRef}
-        className="flex-1 overflow-y-auto p-4 space-y-4 pb-20"
+        className="flex-1 overflow-y-auto p-4 space-y-4 pb-20 "
         onScroll={handleScroll}
       >
         {isLoadingMore && (
@@ -393,7 +414,7 @@ const ChatRoomPage = () => {
         ))}
         <div ref={messagesEndRef} />
       </div>
-      <div className="fixed bottom-20 w-full p-4 flex items-center bg-white">
+      <div className="fixed bottom-15 w-full p-4 flex items-center bg-white">
         <input
           type="text"
           value={newMessage}
