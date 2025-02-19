@@ -35,7 +35,7 @@ public class ChatRoomFacade {
                         .count();
                 lastMessage = chatMessages.get(0).getContent();
             }
-            Integer receiver = userId.equals(chatRoom.getParticipantIds().get(0)) ? Integer.valueOf(chatRoom.getParticipantIds().get(0)): Integer.valueOf(chatRoom.getParticipantIds().get(1));
+            Integer receiver = userId.equals(Integer.valueOf(chatRoom.getParticipantIds().get(0))) ? Integer.valueOf(chatRoom.getParticipantIds().get(1)): Integer.valueOf(chatRoom.getParticipantIds().get(0));
             UserInfo userInfo = userService.getUser(receiver);
             ChatRoomsGetRes chatRoomsGetRes = ChatRoomsGetRes.builder()
                     .roomId(chatRoom.getId())
