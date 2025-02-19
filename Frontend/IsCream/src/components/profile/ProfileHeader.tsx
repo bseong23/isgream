@@ -35,13 +35,13 @@ const ProfileHeader = ({
   return (
     <>
       <div className="w-full flex justify-center">
-        <div className="w-full max-w-[706px] w-[95%] mx-auto px-3 my-3">
+        <div className="w-full max-w-[706px] mx-auto px-3 my-3">
           <div className="flex justify-between text-xl">
             <div className="flex items-center">
               <img
                 src={profileImage || defaultImg}
                 alt="Profile"
-                className="w-12 h-12 rounded-full w-24 h-24 rounded-full overflow-hidden border-2 border-gray-200"
+                className="w-24 h-25 rounded-full overflow-hidden border-2 border-gray-200"
               />
               <span className="ml-4 text-[25px]">{nickname}님</span>
             </div>
