@@ -15,7 +15,8 @@ export const pdfApi = {
           const response = await api.get(`/htp-tests/${testId}/pdf`,{
             responseType: 'blob'
           });
-    
+          console.log("htp pdf 응담: ", response);
+          
           return response.data;
           // if (response.data.code === "S0000") {
           //   console.log("HTP 검사 다운로드 완료", response);

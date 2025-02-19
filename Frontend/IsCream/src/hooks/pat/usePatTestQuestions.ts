@@ -3,8 +3,8 @@ import { api } from "../../utils/common/axiosInstance";
 import { PatTestQuestionList } from "../../types/patTest";
 
 const usePatTestQuestions = () => {
-    const [questions, setQuestions] = useState<PatTestQuestionList>({ data: [] }); // ✅ 빈 객체 `{ data: [] }` 설정
-    const [loading, setLoading] = useState<boolean>(true);
+  const [questions, setQuestions] = useState<PatTestQuestionList>({ data: [] }); // ✅ 빈 객체 `{ data: [] }` 설정
+  const [loading, setLoading] = useState<boolean>(true);
   const [error, setError] = useState<string | null>(null);
 
   useEffect(() => {

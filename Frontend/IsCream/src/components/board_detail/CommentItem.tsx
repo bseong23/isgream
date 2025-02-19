@@ -1,6 +1,7 @@
 import { useState } from "react";
 import type { CommentItemProps } from "../../types/board";
 import CommentDropdown from "./CommentDropdown";
+import defaultImage from "../../assets/image/챗봇_곰.png";
 
 const CommentItem = ({
   comment,
@@ -35,11 +36,14 @@ const CommentItem = ({
           }}
         >
           <div className="flex items-center space-x-2 max-w-4xl mx-auto px-2 mt-1">
-            <div className="w-10 h-10 rounded-full overflow-hidden">
+            <div className="w-10 h-10 bg-gray-50 rounded-full overflow-hidden">
               <img
-                src={comment.author.imageUrl}
-                alt="profile"
-                className="w-[95%] h-full object-cover mx-auto"
+                src={comment.author.imageUrl ?? defaultImage}
+                alt={comment.author.nickname}
+                className="w-full h-full object-cover"
+                onError={(e) => {
+                  e.currentTarget.src = defaultImage;
+                }}
               />
             </div>
             <input
@@ -80,11 +84,14 @@ const CommentItem = ({
     <div className={`${isReply ? "pl-4 mt-4" : ""}`}>
       <div className="flex items-center justify-between group">
         <div className="flex items-center flex-1 ">
-          <div className="w-10 h-10 rounded-full mr-2 overflow-hidden flex-shrink-0">
+          <div className="w-10 h-10 bg-gray-50 rounded-full mr-2 overflow-hidden flex-shrink-0">
             <img
-              src={comment.author.imageUrl}
+              src={comment.author.imageUrl ?? defaultImage}
               alt={comment.author.nickname}
               className="w-full h-full object-cover"
+              onError={(e) => {
+                e.currentTarget.src = defaultImage;
+              }}
             />
           </div>
           <div className="ml-2 flex-1">
