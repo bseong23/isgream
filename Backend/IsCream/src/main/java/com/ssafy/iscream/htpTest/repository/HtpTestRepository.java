@@ -18,6 +18,13 @@ public interface HtpTestRepository extends JpaRepository<HtpTest, Integer> {
             @Param("endDate") LocalDateTime endDate
     );
 
+    @Query("SELECT h FROM HtpTest h WHERE h.childId = :childId AND h.createdAt >= :startDate AND h.createdAt < :endDate AND h.maleDrawingUrl IS NOT NULL AND h.femaleDrawingUrl IS NOT NULL")
+    List<HtpTest> findByChildIdAndCreatedAtBetweenAndValid(
+            @Param("childId") int childId,
+            @Param("startDate") LocalDateTime startDate,
+            @Param("endDate") LocalDateTime endDate
+    );
+
     @Query("SELECT h FROM HtpTest h WHERE h.childId = :childId AND FUNCTION('DATE', h.createdAt) = :selectedDate")
     Optional<HtpTest> findByChildIdAndDate(
             @Param("childId") int childId,
