@@ -8,11 +8,10 @@ import org.springframework.stereotype.Repository;
 
 import java.time.LocalDate;
 import java.util.List;
-import java.util.Optional;
 
 @Repository
 public interface BigFiveTestRepository extends JpaRepository<BigFiveTest, Integer> {
-    @Query(value = "SELECT * FROM big_five_test WHERE child_id = :childId ORDER BY test_date DESC, big_five_test_id DESC LIMIT 1", nativeQuery = true)
+    @Query("SELECT b FROM BigFiveTest b WHERE b.childId = :childId ORDER BY b.testDate DESC, b.testId DESC LIMIT 1")
     BigFiveTest findFirstByChildIdOrderByTestDateDesc(@Param("childId") Integer childId);
 
     @Query("SELECT b.pdfUrl FROM BigFiveTest b WHERE b.childId IN :childIds")
