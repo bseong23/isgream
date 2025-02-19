@@ -2,7 +2,7 @@ import React from "react";
 import { Send } from "lucide-react";
 import { useChatbot } from "../../hooks/chatbot/useChatbot";
 import chatbotImage from "../../assets/image/챗봇_곰.png";
-import Spinner from "../spinner";
+import Spinner from "../Spinner";
 
 const Chatbot: React.FC = () => {
   const {
