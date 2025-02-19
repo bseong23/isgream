@@ -45,6 +45,7 @@ interface openChatroomResponse {
 }
 
 let stompClient: Client | null = null;
+let currentSubscription: any = null;
 
 export const chatApi = {
   // 채팅방 목록 불러오기
@@ -112,7 +113,8 @@ export const chatApi = {
         return new Promise((resolve, reject) => {
             try {
                 stompClient = new Client({
-                brokerURL: 'ws://localhost:8080/ws',
+                brokerURL: 'https://i12a407.p.ssafy.io/api/ws',    
+                // brokerURL: 'ws://localhost:8080/ws',
                 connectHeaders: {
                     roomId: roomId,
                     Authorization: `Bearer ${token}`,
@@ -134,6 +136,12 @@ export const chatApi = {
                     reject(new Error('STOMP 연결 실패'));
                 }
             });
+
+            // 활성화 전에 연결이 완료되길 기다림
+            stompClient.onConnect = () => {
+                console.log('연결 완료');
+                resolve();
+            };
             stompClient.activate();
         } catch (error) {
             reject(error);
@@ -142,40 +150,54 @@ export const chatApi = {
     },
 
     // 메시지 보내기
-    async sendMessage(roomId: string, sender: string, receiver: string, content: string): Promise<void> {
+    async sendMessage(roomId: string, sender: string, receiver: string, content: string): Promise<any> {
         if (!stompClient) {
           throw new Error('웹소켓이 연결되지 않았습니다.');
         }
         
-        try {
-          // publish는 void를 반환하므로 await 불필요
-          stompClient.publish({
-            destination: '/pub/chat/send',
-            body: JSON.stringify({
-              roomId,
-              sender,
-              receiver,
-              content
-            })
+        return new Promise((resolve, reject) => {
+            try {
+              const messageData = {
+                roomId,
+                sender,
+                receiver,
+                content
+              };
+              console.log('Sending message:', messageData);
+              
+              stompClient.publish({
+                destination: '/pub/chat/send',
+                body: JSON.stringify(messageData),
+                headers: { 'content-type': 'application/json' }
+              });
+              
+              // 서버 응답을 기다림
+              const subscription = stompClient.subscribe(`/sub/chat/room/${roomId}`, (message) => {
+                const responseData = JSON.parse(message.body);
+                subscription.unsubscribe(); // 응답을 받은 후 구독 해제
+                resolve(responseData);
+                console.log("백엔드 응답데이터: ", responseData);
+                
+              });
+            } catch (error) {
+              console.error('메시지 전송 실패:', error);
+              reject(error);
+            }
           });
-          
-          // 응답은 이미 설정된 구독을 통해 받게 됨
-          // subscribeChatroom에서 설정한 콜백에서 처리됨
-          
-        } catch (error) {
-          console.error('메시지 전송 실패:', error);
-          throw error;
-        }
-      },
+        },
 
-    // // 채팅방 입장시 연결 성공 직후후, 구독
+    // // 채팅방 입장시 연결 성공 직후, 구독
     async subscribeChatroom(roomId: string, onMessageReceived: (message: any) => void): Promise<() => void> {
         if (!stompClient) {
             throw new Error('웹소켓이 연결되지 않았습니다.');
         }
     
         try {
-            const subscription = stompClient.subscribe(
+            if (currentSubscription) {
+                currentSubscription.unsubscribe();
+            }
+
+            currentSubscription  = stompClient.subscribe(
                 `/sub/chat/room/${roomId}`,
                 (message) => {
                     console.log('새로운 메시지 수신:', message);
@@ -185,7 +207,10 @@ export const chatApi = {
             );
     
             return () => {
-                subscription.unsubscribe();
+                if (currentSubscription) {
+                    currentSubscription.unsubscribe();
+                    currentSubscription = null;
+                }
             };
         } catch (error) {
             console.error('채팅방 구독 실패:', error);
@@ -194,27 +219,38 @@ export const chatApi = {
     }, 
 
     // // 채팅방 안에서, 메시지 읽음 처리
-    // async messageRead(roomId: string, content: string): Promise<void> {
-    //     if (!stompClient) {
-    //         throw new Error('웹소켓이 연결되지 않았습니다.');
-    //     }
+    async messageRead(messageId: string, readerId: string, roomId: string): Promise<any> {
+        if (!stompClient) {
+            throw new Error('웹소켓이 연결되지 않았습니다.');
+        }
     
-    //     try {
-    //         const token = localStorage.getItem('access');
-    //         const decodedToken = decodeToken(token!);
-    //         const senderId = decodedToken.userId;
-    
-    //         await stompClient.publish({
-    //             destination: '/pub/chat/send',
-    //             body: JSON.stringify({
-    //                 roomId,
-    //                 sender: senderId,
-    //                 content
-    //             })
-    //         });
-    //     } catch (error) {
-    //         console.error('메시지 전송 실패:', error);
-    //         throw error;
-    //     }
-    // }
+        return new Promise((resolve, reject) => {
+            try{
+                const messageData = {
+                    messageId,
+                    readerId
+                };
+                console.log("sending message: ", messageData);
+
+                stompClient?.publish({
+                    destination: '/pub/chat/ack',
+                body: JSON.stringify({
+                    messageId,
+                    readerId
+                })
+                });
+
+                // 서버 응답을 기다림
+                const subscription = stompClient?.subscribe(`/sub/chat/room/${roomId}`, (message) => {
+                    const responseData = JSON.parse(message.body);
+                    subscription?.unsubscribe(); // 응답을 받은 후 구독 해제
+                    resolve(responseData);
+                    console.log("백엔드 응답 데이터: ", responseData);
+                })
+            } catch (error) {
+                console.log("메세지 전송 실패: ", error);
+                reject(error);
+            }
+        })
+    }
 }
