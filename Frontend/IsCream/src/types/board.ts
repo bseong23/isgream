@@ -24,6 +24,7 @@ export interface Post {
   viewCount: number;
   createdAt: string;
   authorName: string;
+  authorId: string;
   author: Author;
 }
 
@@ -35,6 +36,7 @@ export interface PostItemProps {
     thumbnail: string;
     createdAt: string;
     authorName: string;
+    authorId: string;
     likes: number;
     userLiked: boolean;
     hits: number;

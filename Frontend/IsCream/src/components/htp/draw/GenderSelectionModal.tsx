@@ -5,9 +5,12 @@ interface GenderSelectionModalProps {
   onClose: () => void;
 }
 
-const GenderSelectionModal: React.FC<GenderSelectionModalProps> = ({ onSelectGender, onClose }) => {
+const GenderSelectionModal: React.FC<GenderSelectionModalProps> = ({
+  onSelectGender,
+  onClose
+}) => {
   return (
-    <div className="fixed inset-0 flex justify-center items-center bg-black bg-opacity-50">
+    <div className="fixed inset-0 flex justify-center items-center backdrop-blur-sm bg-white/30">
       <div className="bg-white p-6 rounded-lg shadow-lg w-80 flex flex-col items-center">
         <h2 className="text-lg font-bold mb-4">성별을 선택하세요</h2>
         <div className="flex gap-4 mb-4">

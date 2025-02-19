@@ -25,7 +25,7 @@ import {
   VerifyEmailPage,
   ResetPasswordPage,
   ChatPage,
-  // ChatRoomPage,
+  ChatRoomPage,
   CenterPage,
   CanvasPage,
   AiAnalysisPage,
@@ -33,6 +33,7 @@ import {
   PhotoCapturePage,
   HTPResultsPage,
   Education,
+  ParentingIntroPage,
   ParentingTestPage,
   PatTestResultPage,
   BigFivePage,
@@ -120,8 +121,8 @@ function App() {
               path="/chat/room/:roomId"
               element={
                 <ProtectedRoute>
-                  <ChatPage />
-                  {/* <ChatRoomPage /> */}
+                  {/* <ChatPage /> */}
+                  <ChatRoomPage />
                 </ProtectedRoute>
               }
             />
@@ -227,6 +228,14 @@ function App() {
               element={
                 <ProtectedRoute>
                   <AiAnalysisPage />
+                </ProtectedRoute>
+              }
+            />
+            <Route
+              path="/pat"
+              element={
+                <ProtectedRoute>
+                  <ParentingIntroPage />
                 </ProtectedRoute>
               }
             />
