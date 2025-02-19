@@ -2,7 +2,7 @@ import React, { useRef, useState, useEffect } from "react";
 import { ReactSketchCanvas, ReactSketchCanvasRef } from "react-sketch-canvas";
 import characterImage from "../../../assets/image/character2.png"; // 캐릭터 이미지 import
 import { useUploadDrawing } from "../../../hooks/htp/useUploadDrawing";
-import { DrawingType } from "../../../types/htp";
+import { DrawingType, UploadDrawingResponse } from "../../../types/htp";
 import { createUploadFormData } from "../../../utils/common/formDataHelper"; // ✅ FormData 변환 함수 임포트
 
 interface Canvas2Props {
@@ -10,10 +10,16 @@ interface Canvas2Props {
   gender?: "male" | "female";
   index: number;
   childId: number;
-  onSaveComplete: (data: string) => void;
+  onSaveComplete: (data: UploadDrawingResponse) => void; // ✅ 타입 변경
 }
 
-const Canvas2: React.FC<Canvas2Props> = ({ type, gender, index, childId, onSaveComplete }) => {
+const Canvas2: React.FC<Canvas2Props> = ({
+  type,
+  gender,
+  index,
+  childId,
+  onSaveComplete
+}) => {
   const canvasRef = useRef<ReactSketchCanvasRef | null>(null);
   const [startTime, setStartTime] = useState<number | null>(null);
 
@@ -30,60 +36,53 @@ const Canvas2: React.FC<Canvas2Props> = ({ type, gender, index, childId, onSaveC
 
   const handleSave = async () => {
     if (!canvasRef.current || !startTime) return;
-  
+
     const timeTaken = ((Date.now() - startTime) / 1000).toFixed(2);
     const dataUrl = await canvasRef.current.exportImage("png");
     const response = await fetch(dataUrl);
     const blob = await response.blob();
-    const file = new File([blob], `drawing_${type}_${index}.png`, { type: "image/png" });
-  
-    const formData = createUploadFormData({ file, time: timeTaken, childId, type, index, gender });
-  
+    const file = new File([blob], `drawing_${type}_${index}.png`, {
+      type: "image/png"
+    });
+
+    const formData = createUploadFormData({
+      file,
+      time: timeTaken,
+      childId,
+      type,
+      index,
+      gender
+    });
+
     console.log("📤 전송할 FormData:", formData);
-  
+
     uploadDrawing(formData, {
       onSuccess: (apiResponse) => {
         console.log("✅ 저장 성공! API 응답:", apiResponse);
-  
+
         if (!apiResponse || !apiResponse.data) {
           console.error("❌ API 응답 데이터가 올바르지 않습니다!", apiResponse);
           alert("분석 결과를 불러올 수 없습니다.");
           return;
         }
-  
-        // ✅ API 응답에서 result 값 가져오기
-        const { houseDrawingUrl, treeDrawingUrl, maleDrawingUrl, femaleDrawingUrl, result } = apiResponse.data;
 
-  
         // ✅ API 응답 데이터를 JSON 형태로 부모 컴포넌트로 전달
-        const analysisData = {
+        onSaveComplete({
           data: {
-            result,
-            houseDrawingUrl,
-            treeDrawingUrl,
-            maleDrawingUrl,
-            femaleDrawingUrl,
-          },
-        };
-  
-        console.log("📌 Canvas.tsx에서 onSaveComplete 호출됨:", analysisData);
-  
-        if (!onSaveComplete) {
-          console.error("❌ onSaveComplete 함수가 존재하지 않습니다!");
-          return;
-        }
-  
-        onSaveComplete(analysisData); // ✅ 부모 컴포넌트(CanvasPage.tsx)로 API 응답 데이터 전달
+            result: apiResponse.data.result ?? "",
+            houseDrawingUrl: apiResponse.data.houseDrawingUrl ?? "",
+            treeDrawingUrl: apiResponse.data.treeDrawingUrl ?? "",
+            maleDrawingUrl: apiResponse.data.maleDrawingUrl ?? "",
+            femaleDrawingUrl: apiResponse.data.femaleDrawingUrl ?? ""
+          }
+        });
       },
       onError: (error) => {
         console.error("❌ 저장 오류 발생:", error);
         alert("저장 실패! 다시 시도해주세요.");
-      },
+      }
     });
   };
-  
-  
-  
 
   return (
     <div className="fixed inset-0 flex flex-col items-center bg-[#EAF8E6] overflow-hidden">

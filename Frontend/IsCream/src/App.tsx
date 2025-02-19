@@ -33,6 +33,7 @@ import {
   PhotoCapturePage,
   HTPResultsPage,
   Education,
+  ParentingIntroPage,
   ParentingTestPage,
   PatTestResultPage,
   BigFivePage,
@@ -227,6 +228,14 @@ function App() {
               element={
                 <ProtectedRoute>
                   <AiAnalysisPage />
+                </ProtectedRoute>
+              }
+            />
+            <Route
+              path="/pat"
+              element={
+                <ProtectedRoute>
+                  <ParentingIntroPage />
                 </ProtectedRoute>
               }
             />
