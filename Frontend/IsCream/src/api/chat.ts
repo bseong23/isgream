@@ -172,7 +172,11 @@ export const chatApi = {
         };
         console.log("Sending message:", messageData);
 
-        if (stompClient === null) return;
+        if (stompClient === null) {
+            console.log("stomp문제ㅜㅜ");
+            
+            return;
+        }
 
         stompClient.publish({
           destination: "/pub/chat/send",

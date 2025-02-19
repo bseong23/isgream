@@ -68,6 +68,8 @@ const ChatRoomPage = () => {
           })
         };
       });
+      
+      
     } catch (error) {
       console.error("메시지 읽음 처리 실패:", error);
     }
@@ -113,6 +115,8 @@ const ChatRoomPage = () => {
           chats: [...messagesWithOpponentName, ...prevData.chats]
         };
       });
+
+      console.log("챗데이터: ", chatData);
 
       // 스크롤 위치 복원
       if (container) {
@@ -281,25 +285,28 @@ const ChatRoomPage = () => {
     setNewMessage(""); // 즉시 input 비우기
 
     try {
-        await chatApi.sendMessage(roomId, currentUserId, receiver, newMessage);
-
-        const sentMessage = {
-          id: Date.now().toString(),
-          roomId: roomId,
-          sender: currentUserId,
-          receiver: receiver,
-          content: messageToSend,
-          timestamp: new Date().toISOString(),
-          read: false,
-          opponentName: opponentName
-        };
+        console.log("메시지보낼때 파라미터 확인: ", roomId, currentUserId, receiver, messageToSend);
+        const response = await chatApi.sendMessage(roomId, currentUserId, receiver, messageToSend);
+        console.log("챗룸페이지에서 메시지 보내고 돌아온 응답 메시지: ", response);
+        
+        
+        // const sentMessage = {
+        //   id: Date.now().toString(),
+        //   roomId: roomId,
+        //   sender: currentUserId,
+        //   receiver: receiver,
+        //   content: messageToSend,
+        //   timestamp: new Date().toISOString(),
+        //   read: false,
+        //   opponentName: opponentName
+        // };
 
         setShouldScrollToBottom(true);  // 새 메시지 전송시 스크롤
         setChatData(prevData => {
-          if (!prevData) return { chats: [sentMessage] };
+          if (!prevData) return { chats: [response] };
           return {
             ...prevData,
-            chats: [sentMessage, ...prevData.chats]
+            chats: [response, ...prevData.chats]
           };
         });
         
