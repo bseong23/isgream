@@ -4,8 +4,8 @@ import characterImage from "../../../assets/image/character2.png";
 import { useUploadDrawing } from "../../../hooks/htp/useUploadDrawing";
 import { DrawingType, UploadDrawingResponse } from "../../../types/htp";
 import { createUploadFormData } from "../../../utils/common/formDataHelper";
+import { useNavigate } from "react-router-dom"; // 추가된 부분
 
-const HEADER_HEIGHT = 60; // 헤더 높이 (px)
 
 interface CanvasProps {
   type: DrawingType;
@@ -24,6 +24,7 @@ const Canvas: React.FC<CanvasProps> = ({
   onSaveComplete,
   onSaveStart
 }) => {
+  const navigate = useNavigate(); // 추가된 부분
   const canvasRef = useRef<ReactSketchCanvasRef | null>(null);
   const [startTime, setStartTime] = useState<number | null>(null);
   const { mutate: uploadDrawing } = useUploadDrawing();
@@ -32,6 +33,10 @@ const Canvas: React.FC<CanvasProps> = ({
     setStartTime(Date.now());
   }, []);
 
+  const handleGoBack = () => {
+    navigate("/ai-analysis"); // 추가된 부분: 뒤로가기 버튼 클릭 시 /ai-analysis로 이동
+  };
+
   const handleClear = () => {
     canvasRef.current?.clearCanvas();
   };
@@ -39,7 +44,6 @@ const Canvas: React.FC<CanvasProps> = ({
   const handleSave = async () => {
     if (!canvasRef.current || !startTime) return;
 
-    // 저장 시작 시 로딩 상태 활성화
     onSaveStart();
 
     const timeTaken = ((Date.now() - startTime) / 1000).toFixed(2);
@@ -71,7 +75,6 @@ const Canvas: React.FC<CanvasProps> = ({
           return;
         }
 
-        // API 응답 데이터를 JSON 형태로 부모 컴포넌트로 전달
         onSaveComplete({
           data: {
             result: apiResponse.data.result ?? "",
@@ -90,17 +93,12 @@ const Canvas: React.FC<CanvasProps> = ({
   };
 
   return (
-    <div
-      className="fixed inset-x-0 top-[60px] flex justify-center items-center bg-[#EAF8E6] overflow-hidden"
-      style={{ height: `calc(100vh - ${HEADER_HEIGHT}px)` }}
-    >
-      <div
-        className={`flex w-full h-full px-4 ${
-          type === "house" ? "flex-row" : "flex-col"
-        } justify-between items-center relative`}
-      >
+    <div className="fixed inset-0 flex justify-center items-center bg-[#EAF8E6] overflow-hidden">
+      <div className={`flex w-full h-full px-2 ${
+        type === "house" ? "flex-row" : "flex-col"
+      } justify-between items-center relative`}>
         {/* 그림판 */}
-        <div className="border-[1.5px] border-gray-400 border-opacity-50 rounded-[15px] overflow-hidden w-[90%] h-full">
+        <div className="border-[1.5px] border-gray-400 border-opacity-50 rounded-[15px] overflow-hidden w-[90%] h-[95%] my-auto">
           <ReactSketchCanvas
             ref={canvasRef}
             style={{ width: "100%", height: "100%" }}
@@ -108,36 +106,44 @@ const Canvas: React.FC<CanvasProps> = ({
             strokeColor="black"
           />
         </div>
-
+  
         {/* 버튼 + 캐릭터 컨테이너 */}
-        <div className="flex flex-col items-center justify-between h-full w-[10%] ml-2">
+        <div className="flex flex-col items-center justify-between h-[90%] w-[12%] ml-2 my-auto">
           <div className="flex flex-col gap-2 w-full">
             <button
               onClick={handleClear}
-              className="w-full h-[40px] bg-green-600 text-white font-semibold rounded-lg text-sm shadow-md"
+              className="w-full h-[50px] bg-green-600 text-white font-semibold rounded-lg text-md shadow-md"
             >
               다시
             </button>
             <button
               onClick={handleSave}
-              className="w-full h-[40px] bg-green-600 text-white font-semibold rounded-lg text-sm shadow-md"
+              className="w-full h-[50px] bg-green-600 text-white font-semibold rounded-lg text-md shadow-md"
             >
               저장
             </button>
+            <button
+              onClick={handleGoBack}
+              className="w-full h-[50px] bg-green-600 text-white font-semibold rounded-lg text-md shadow-md"
+            >
+              뒤로가기
+            </button>
           </div>
-
+  
           {/* 캐릭터 */}
           <div className="flex justify-center w-full">
             <img
               src={characterImage}
               alt="캐릭터"
-              className="w-full max-w-[100px] h-auto mb-4"
+              className="w-full max-w-[80px] h-auto"
             />
           </div>
         </div>
       </div>
     </div>
   );
+  
+  
 };
 
 export default Canvas;

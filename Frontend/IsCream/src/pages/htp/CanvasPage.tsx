@@ -11,18 +11,13 @@ import LoadingGIF from "../../assets/loading.gif";
 type DrawingType = "house" | "tree" | "male" | "female";
 
 const CanvasPage: React.FC = () => {
-  const [step, setStep] = useState<"intro" | "drawing" | "gender" | "result">(
-    "intro"
-  );
+  const [step, setStep] = useState<"intro" | "drawing" | "gender" | "result">("intro");
   const [currentType, setCurrentType] = useState<DrawingType>("house");
-  const [firstGender, setFirstGender] = useState<"male" | "female" | null>(
-    null
-  );
+  const [firstGender, setFirstGender] = useState<"male" | "female" | null>(null);
   const [index, setIndex] = useState(1);
-  const [resultData, setResultData] = useState<UploadDrawingResponse | null>(
-    null
-  );
+  const [resultData, setResultData] = useState<UploadDrawingResponse | null>(null);
   const [isAnalyzing, setIsAnalyzing] = useState(false);
+  const [showOppositeGenderModal, setShowOppositeGenderModal] = useState(false);
 
   const { selectedChild } = useChild(useCallback(() => {}, []));
   const childId = useMemo(() => selectedChild?.childId || 0, [selectedChild]);
@@ -32,70 +27,92 @@ const CanvasPage: React.FC = () => {
       if (!firstGender) {
         setStep("gender");
       } else {
-        setStep("drawing");
+        if (index === 4) {
+          setShowOppositeGenderModal(true);
+        } else {
+          setStep("drawing");
+        }
       }
     } else {
       setStep("drawing");
     }
+  }, [currentType, firstGender, index]);
+
+  const handleSelectGender = useCallback((selectedGender: "male" | "female") => {
+    setFirstGender(selectedGender);
+    setCurrentType(selectedGender);
+    setStep("drawing");
+  }, []);
+
+  const handleSaveComplete = useCallback((data: UploadDrawingResponse) => {
+    console.log("📌 handleSaveComplete 호출됨! 전달된 데이터:", data);
+    setIsAnalyzing(false);
+
+    if (!data?.data || Object.keys(data.data).length === 0) {
+      console.error("❌ handleSaveComplete에서 받은 데이터가 올바르지 않습니다!", data);
+      return;
+    }
+
+    if (currentType === "house") {
+      setCurrentType("tree");
+      setIndex(2);
+      setStep("intro");
+    } else if (currentType === "tree") {
+      setCurrentType("male");
+      setIndex(3);
+      setStep("intro");
+    } else if (currentType === firstGender) {
+      setCurrentType(firstGender === "male" ? "female" : "male");
+      setIndex(4);
+      setStep("intro");
+    } else {
+      console.log("✅ 모든 그림 완료! 결과 표시 중...");
+      setResultData({
+        data: {
+          houseDrawingUrl: data.data?.houseDrawingUrl ?? "",
+          treeDrawingUrl: data.data?.treeDrawingUrl ?? "",
+          maleDrawingUrl: data.data?.maleDrawingUrl ?? "",
+          femaleDrawingUrl: data.data?.femaleDrawingUrl ?? "",
+          result: data.data?.result ?? ""
+        }
+      });
+      setStep("result");
+    }
   }, [currentType, firstGender]);
-
-  const handleSelectGender = useCallback(
-    (selectedGender: "male" | "female") => {
-      setFirstGender(selectedGender);
-      setCurrentType(selectedGender);
-      setStep("drawing");
-    },
-    []
-  );
-
-  const handleSaveComplete = useCallback(
-    (data: UploadDrawingResponse) => {
-      console.log("📌 handleSaveComplete 호출됨! 전달된 데이터:", data);
-      setIsAnalyzing(false);
-
-      if (!data?.data || Object.keys(data.data).length === 0) {
-        console.error(
-          "❌ handleSaveComplete에서 받은 데이터가 올바르지 않습니다!",
-          data
-        );
-        return;
-      }
-
-      if (currentType === "house") {
-        setCurrentType("tree");
-        setIndex(2);
-        setStep("intro");
-      } else if (currentType === "tree") {
-        setCurrentType("male");
-        setIndex(3);
-        setStep("intro");
-      } else if (currentType === firstGender) {
-        setCurrentType(firstGender === "male" ? "female" : "male");
-        setIndex(4);
-        setStep("intro");
-      } else {
-        console.log("✅ 모든 그림 완료! 결과 표시 중...");
-        setResultData({
-          data: {
-            houseDrawingUrl: data.data?.houseDrawingUrl ?? "",
-            treeDrawingUrl: data.data?.treeDrawingUrl ?? "",
-            maleDrawingUrl: data.data?.maleDrawingUrl ?? "",
-            femaleDrawingUrl: data.data?.femaleDrawingUrl ?? "",
-            result: data.data?.result ?? ""
-          }
-        });
-        setStep("result");
-      }
-    },
-    [currentType, firstGender]
-  );
 
   const handleSaveStart = useCallback(() => {
     setIsAnalyzing(true);
   }, []);
 
+  const handleOppositeGenderContinue = () => {
+    setShowOppositeGenderModal(false);
+    setStep("drawing");
+  };
+
   return (
     <div className="relative w-full flex flex-col items-center bg-white pb-20">
+      {/* 반대 성별 모달 */}
+      {showOppositeGenderModal && (
+        <div className="fixed inset-0 bg-white/30 bg-opacity-50 flex items-center justify-center z-50">
+          <div className="bg-white p-6 rounded-lg shadow-lg">
+            <h2 className="text-xl font-bold mb-4">추가 분석</h2>
+            <p>
+              {firstGender === "male"
+                ? "여성 그림을 그려보세요"
+                : "남성 그림을 그려보세요"}
+            </p>
+            <div className="mt-4 flex justify-end">
+              <button
+                className="px-4 py-2 bg-blue-500 text-white rounded"
+                onClick={handleOppositeGenderContinue}
+              >
+                확인
+              </button>
+            </div>
+          </div>
+        </div>
+      )}
+
       {step === "intro" && (
         <DrawingIntro type={currentType} onStart={handleStartDrawing} />
       )}

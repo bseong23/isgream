@@ -1,11 +1,12 @@
 import { QueryClientProvider } from "@tanstack/react-query";
 import { queryClient } from "./utils/common/queryClient";
-import { BrowserRouter, Routes, Route } from "react-router-dom";
+import { BrowserRouter, Routes, Route, useLocation } from "react-router-dom";
 import BottomNavigation from "./components/nav/Nav";
 import Header from "./components/header/Header";
 import ProtectedRoute from "./components/ProtectedRoute";
 import { useEffect } from "react";
 import { api } from "./utils/common/axiosInstance";
+import { useFCM } from "./hooks/notification/useFCM";
 
 // pages 폴더에서 필요한 컴포넌트들을 가져옴
 import {
@@ -40,7 +41,17 @@ import {
   BigFiveQuestionPage,
   BigFiveResultPage
 } from "./pages";
-import { useFCM } from "./hooks/notification/useFCM";
+
+// 스크롤 초기화 컴포넌트 분리
+const ScrollToTop = () => {
+  const { pathname } = useLocation();
+
+  useEffect(() => {
+    window.scrollTo(0, 0);
+  }, [pathname]);
+
+  return null;
+};
 
 // 앱 시작시 인증 설정
 const setupAxiosInterceptors = () => {
@@ -53,8 +64,6 @@ const setupAxiosInterceptors = () => {
 function App() {
   const { initializeFCM } = useFCM();
 
-  const isLoginPage = location.pathname === "/login";
-
   useEffect(() => {
     setupAxiosInterceptors();
     initializeFCM();
@@ -63,11 +72,10 @@ function App() {
   return (
     <QueryClientProvider client={queryClient}>
       <BrowserRouter>
+        <ScrollToTop />
         <Header />
 
-        <div
-          className={`w-[95%] mx-auto pb-20 bg-white min-h-screen ${!isLoginPage ? "pt-20" : ""}`}
-        >
+        <div className="w-[95%] mx-auto pb-20 bg-white min-h-screen pt-20">
           <Routes>
             <Route path="/login" element={<LoginPage />} />
             {/* 인증이 필요 없는 라우트 */}
@@ -126,7 +134,6 @@ function App() {
               path="/chat/room/:roomId"
               element={
                 <ProtectedRoute>
-                  {/* <ChatPage /> */}
                   <ChatRoomPage />
                 </ProtectedRoute>
               }
