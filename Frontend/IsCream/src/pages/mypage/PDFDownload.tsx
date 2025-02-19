@@ -122,7 +122,7 @@ const PDFDownload = () => {
 
   useEffect(() => {
     fetchTestResults();
-  }, [selectedTests]); // selectedTests는 제거하고 날짜만 watching
+  }, [dateRange, selectedTests]); // selectedTests는 제거하고 날짜만 watching
 
   const handleDateChange = (newRange: DateRange) => {
     setDateRange(newRange);

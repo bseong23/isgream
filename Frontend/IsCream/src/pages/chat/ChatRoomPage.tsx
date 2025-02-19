@@ -367,13 +367,15 @@ const ChatRoomPage = () => {
 
   return (
     // 무한스크롤위한 페이지 사이즈 설정 
-    <div className="flex flex-col bg-white h-[calc(100vh-120px)]"> 
+    <div className="flex flex-col h-[calc(100vh-160px)]"> 
+
+    {/* 채팅 메시지 영역 */}
       <div 
         ref={chatContainerRef}
-        className="flex-1 overflow-y-auto p-4 space-y-4 pb-20 "
+        className="flex-1 overflow-y-auto px-4"
         onScroll={handleScroll}
       >
-        {isLoadingMore && (
+        {isLoadingMore && hasMore && (
           <div className="text-center py-2">
             <span className="text-gray-500">메시지를 불러오는 중...</span>
           </div>
@@ -414,23 +416,30 @@ const ChatRoomPage = () => {
         ))}
         <div ref={messagesEndRef} />
       </div>
-      <div className="fixed bottom-15 w-full p-4 flex items-center bg-white">
-        <input
-          type="text"
-          value={newMessage}
-          onChange={(e) => setNewMessage(e.target.value)}
-          onKeyPress={handleKeyPress}
-          placeholder="메시지를 입력하세요"
-          className="flex-1 border border-gray-500 rounded-lg p-2 mr-2"
-        />
-        <button
-          onClick={handleSendMessage}
-          disabled={!isConnected}
-          className="bg-green-500 text-white px-4 py-2 rounded-lg disabled:bg-gray-300"
-        >
-          전송
-        </button>
+      
+
+      {/* 채팅입력창 */}
+      <div className="mt-4">
+        <div className="flex items-center p-1 bg-white ">
+          <input
+            type="text"
+            value={newMessage}
+            onChange={(e) => setNewMessage(e.target.value)}
+            onKeyPress={handleKeyPress}
+            placeholder="메시지를 입력하세요"
+            className="flex-1 border border-gray-500 rounded-lg p-2 mr-2"
+          />
+          <button
+            onClick={handleSendMessage}
+            disabled={!isConnected}
+            className="bg-green-500 text-white px-4 py-2 rounded-lg disabled:bg-gray-300"
+          >
+            전송
+          </button>
+        </div>
       </div>
+      {/* 채팅입력창 */}
+
     </div>
   );
 };

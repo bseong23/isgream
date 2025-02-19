@@ -124,7 +124,7 @@ const ChildInfo: React.FC<ChildInfoProps> = ({
                         </button>
                     </div>
                 </div>
-                <h3 className="text-gray-600">이름: {nickname}</h3>
+                <h3 className="text-gray-600 overflow-hidden text-ellipsis whitespace-nowrap">이름: {nickname}</h3>
                 <p className="text-gray-600">성별: {gender}</p>
                 <p className="text-gray-600">생년월일: {birth}</p>
             </div>
