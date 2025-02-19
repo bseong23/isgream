@@ -1,43 +1,49 @@
-//package com.ssafy.iscream.noti.config;
-//
-//import com.google.auth.oauth2.GoogleCredentials;
-//import com.google.cloud.firestore.Firestore;
-//import com.google.firebase.FirebaseApp;
-//import com.google.firebase.FirebaseOptions;
-//import com.google.firebase.cloud.FirestoreClient;
-//import jakarta.annotation.PostConstruct;
-//import lombok.extern.slf4j.Slf4j;
-//import org.springframework.context.annotation.Bean;
-//import org.springframework.context.annotation.Configuration;
-//import org.springframework.core.io.ClassPathResource;
-//import org.springframework.stereotype.Service;
-//
-//import java.io.FileInputStream;
-//import java.io.FileNotFoundException;
-//import java.io.InputStream;
-//
+package com.ssafy.iscream.noti.config;
+
+import com.google.auth.oauth2.GoogleCredentials;
+import com.google.cloud.firestore.Firestore;
+import com.google.firebase.FirebaseApp;
+import com.google.firebase.FirebaseOptions;
+import com.google.firebase.cloud.FirestoreClient;
+import lombok.extern.slf4j.Slf4j;
+import org.springframework.context.annotation.Bean;
+import org.springframework.context.annotation.Configuration;
+import org.springframework.core.io.ClassPathResource;
+
+import javax.annotation.PostConstruct;
+import java.io.InputStream;
+
 //@Configuration
-//@Slf4j
-//public class FirebaseConfig {
-//
-//    private Firestore firestore;
+//public class FirebaseInitialization {
 //
 //    @PostConstruct
-//    public void init() {
+//    public void initialize() {
+//        try {
+//            ClassPathResource resource = new ClassPathResource("firebase/androidtest-firebase-adminsdk.json");
+//            InputStream serviceAccount = resource.getInputStream();
+//            System.out.println(serviceAccount);
+//
+//            FirebaseOptions options = FirebaseOptions.builder()
+//                    .setCredentials(GoogleCredentials.fromStream(serviceAccount))
+//                    .build();
+//
+//            FirebaseApp.initializeApp(options);
+//            System.out.println("Fcm Setting Completed");
+//        } catch (IOException e) {
+//            throw new RuntimeException(e.getMessage());
+//        }
+//    }
+//}
+
+//@Configuration
+//public class FirebaseInitialization {
+//    @Bean
+//    public Firestore init() {
 //        try {
 //
-//            ClassPathResource classPathResource = new ClassPathResource("firebase/serviceAccountKey.json");
+//            ClassPathResource classPathResource = new ClassPathResource("firebase/androidtest-firebase-adminsdk.json");
 //            InputStream serviceAccount = classPathResource.getInputStream();
-////            InputStream serviceAccount = getClass().getClassLoader()
-////                    .getResourceAsStream("/firebase/serviceAccountKey.json");
-//
-//            System.out.println("================================================");
 //            System.out.println(serviceAccount);
-//            System.out.println("================================================");
-//
-//            if (serviceAccount == null) {
-//                throw new FileNotFoundException("Firebase serviceAccountKey.json 파일을 찾을 수 없습니다.");
-//            }
 //
 //            FirebaseOptions options = FirebaseOptions.builder()
 //                    .setCredentials(GoogleCredentials.fromStream(serviceAccount))
@@ -47,127 +53,54 @@
 //                FirebaseApp.initializeApp(options);
 //            }
 //
-//            this.firestore = FirestoreClient.getFirestore();
-//
+//            System.out.println("Fcm Setting Completed");
+//            return FirestoreClient.getFirestore();
 //        } catch (Exception e){
-//            log.error(e.getMessage());
+//            throw new RuntimeException("Firestore 초기화 실패: " + e.getMessage());
 //        }
 //    }
-//
-//    @Bean
-//    public Firestore getFirestore() {
-//        return firestore;
-//    }
 //}
-//
-//
-////package com.ssafy.iscream.noti.config;
-////
-////import lombok.extern.slf4j.Slf4j;
-////import org.springframework.context.annotation.Configuration;
-////
-////@Configuration
-////@Slf4j
-////public class FirebaseConfig {
-////
-//////    private Firestore firestore;
-//////
-//////    @PostConstruct
-//////    public void init() {
-//////        try {
-//////            InputStream serviceAccount = getClass().getClassLoader()
-//////                    .getResourceAsStream("firebase/serviceAccountKey.json");
-//////
-//////            if (serviceAccount == null) {
-//////                throw new FileNotFoundException("Firebase serviceAccountKey.json 파일을 찾을 수 없습니다.");
-//////            }
-//////
-//////            FirebaseOptions options = FirebaseOptions.builder()
-//////                    .setCredentials(GoogleCredentials.fromStream(serviceAccount))
-//////                    .build();
-//////
-//////            if (FirebaseApp.getApps().isEmpty()) {
-//////                FirebaseApp.initializeApp(options);
-//////            }
-//////
-//////            this.firestore = FirestoreClient.getFirestore();
-//////
-//////        } catch (Exception e){
-//////            log.error(e.getMessage());
-//////        }
-//////    }
-//////
-//////    @Bean
-//////    public Firestore getFirestore() {
-//////        return firestore;
-//////    }
-////}
-////
-////
-//////package com.ssafy.iscream.noti.config;
-//////
-//////import com.google.auth.oauth2.GoogleCredentials;
-//////import com.google.cloud.firestore.Firestore;
-//////import com.google.firebase.FirebaseApp;
-//////import com.google.firebase.FirebaseOptions;
-//////import com.google.firebase.cloud.FirestoreClient;
-//////import jakarta.annotation.PostConstruct;
-//////import lombok.extern.slf4j.Slf4j;
-//////import org.springframework.context.annotation.Bean;
-//////import org.springframework.context.annotation.Configuration;
-//////import org.springframework.core.env.Environment;
-//////import java.io.ByteArrayInputStream;
-//////import java.nio.charset.StandardCharsets;
-//////import java.util.Base64;
-//////
-//////@Configuration
-//////@Slf4j
-//////public class FirebaseConfig {
-//////
-//////    private final Environment environment;
-//////    private Firestore firestore;
-//////
-//////    public FirebaseConfig(Environment environment) {
-//////        this.environment = environment;
-//////    }
-//////
-//////    @PostConstruct
-//////    public void init() {
-//////        try {
-//////            // application.properties에서 Base64 인코딩된 환경 변수 불러오기
-//////            String firebaseConfigBase64 = environment.getProperty("firebase.config.base64");
-//////
-//////            if (firebaseConfigBase64 == null || firebaseConfigBase64.isEmpty()) {
-//////                throw new IllegalStateException("firebase.config.base64 환경 변수가 설정되지 않았습니다.");
-//////            }
-//////
-//////            // Base64 디코딩 (줄바꿈 및 공백 제거)
-//////            byte[] decodedBytes = Base64.getDecoder().decode(firebaseConfigBase64.replaceAll("\\s", ""));
-//////            String firebaseConfigJson = new String(decodedBytes, StandardCharsets.UTF_8);
-//////
-//////            // JSON 문자열을 InputStream으로 변환
-//////            ByteArrayInputStream serviceAccount = new ByteArrayInputStream(firebaseConfigJson.getBytes(StandardCharsets.UTF_8));
-//////
-//////            // Firebase 옵션 설정
-//////            FirebaseOptions options = FirebaseOptions.builder()
-//////                    .setCredentials(GoogleCredentials.fromStream(serviceAccount))
-//////                    .build();
-//////
-//////            if (FirebaseApp.getApps().isEmpty()) {
-//////                FirebaseApp.initializeApp(options);
-//////            }
-//////
-//////            this.firestore = FirestoreClient.getFirestore();
-//////            log.info("Firebase 초기화 성공");
-//////
-//////        } catch (Exception e) {
-//////            log.error("Firebase 초기화 중 오류 발생", e);
-//////        }
-//////    }
-//////
-//////    @Bean
-//////    public Firestore getFirestore() {
-//////        return firestore;
-//////    }
-//////}
-//////
+
+@Configuration
+@Slf4j
+public class FirebaseConfig {
+
+    private Firestore firestore;
+
+    @PostConstruct
+    public void init() {
+        try {
+            System.out.println("@PostConstruct 메소드 시작입니다!!!");
+
+            ClassPathResource classPathResource = new ClassPathResource("firebase/serviceAccountKey.json");
+            if (!classPathResource.exists()) {
+                throw new RuntimeException("❌ Firebase JSON 파일을 찾을 수 없습니다.");
+            }
+
+            InputStream serviceAccount = classPathResource.getInputStream();
+            System.out.println("✅ Firebase JSON 파일이 정상적으로 로드되었습니다.");
+
+            FirebaseOptions options = FirebaseOptions.builder()
+                    .setCredentials(GoogleCredentials.fromStream(serviceAccount))
+                    .build();
+
+            if (FirebaseApp.getApps().isEmpty()) {
+                FirebaseApp.initializeApp(options);
+            }
+
+            this.firestore = FirestoreClient.getFirestore();
+            System.out.println("✅ Firebase Firestore 설정 완료!");
+
+        } catch (Exception e) {
+            e.printStackTrace(); // 예외 전체 스택 출력
+            throw new RuntimeException("❌ Firestore 초기화 실패: " + e.getMessage());
+        }
+    }
+
+
+    @Bean
+    public Firestore getFirestore() {
+        System.out.println("@Bean 메소드입니다!!!");
+        return firestore;
+    }
+}

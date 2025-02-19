@@ -76,6 +76,8 @@ public class SecurityConfig {
 
                         CorsConfiguration configuration = new CorsConfiguration();
 
+
+                        //configuration.setAllowedOriginPatterns(Arrays.asList("*"));
                         configuration.setAllowedOriginPatterns(Arrays.asList("http://localhost:5173", "https://i12a407.p.ssafy.io", "http://localhost:8080"));
                         configuration.setAllowedMethods(Arrays.asList("GET", "POST", "PUT", "DELETE", "OPTIONS"));
                         configuration.setAllowCredentials(true);
@@ -102,7 +104,7 @@ public class SecurityConfig {
         // 경로별 인가 작업
         http
                 .authorizeHttpRequests((auth) -> auth
-                        //.requestMatchers("/api/ws/**", "/ws/**").permitAll()// 웹소켓은 이거 해야함하하
+                        .requestMatchers("/api/ws/**", "/ws/**").permitAll()// 웹소켓은 이거 해야함하하 why -> 핸드셰이크
                         .requestMatchers("/v3/api-docs/**", "/swagger-ui/**", "/swagger-ui.html").permitAll()
                         .requestMatchers("/h2-console/**").permitAll()
                         .requestMatchers("/users/join/**", "/users/login/**", "/oauth2/**").permitAll()
