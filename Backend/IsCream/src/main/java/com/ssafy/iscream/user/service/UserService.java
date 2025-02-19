@@ -51,7 +51,7 @@ public class UserService {
             throw new UserExistException();
         }
 
-        duplicatePhone(userReq.getPhone()); // 전화번호 중복 확인
+//        duplicatePhone(userReq.getPhone()); // 전화번호 중복 확인
 
         User user = modelMapper.map(userReq, User.class);
         user.setRelation(Relation.valueOf(userReq.getRelation()));
@@ -90,15 +90,15 @@ public class UserService {
     }
 
     // 전화번호 중복 확인
-    private Boolean duplicatePhone(String phone) {
-        Boolean exist = userRepository.existsByPhone(phone);
-
-        if (exist) {
-            throw new UserExistException();
-        }
-
-        return true;
-    }
+//    private Boolean duplicatePhone(String phone) {
+//        Boolean exist = userRepository.existsByPhone(phone);
+//
+//        if (exist) {
+//            throw new UserExistException();
+//        }
+//
+//        return true;
+//    }
 
     // 사용자 정보 확인 (이메일, 이름, 전화번호)
     public Boolean existUserInfo(UserInfoReq req, Integer userId) {
@@ -161,7 +161,13 @@ public class UserService {
         User user = userRepository.findById(userId)
                 .orElseThrow(() -> new UserNotFoundException(ErrorCode.USER_NOT_FOUND));
 
-        user.setStatus(Status.BANNED); // 탈퇴 처리
+        // 탈퇴 처리
+        user.setStatus(Status.BANNED);
+        user.setEmail(null);
+        user.setNickname("탈퇴한 사용자");
+
+        s3Service.deleteFile(user.getImageUrl());
+        user.setImageUrl(null);
 
         String refresh = tokenService.validateRefreshToken(request); // 쿠키에서 토큰 가져오기
         tokenService.deleteRefreshToken(refresh); // Redis에 저장된 리프레시 토큰 삭제
