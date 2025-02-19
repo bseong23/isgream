@@ -36,7 +36,7 @@ const DateSelector: React.FC<DateSelectorProps> = ({
 
   return (
     <div className="flex items-center space-x-2 my-5">
-      <div className="flex items-center relative">
+      <div className="sm:w-auto flex items-center relative">
         {/* <Calendar className="h-5 w-5 text-gray-500" /> */}
         <Input
           type="calendar"
@@ -44,7 +44,7 @@ const DateSelector: React.FC<DateSelectorProps> = ({
           required={true}
           value={dateRange.startDate}
           onChange={handleStartDateChange}
-          className="border-none p-0 pl-2"
+          className="w-full border-none"
         />
         <label className="absolute left-2 -top-2.5 px-1 text-sm transition-all text-gray-500 bg-white">
           시작일
@@ -59,9 +59,9 @@ const DateSelector: React.FC<DateSelectorProps> = ({
           required={true}
           value={dateRange.endDate}
           onChange={handleEndDateChange}
-          className="border-none p-0 pl-2"
+          className="w-full border-none"
         />
-        <label className="absolute left-2 -top-2.5 px-1 text-sm transition-all text-gray-500">
+        <label className="absolute left-2 -top-2.5 px-1 text-sm transition-all text-gray-500 bg-white">
           종료일
         </label>
       </div>
