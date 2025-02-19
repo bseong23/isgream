@@ -20,7 +20,7 @@ public class IsCreamApplication {
 
     @PostConstruct
     public static void init(){
-        TimeZone.setDefault(TimeZone.getTimeZone("KST"));
+        TimeZone.setDefault(TimeZone.getTimeZone("Asia/Seoul"));
     }
 
 }
