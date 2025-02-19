@@ -10,7 +10,7 @@ interface GetChatListResponse {
     newMessageCount: number;
     lastMessageTime: string;
     lastMessageUnread: string;
-    opponentId: string;
+    receiver: string;
   }[];
 }
 
@@ -272,12 +272,25 @@ export const chatApi = {
         const subscription = stompClient?.subscribe(
           `/sub/chat/room/${roomId}`,
           (message) => {
-            const responseData = JSON.parse(message.body);
-            subscription?.unsubscribe(); // 응답을 받은 후 구독 해제
-            resolve(responseData);
-            console.log("백엔드 응답 데이터: ", responseData);
+            try{
+                const responseData = JSON.parse(message.body);
+                
+                // 타임스탬프 파싱 시 안전한 방법 사용
+                if (responseData.timestamp) {
+                    responseData.timestamp = new Date(responseData.timestamp);
+                }
+
+                subscription?.unsubscribe(); // 응답을 받은 후 구독 해제
+                resolve(responseData);
+                console.log("백엔드 응답 데이터: ", responseData);
+            } catch (parseError) {
+                console.error("메시지 파싱 중 오류: ", parseError);
+                console.log("원본 메시지 본문: ", message.body);
+                reject(parseError);
+            }
           }
         );
+        
       } catch (error) {
         console.log("메세지 전송 실패: ", error);
         reject(error);
