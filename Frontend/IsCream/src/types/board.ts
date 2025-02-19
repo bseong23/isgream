@@ -11,7 +11,7 @@ export interface ApiResponse<T = void> {
 export interface Author {
   id: string;
   nickname: string;
-  imageUrl: string;
+  imageUrl?: string | null;
 }
 
 export interface Post {

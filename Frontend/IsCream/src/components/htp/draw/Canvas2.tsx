@@ -10,7 +10,7 @@ interface Canvas2Props {
   gender?: "male" | "female";
   index: number;
   childId: number;
-  onSaveComplete: () => void;
+  onSaveComplete: (data: string) => void;
 }
 
 const Canvas2: React.FC<Canvas2Props> = ({ type, gender, index, childId, onSaveComplete }) => {
@@ -30,22 +30,50 @@ const Canvas2: React.FC<Canvas2Props> = ({ type, gender, index, childId, onSaveC
 
   const handleSave = async () => {
     if (!canvasRef.current || !startTime) return;
-
-    const time = ((Date.now() - startTime) / 1000).toFixed(2);
+  
+    const timeTaken = ((Date.now() - startTime) / 1000).toFixed(2);
     const dataUrl = await canvasRef.current.exportImage("png");
     const response = await fetch(dataUrl);
     const blob = await response.blob();
     const file = new File([blob], `drawing_${type}_${index}.png`, { type: "image/png" });
-
-    console.log("📤 저장 요청 데이터:", { file, time, childId, type, index, gender });
-
-    // ✅ FormData 변환 후 API 요청
-    const formData = createUploadFormData({ file, time: time, childId, type, index, gender });
-
+  
+    const formData = createUploadFormData({ file, time: timeTaken, childId, type, index, gender });
+  
+    console.log("📤 전송할 FormData:", formData);
+  
     uploadDrawing(formData, {
-      onSuccess: () => {
-        console.log("✅ 저장 성공!");
-        onSaveComplete();
+      onSuccess: (apiResponse) => {
+        console.log("✅ 저장 성공! API 응답:", apiResponse);
+  
+        if (!apiResponse || !apiResponse.data) {
+          console.error("❌ API 응답 데이터가 올바르지 않습니다!", apiResponse);
+          alert("분석 결과를 불러올 수 없습니다.");
+          return;
+        }
+  
+        // ✅ API 응답에서 result 값 가져오기
+        const { houseDrawingUrl, treeDrawingUrl, maleDrawingUrl, femaleDrawingUrl, result } = apiResponse.data;
+
+  
+        // ✅ API 응답 데이터를 JSON 형태로 부모 컴포넌트로 전달
+        const analysisData = {
+          data: {
+            result,
+            houseDrawingUrl,
+            treeDrawingUrl,
+            maleDrawingUrl,
+            femaleDrawingUrl,
+          },
+        };
+  
+        console.log("📌 Canvas.tsx에서 onSaveComplete 호출됨:", analysisData);
+  
+        if (!onSaveComplete) {
+          console.error("❌ onSaveComplete 함수가 존재하지 않습니다!");
+          return;
+        }
+  
+        onSaveComplete(analysisData); // ✅ 부모 컴포넌트(CanvasPage.tsx)로 API 응답 데이터 전달
       },
       onError: (error) => {
         console.error("❌ 저장 오류 발생:", error);
@@ -53,6 +81,9 @@ const Canvas2: React.FC<Canvas2Props> = ({ type, gender, index, childId, onSaveC
       },
     });
   };
+  
+  
+  
 
   return (
     <div className="fixed inset-0 flex flex-col items-center bg-[#EAF8E6] overflow-hidden">

@@ -1,31 +1,39 @@
-import { useEffect, useState } from "react";
-import { api } from "../../utils/common/axiosInstance"; // ✅ axiosInstance 사용
+import { useState, useEffect } from "react";
+import { api } from "../../utils/common/axiosInstance";
 
-// ✅ 검사 결과 타입 정의
-interface PatTestResult {
+interface TestResult {
+  testDate: string;
   scoreA: number;
   scoreB: number;
   scoreC: number;
-  type: string; // 예: "권위적 부모", "방임적 부모"
-  description: string; // 유형 설명
+  result: string;
 }
 
-// ✅ 최신 검사 결과 가져오는 커스텀 훅
+interface ApiResponse {
+  code: "S0000" | "E4001";
+  message: string;
+  data: TestResult;
+}
+
 const usePatTestResult = () => {
-  const [result, setResult] = useState<PatTestResult | null>(null);
+  const [data, setData] = useState<ApiResponse | null>(null);
   const [loading, setLoading] = useState<boolean>(true);
   const [error, setError] = useState<string | null>(null);
 
   useEffect(() => {
     const fetchResult = async () => {
       try {
-        console.log("🚀 Fetching latest PAT test result...");
-        const response = await api.get<PatTestResult>("/pat-tests/recent"); // ✅ 최신 결과 가져오기
-        console.log("📡 Fetched result:", response.data);
-        setResult(response.data);
+        const response = await api.get<ApiResponse>("/pat-tests/recent");
+
+        if (response.data.code === "S0000") {
+          console.log("✅ 최신 검사 결과:", response.data.data); // 핵심 데이터만 출력
+          setData(response.data);
+        } else {
+          throw new Error(response.data.message || "검사 결과 조회 실패");
+        }
       } catch (err) {
-        console.error("❌ Error fetching test result:", err);
-        setError(err instanceof Error ? err.message : "Unknown error");
+        console.error("❌ 검사 결과 조회 실패:", err);
+        setError("검사 결과를 불러오는 데 실패했습니다.");
       } finally {
         setLoading(false);
       }
@@ -34,7 +42,7 @@ const usePatTestResult = () => {
     fetchResult();
   }, []);
 
-  return { result, loading, error };
+  return { data, loading, error };
 };
 
 export default usePatTestResult;
