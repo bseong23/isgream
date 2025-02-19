@@ -214,6 +214,11 @@ const ChatRoomPage = () => {
           if (document.visibilityState === 'visible') {
             handleReadMessages();
           }
+
+          // 초기 로드 시 즉시 스크롤 (smooth 효과 없이)
+          setTimeout(() => {
+            scrollToBottom(false);
+          }, 100);
         }
         
         const token = localStorage.getItem("accessToken");
