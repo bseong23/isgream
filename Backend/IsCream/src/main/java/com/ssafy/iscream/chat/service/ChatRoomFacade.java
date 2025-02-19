@@ -26,21 +26,19 @@ public class ChatRoomFacade {
         List<ChatRoom> chatRooms = chatRoomService.getUserChatRooms(userId);
         List<ChatRoomsGetRes> chatRoomsGetResList = new ArrayList<>();
         for (ChatRoom chatRoom : chatRooms) {
-            List<ChatMessage> chatMessages = chatService.getChatMessages(String.valueOf(userId), chatRoom.getId(), 99);
-            long unreadCount = 0;
+
+            int unreadCount = chatService.getChatMessagesReceivedCount(chatRoom.getId(), String.valueOf(userId));
             String lastMessage = "";
-            if (!chatMessages.isEmpty()){
-                unreadCount = chatMessages.stream()
-                        .filter(msg -> !msg.isRead()) // isRead가 false인 것만 필터링
-                        .count();
-                lastMessage = chatMessages.get(0).getContent();
+            ChatMessage chatMessage = chatService.getLastChatMessage(chatRoom.getId());
+            if (chatMessage != null) {
+                lastMessage = chatMessage.getContent();
             }
             Integer receiver = userId.equals(Integer.valueOf(chatRoom.getParticipantIds().get(0))) ? Integer.valueOf(chatRoom.getParticipantIds().get(1)): Integer.valueOf(chatRoom.getParticipantIds().get(0));
             UserInfo userInfo = userService.getUser(receiver);
             ChatRoomsGetRes chatRoomsGetRes = ChatRoomsGetRes.builder()
                     .roomId(chatRoom.getId())
                     .LastMessageTime(chatRoom.getLastMessageTimestamp())
-                    .newMessageCount((int)unreadCount)
+                    .newMessageCount(unreadCount)
                     .lastMessageUnread(lastMessage)
                     .opponentName(userInfo.nickname())
                     .receiver(String.valueOf(receiver))

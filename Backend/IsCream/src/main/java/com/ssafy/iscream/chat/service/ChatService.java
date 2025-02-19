@@ -106,6 +106,15 @@ public class ChatService {
         log.info("📩 읽음 상태 전송: {}", destination);
     }
 
+    public int getChatMessagesReceivedCount(String roomId, String userId) {
+        return chatMessageRepository.countByRoomIdAndReceiverAndIsRead(roomId, userId, false);
+
+    }
+
+    public ChatMessage getLastChatMessage(String roomId) {
+        return chatMessageRepository.findTopByRoomIdOrderByTimestampDesc(roomId);
+    }
+
     public List<ChatMessage> getChatMessages(String userId, String roomId, int page) {
 
         // ✅ 채팅방 존재 여부 확인
