@@ -1,10 +1,7 @@
 package com.ssafy.iscream.education.domain;
 
 import com.ssafy.iscream.htpTest.domain.Emoji;
-import jakarta.persistence.Entity;
-import jakarta.persistence.GeneratedValue;
-import jakarta.persistence.GenerationType;
-import jakarta.persistence.Id;
+import jakarta.persistence.*;
 import lombok.AllArgsConstructor;
 import lombok.Getter;
 import lombok.RequiredArgsConstructor;
@@ -22,5 +19,6 @@ public class Education {
     String description;
     String url;
     String thumbnailUrl;
-    Emoji emoji;
+    @Enumerated(EnumType.STRING)
+    RecommendType recommendType;
 }

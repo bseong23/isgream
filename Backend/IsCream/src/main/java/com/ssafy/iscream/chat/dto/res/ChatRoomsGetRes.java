@@ -13,6 +13,7 @@ public class ChatRoomsGetRes {
     Integer newMessageCount;
     LocalDateTime LastMessageTime;
     String lastMessageUnread;
+    String receiver;
 
 //
 //                "roomId" : string (채팅방 아이디),

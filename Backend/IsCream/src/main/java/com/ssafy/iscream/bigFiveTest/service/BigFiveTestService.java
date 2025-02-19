@@ -207,5 +207,9 @@ public class BigFiveTestService {
             return "- 평균보다 상당히 낮음: " + lowTrait + "이 강한 편입니다.\n";
         }
     }
+
+    public BigFiveTest getLastBigFiveTest(Integer childId) {
+        return bigFiveTestRepository.findFirstByChildIdOrderByCreatedAtDesc(childId);
+    }
 }
 

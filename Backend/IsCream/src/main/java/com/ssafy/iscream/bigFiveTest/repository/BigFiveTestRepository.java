@@ -8,6 +8,7 @@ import org.springframework.stereotype.Repository;
 
 import java.time.LocalDate;
 import java.util.List;
+import java.util.Optional;
 
 @Repository
 public interface BigFiveTestRepository extends JpaRepository<BigFiveTest, Integer> {
@@ -27,4 +28,5 @@ public interface BigFiveTestRepository extends JpaRepository<BigFiveTest, Intege
             @Param("endDate") LocalDate endDate
     );
 
+    BigFiveTest findFirstByChildIdOrderByCreatedAtDesc(Integer childId);
 }

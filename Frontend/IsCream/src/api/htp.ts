@@ -19,7 +19,7 @@ export const uploadDrawing = async (formData: FormData): Promise<UploadDrawingRe
 export const htpGetResultList = async(startDate: string, endDate: string): Promise<GetTestListResponse> => {
   try{
     const response = await api.get(`/htp-tests?startDate=${startDate}&endDate=${endDate}`,)
-
+    
     console.log("HTP검사: ", response.data);
     
     if(response.data.code === "S0000"){

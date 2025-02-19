@@ -21,26 +21,24 @@ export const registerServiceWorker = async () => {
 
 export const requestNotificationPermission = async () => {
   try {
+    // 먼저 권한 요청
     const permission = await Notification.requestPermission();
+
     if (permission === "granted") {
       const messaging = getMessaging(app);
 
       try {
-        const currentToken = await getToken(messaging);
+        // 서비스워커 등록 확인
+        const registration = await navigator.serviceWorker.getRegistration();
 
-        if (currentToken) {
-          console.log("현재 토큰:", currentToken);
-          return currentToken;
-        }
-
+        // 토큰 요청
         const token = await getToken(messaging, {
           vapidKey: import.meta.env.VITE_FIREBASE_VAPID_KEY,
-          serviceWorkerRegistration:
-            await navigator.serviceWorker.getRegistration()
+          serviceWorkerRegistration: registration
         });
 
         if (token) {
-          console.log("새 FCM 토큰:", token);
+          console.log("FCM 토큰:", token);
           return token;
         }
 

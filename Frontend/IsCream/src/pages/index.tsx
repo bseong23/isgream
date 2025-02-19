@@ -29,7 +29,7 @@ export { default as BoardDetailPage } from "./board/BoardDetailPage";
 
 // 🌟 채팅 관련
 export { default as ChatPage } from "./ChatPage";
-// export { default as ChatRoomPage } from "./chat/ChatRoomPage";
+export { default as ChatRoomPage } from "./chat/ChatRoomPage";
 
 // 🌟 HTP 검사 (그림판)
 export { default as CanvasPage } from "./htp/CanvasPage";
