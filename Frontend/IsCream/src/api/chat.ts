@@ -221,8 +221,13 @@ export const chatApi = {
         `/sub/chat/room/${roomId}`,
         (message) => {
           console.log("새로운 메시지 수신:", message);
-          const receivedMessage = JSON.parse(message.body);
-          onMessageReceived(receivedMessage);
+          try{
+              const receivedMessage = JSON.parse(message.body);
+              onMessageReceived(receivedMessage);
+          }catch(error){
+            console.error("메시지 파싱 오류:", error);
+            console.log("원본 메시지:", message.body);
+          }
         }
       );
 
@@ -252,16 +257,15 @@ export const chatApi = {
       try {
         const messageData = {
           messageId,
-          readerId
+          readerId,
+          type: "ACK"
         };
-        console.log("sending message: ", messageData);
+        console.log("sending read message: ", messageData);
 
         stompClient?.publish({
           destination: "/pub/chat/ack",
-          body: JSON.stringify({
-            messageId,
-            readerId
-          })
+          body: JSON.stringify(messageData),
+          headers: { "content-type": "application/json" }
         });
 
         // 서버 응답을 기다림
