@@ -23,7 +23,7 @@ def diagnose(predictions):
 
         if prediction["type"] in type_to_function:
             analysis_result = type_to_function[prediction["type"]](prediction)
-            print(analysis_result)
+            
             return f"{header}\n{process_predictions(analysis_result)}"
         return None
 
