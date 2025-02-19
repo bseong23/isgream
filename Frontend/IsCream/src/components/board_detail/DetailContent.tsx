@@ -9,15 +9,15 @@ interface DetailContentProps {
     title: string;
     content: string;
     author: {
-      id: string;
       nickname: string;
-      imageUrl: string;
+      imageUrl: string | null;
     };
     createdAt: string;
     images?: string[];
+    userId?: number;
   };
   onDelete: () => void;
-  onChat?: (authorId: string) => void;
+  onChat?: (userId: string) => void;
 }
 
 const DetailContent: React.FC<DetailContentProps> = ({
@@ -41,12 +41,13 @@ const DetailContent: React.FC<DetailContentProps> = ({
     try {
       setIsCreatingChat(true);
 
-      const response = await chatApi.createChatroom(post.author.id);
-
+      const response = await chatApi.createChatroom(post.userId);
+      console.log("채팅방 생성하기 버튼 눌렀을 때의 응답: ",response);
+      
       if (response.code === "S0000") {
         // 채팅방 생성 성공시 채팅방으로 이동
         if (response.data?.id) {
-          onChat?.(post.author.id);
+          onChat?.(post.userId?.toString());
           navigate(`/chat/room/${response.data.id}`);
         }
       } else {

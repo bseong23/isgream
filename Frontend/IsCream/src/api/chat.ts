@@ -66,7 +66,7 @@ export const chatApi = {
   // 채팅방 생성하기
   async createChatroom(receiverId: string): Promise<CreateChatroomResponse> {
     try {
-      const response = await api.post(`/chatrooms/create?=${receiverId}`);
+      const response = await api.post(`/chatrooms/create?receiverId=${receiverId}`);
       if (response.data.code === "S0000") {
         return response.data;
       }
@@ -172,7 +172,11 @@ export const chatApi = {
         };
         console.log("Sending message:", messageData);
 
-        if (stompClient === null) return;
+        if (stompClient === null) {
+            console.log("stomp문제ㅜㅜ");
+            
+            return;
+        }
 
         stompClient.publish({
           destination: "/pub/chat/send",

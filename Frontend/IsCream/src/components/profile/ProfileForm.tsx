@@ -5,6 +5,8 @@ import RelationButtons from "../../components/profile/RelationButtons";
 import { useState } from "react";
 import { useNavigate } from "react-router-dom";
 import { postNicknameCheck } from "../../api/user"
+import WithdrawButton from "../../components/account/WithdrawButton"; // ✅ 회원 탈퇴 버튼 추가
+
 
 interface ProfileFormProps {
   birthDate: string;
@@ -138,21 +140,22 @@ const ProfileForm: React.FC<ProfileFormProps> = ({ birthDate, setBirthDate, init
             />
           </ProfileFormLabel>
 
-          {/* 비밀번호 변경 버튼 */}
-          <div className="flex justify-center">
-            <div className="w-[95%] flex justify-end">
-              <button
-                className="w-1/3 bg-[#009E28] rounded-[15px] text-white p-1 my-5"
-                onClick={() => {
-                  console.log("비밀번호 변경하기 버튼 클릭")
-                  navigate('/mypage/changeinfo/password')
-                }}
-              >
-                비밀번호 변경하기 &gt;
-              </button>
-            </div>
-          </div>
+          {/* 비밀번호 변경 & 회원 탈퇴 버튼 - 좌우 대칭 */}
+          <div className="flex justify-between w-[95%] mx-auto">
+            {/* 회원 탈퇴 버튼 (비밀번호 변경 버튼과 크기 동일) */}
+            <WithdrawButton className="w-1/3 rounded-[15px] p-1 my-5" />
 
+            {/* 비밀번호 변경 버튼 */}
+            <button
+              className="w-1/3 bg-[#009E28] rounded-[15px] text-white p-1 my-5"
+              onClick={() => {
+                console.log("비밀번호 변경하기 버튼 클릭")
+                navigate('/mypage/changeinfo/password')
+              }}
+            >
+              비밀번호 변경하기 &gt;
+            </button>
+          </div>
           {/* 정보 수정 버튼 */}
           <div className="flex justify-center sticky mt-20 mb-10">
               <LongButton color="green" onClick={handleSubmit}>정보 수정</LongButton>

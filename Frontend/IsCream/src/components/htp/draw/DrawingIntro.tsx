@@ -2,7 +2,7 @@ import React from "react";
 import houseImage from "../../../assets/image/house.png";
 import treeImage from "../../../assets/image/tree.png";
 import personImage from "../../../assets/image/person.png";
-import characterImage from "../../../assets/image/character2.png";
+// import characterImage from "../../../assets/image/character2.png";
 
 interface DrawingIntroProps {
   type: "house" | "tree" | "male" | "female";
@@ -43,9 +43,9 @@ const DrawingIntro: React.FC<DrawingIntroProps> = ({ type, onStart }) => {
   const displayType = type === "male" || type === "female" ? "person" : type;
 
   return (
-    <div className="flex flex-col items-center mt-15 justify-center w-full min-h-screen bg-white px-4 py-8 md:py-12">
+    <div className="flex flex-col items-center justify-center w-full bg-white px-4 py-1">
       {/* 제목 */}
-      <h1 className="text-3xl md:text-4xl lg:text-5xl font-bold text-green-700 mb-8 md:mb-12">
+      <h1 className="text-3xl md:text-4xl lg:text-5xl font-bold text-green-700 mb-1 md:mb-12">
         {type === "house"
           ? "집 (HOUSE)"
           : type === "tree"
@@ -86,12 +86,12 @@ const DrawingIntro: React.FC<DrawingIntroProps> = ({ type, onStart }) => {
         >
           그림 시작하기
         </button>
-        <img
+        {/* <img
           src={characterImage}
           alt="캐릭터"
           className="absolute right-0 bottom-0 w-28 md:w-32 lg:w-36 h-auto
                      transform translate-x-1/2 hover:scale-110 transition-transform duration-200"
-        />
+        /> */}
       </div>
     </div>
   );
