@@ -84,36 +84,41 @@ const HTPSlider: React.FC<HTPSliderProps> = ({
       </h3>
 
       <div className="relative h-[calc(100%-4rem)]">
-        {/* Navigation Dots */}
-        <div className="absolute top-0 left-0 right-0 flex justify-center gap-2 mb-4 z-10">
-          {slides.map((slide, index) => (
-            <button
-              key={index}
-              onClick={() => setCurrentSlide(index)}
-              className={`w-2 h-2 rounded-full transition-all ${
-                currentSlide === index ? "bg-blue-500 w-4" : "bg-gray-300"
-              }`}
-              title={typeToKorean[slide.type as keyof typeof typeToKorean]}
-            />
-          ))}
-        </div>
-
-        {/* Slide Content */}
-        <div className="h-full overflow-y-auto px-4 md:px-8 pt-6">
+        <div className="h-full overflow-y-auto px-4 md:px-8 pt-12">
           <div className="flex flex-col items-center">
-            <div className="mb-4 text-lg font-medium">
-              {
-                typeToKorean[
-                  slides[currentSlide].type as keyof typeof typeToKorean
-                ]
-              }{" "}
-              그림
+            <div className="absolute top-0 left-0 right-0 flex items-center justify-between px-4 md:px-8 mb-4 z-10">
+              <button
+                onClick={goToPrevSlide}
+                className="bg-white hover:bg-gray-100 rounded-full p-1 md:p-2 transition-all shadow-md"
+              >
+                <ChevronLeft className="w-4 h-4 md:w-6 md:h-6" />
+              </button>
+
+              <div className="mb-4 text-lg font-medium">
+                {
+                  typeToKorean[
+                    slides[currentSlide].type as keyof typeof typeToKorean
+                  ]
+                }{" "}
+                그림
+              </div>
+              <button
+                onClick={goToNextSlide}
+                className="bg-white hover:bg-gray-100 rounded-full p-1 md:p-2 transition-all shadow-md"
+              >
+                <ChevronRight className="w-4 h-4 md:w-6 md:h-6" />
+              </button>
             </div>
             <img
               src={slides[currentSlide].imageUrl}
-              alt={`${typeToKorean[slides[currentSlide].type as keyof typeof typeToKorean]} 그림`}
+              alt={`${
+                typeToKorean[
+                  slides[currentSlide].type as keyof typeof typeToKorean
+                ]
+              } 그림`}
               className="w-full sm:w-4/5 md:w-3/5 lg:w-1/2 mx-auto mb-6 border border-[#BEBEBE] rounded-lg"
             />
+
             <div className="w-full">
               {slides[currentSlide].report.map((paragraph, idx) => (
                 <p
@@ -126,20 +131,6 @@ const HTPSlider: React.FC<HTPSliderProps> = ({
             </div>
           </div>
         </div>
-
-        {/* Navigation Buttons */}
-        <button
-          onClick={goToPrevSlide}
-          className="absolute left-2 md:left-4 top-1/3 transform -translate-y-1/2 bg-white/80 hover:bg-white rounded-full p-1 md:p-2 transition-all"
-        >
-          <ChevronLeft className="w-4 h-4 md:w-6 md:h-6" />
-        </button>
-        <button
-          onClick={goToNextSlide}
-          className="absolute right-2 md:right-4 top-1/3 transform -translate-y-1/2 bg-white/80 hover:bg-white rounded-full p-1 md:p-2 transition-all"
-        >
-          <ChevronRight className="w-4 h-4 md:w-6 md:h-6" />
-        </button>
       </div>
     </div>
   );

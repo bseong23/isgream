@@ -90,10 +90,14 @@ const BottomNavigation: React.FC = () => {
               <img
                 src={isActiveRoute(item.path) ? item.activeIcon : item.icon}
                 alt={item.label}
-                className={`w-6 h-6 mb-1`}
+                className={`mb-1 ${
+                  item.id === "chat"
+                    ? "w-[1.8rem] h-6" // 채팅 아이콘에 대한 특별한 크기
+                    : "w-6 h-6" // 다른 아이콘들의 기본 크기
+                }`}
               />
               <span
-                className={`text-xs font-medium 
+                className={`text-sm font-medium 
                ${isActiveRoute(item.path) ? "text-[#009E28]" : "text-gray-500"}`}
               >
                 {item.label}
