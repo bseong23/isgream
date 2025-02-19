@@ -7,6 +7,7 @@ export interface LoginResponse {
   code:
     | "S0000"
     | "E6001"
+    | "E6003"
     | "E5011"
     | "E5012"
     | "E3001"

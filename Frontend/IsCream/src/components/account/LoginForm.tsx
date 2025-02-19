@@ -1,12 +1,8 @@
 import { useState, useEffect } from "react";
-import { useGoogleLogin } from "@react-oauth/google";
-import axios from "axios";
 import { useNavigate } from "react-router-dom";
 import { useAuth } from "../../hooks/useAuth";
-import LoginLogo from "../../assets/icons/login_logo.png";
-import GoogleLogo from "../../assets/icons/google_logo.png";
+import LoginLogo from "../../assets/icons/로고.png";
 import LongButton from "../../components/button/LongButton";
-import { ERROR_CODES } from "../../types/auth";
 
 interface LoginFormProps {
   onLoginSuccess: () => void;
@@ -35,65 +31,51 @@ const LoginForm: React.FC<LoginFormProps> = () => {
     try {
       const response = await login({ email, password });
 
-      if (response.code === ERROR_CODES.SUCCESS) {
+      if (response.code === "S0000") {
         navigate("/");
       } else {
         switch (response.code) {
-          case ERROR_CODES.INVALID_EMAIL:
-            setError("유효하지 않은 이메일입니다.");
+          case "E6001":
+            setError(
+              "로그인에 실패했습니다. 이메일과 비밀번호를 확인해주세요."
+            );
             break;
-          case ERROR_CODES.INVALID_PASSWORD:
-            setError("유효하지 않은 비밀번호입니다.");
+          case "E6003":
+            setError("비밀번호가 틀렸습니다.");
             break;
-          case ERROR_CODES.USER_NOT_FOUND:
-            setError("존재하지 않는 사용자입니다.");
+          case "E5011":
+            setError("탈퇴한 사용자입니다.");
             break;
-          case ERROR_CODES.AUTH_FAILED:
+          case "E5012":
+            setError("이메일이 잘못되었습니다.");
+            break;
+          case "E3001":
             setError("인증에 실패했습니다.");
             break;
+          case "E3002":
+            setError("인증이 만료되었습니다. 다시 로그인해주세요.");
+            break;
+          case "E3003":
+            setError("인증 형식이 잘못되었습니다.");
+            break;
+          case "E3004":
+            setError("인증에 실패했습니다. 다시 시도해주세요.");
+            break;
+
           default:
-            setError("로그인에 실패했습니다. 다시 시도해주세요.");
+            setError(
+              response.message || "로그인에 실패했습니다. 다시 시도해주세요."
+            );
         }
       }
-    } catch (error) {
-      setError("로그인 중 오류가 발생했습니다. 다시 시도해주세요.");
+    } catch (error: any) {
       console.error("Login error:", error);
+      setError(
+        error.response?.data?.message ||
+          "로그인 중 오류가 발생했습니다. 다시 시도해주세요."
+      );
     }
   };
-
-  // 구글 로그인 핸들러
-  const googleLogin = useGoogleLogin({
-    onSuccess: async (tokenResponse) => {
-      try {
-        const { access_token } = tokenResponse;
-        // 구글 유저 정보 가져오기
-        const userInfo = await axios.get(
-          "https://www.googleapis.com/oauth2/v3/userinfo",
-          {
-            headers: { Authorization: `Bearer ${access_token}` }
-          }
-        );
-
-        // 백엔드에 사용자 정보 전송
-        const response = await axios.post("/users/join/oauth2", {
-          email: userInfo.data.email,
-          name: userInfo.data.name,
-          googleToken: access_token
-        });
-
-        // 토큰 저장 및 로그인 성공 처리
-        localStorage.setItem("token", response.data.token);
-        navigate("/");
-      } catch (error) {
-        console.error("Google 로그인 오류:", error);
-        setError("Google 로그인에 실패했습니다.");
-      }
-    },
-    onError: () => {
-      setError("Google 로그인에 실패했습니다.");
-    },
-    flow: "implicit"
-  });
 
   const handleSubmit = (e: React.FormEvent) => {
     e.preventDefault();
@@ -101,25 +83,25 @@ const LoginForm: React.FC<LoginFormProps> = () => {
   };
 
   return (
-    <div className="flex flex-col items-center justify-start min-h-screen w-full px-6 pt-16 overflow-hidden">
+    <div className="flex flex-col items-center justify-center min-h-screen w-full overflow-hidden">
       <img
         src={LoginLogo}
         alt="로고"
-        className="w-60 h-60 sm:w-48 sm:h-48 mb-6 rounded-lg"
+        className="w-25 h-20 sm:w-35 sm:h-30 mb-6"
       />
 
-      <form onSubmit={handleSubmit} className="w-full max-w-md mt-4">
+      <form onSubmit={handleSubmit} className="w-full max-w-md mt-4 px-4">
         <input
           type="email"
           placeholder="이메일"
-          className="w-full p-3 mb-4 border rounded focus:outline-none focus:ring-2 focus:ring-green-500"
+          className="w-full p-3 mb-4 border border-[#BEBEBE] rounded-[15px] focus:outline-none focus:border-0 focus:ring-2 focus:ring-green-500"
           value={email}
           onChange={(e) => setEmail(e.target.value)}
         />
         <input
           type="password"
           placeholder="비밀번호"
-          className="w-full p-3 mb-4 border rounded focus:outline-none focus:ring-2 focus:ring-green-500"
+          className="w-full p-3 mb-4 border border-[#BEBEBE] rounded-[15px] focus:outline-none focus:border-0 focus:ring-2 focus:ring-green-500"
           value={password}
           onChange={(e) => setPassword(e.target.value)}
         />
@@ -127,7 +109,7 @@ const LoginForm: React.FC<LoginFormProps> = () => {
         <LongButton
           type="submit"
           color="green"
-          className="w-full p-3 rounded hover:bg-green-600 text-base"
+          className="w-full p-3 hover:bg-green-600 text-base"
         >
           로그인
         </LongButton>
@@ -137,16 +119,7 @@ const LoginForm: React.FC<LoginFormProps> = () => {
         )}
       </form>
 
-      {/* 구글 로그인 버튼 */}
       <div className="w-full flex flex-col items-center mt-8">
-        <button
-          onClick={() => googleLogin()}
-          className="flex items-center justify-center"
-        >
-          <img src={GoogleLogo} alt="Google 로그인" className="w-12 h-12" />
-        </button>
-
-        {/* 비밀번호 찾기 & 회원가입 */}
         <div className="mt-4 flex items-center w-full justify-center">
           <a
             href="/find-password"

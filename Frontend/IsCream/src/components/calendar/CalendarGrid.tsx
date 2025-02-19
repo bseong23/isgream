@@ -92,9 +92,11 @@ const CalendarGrid: React.FC<CalendarGridProps> = ({
 
                 {/* 점 표시 (작은 화면) */}
                 <div className="absolute top-1 right-1 flex gap-1">
+                  {/* 메모 표시 (데스크톱에서만) */}
                   {dayData?.isMemo && (
-                    <div className="w-2 h-2 bg-red-500 rounded-full" />
+                    <div className="hidden md:block w-2 h-2 bg-red-500 rounded-full" />
                   )}
+                  {/* HTP 표시 (모바일에서만) */}
                   {dayData?.isHtp && (
                     <div className="md:hidden">
                       <div className="w-2 h-2 bg-blue-500 rounded-full" />
