@@ -23,7 +23,7 @@ const MainPage = () => {
             <MainCard
               image={ParentingAttitude}
               title="양육태도 검사"
-              to="/parenting-test"
+              to="/pat"
             />
             <MainCard image={Big5} title="성격5요인 검사" to="/big5-test" />
             <MainCard image={Map} title="상담센터 찾기" to="/find-center" />
