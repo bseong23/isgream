@@ -31,6 +31,7 @@ const ChatRoomPage = () => {
   const [currentUserId, setCurrentUserId] = useState<string | null>(null);
   const [page, setPage] = useState(0);
   const [isLoadingMore, setIsLoadingMore] = useState(false);
+  const [shouldScrollToBottom, setShouldScrollToBottom] = useState(true);
   const chatContainerRef = useRef<HTMLDivElement>(null);
   const messagesEndRef = useRef<HTMLDivElement>(null);
 
@@ -72,8 +73,12 @@ const ChatRoomPage = () => {
     }
   };
   
-  const scrollToBottom = () => {
-    messagesEndRef.current?.scrollIntoView({ behavior: 'smooth' });
+  const scrollToBottom = (smooth: boolean = true) => {
+    if (messagesEndRef.current) {
+      messagesEndRef.current.scrollIntoView({ 
+        behavior: smooth ? 'smooth' : 'auto'
+      });
+    }
   };
 
   const loadMoreMessages = async () => {
@@ -90,20 +95,41 @@ const ChatRoomPage = () => {
           opponentName: opponentName
         }));
 
-        setChatData(prevData => {
-          if (!prevData) return { chats: messagesWithOpponentName };
-          return {
-            chats: [...messagesWithOpponentName, ...prevData.chats]
-          };
+      // 현재 스크롤 위치 저장
+      const container = chatContainerRef.current;
+      const previousHeight = container?.scrollHeight || 0;
+      const previousScrollTop = container?.scrollTop || 0;
+
+      // 스크롤 하단에서 100px 이내인 경우에만 자동 스크롤
+      setShouldScrollToBottom(
+        container ? 
+        container.scrollHeight - container.scrollTop <= container.clientHeight + 100 
+        : true
+      );
+
+      setChatData(prevData => {
+        if (!prevData) return { chats: messagesWithOpponentName };
+        return {
+          chats: [...messagesWithOpponentName, ...prevData.chats]
+        };
+      });
+
+      // 스크롤 위치 복원
+      if (container) {
+        requestAnimationFrame(() => {
+          const newHeight = container.scrollHeight;
+          container.scrollTop = previousScrollTop + (newHeight - previousHeight);
         });
-        setPage(nextPage);
       }
-    } catch (error) {
-      console.error("추가 메시지 로드 실패:", error);
-    } finally {
-      setIsLoadingMore(false);
+
+      setPage(nextPage);
     }
-  };
+  } catch (error) {
+    console.error("추가 메시지 로드 실패:", error);
+  } finally {
+    setIsLoadingMore(false);
+  }
+};
 
   const handleScroll = () => {
     const container = chatContainerRef.current;
@@ -112,11 +138,19 @@ const ChatRoomPage = () => {
     if (container.scrollTop <= container.clientHeight * 0.1) {
       loadMoreMessages();
     }
+
+    // 스크롤이 하단에 가까워지면 자동 스크롤 활성화
+    setShouldScrollToBottom(
+      container.scrollHeight - container.scrollTop <= container.clientHeight + 100
+    );
   };
 
   useEffect(() => {
-    scrollToBottom();
-  }, [chatData]);
+    // 새 메시지가 추가되었고 스크롤이 필요한 경우에만 스크롤
+    if (shouldScrollToBottom) {
+      scrollToBottom();
+    }
+  }, [chatData, shouldScrollToBottom]);
 
   const decodeToken = (token: string) => {
     try {
@@ -256,15 +290,17 @@ const ChatRoomPage = () => {
           opponentName: opponentName
         };
 
+        setShouldScrollToBottom(true);  // 새 메시지 전송시 스크롤
         setChatData(prevData => {
-            if (!prevData) return { chats: [sentMessage] };
-            return {
-                ...prevData,
-                chats: [sentMessage, ...prevData.chats]
-            };
+          if (!prevData) return { chats: [sentMessage] };
+          return {
+            ...prevData,
+            chats: [sentMessage, ...prevData.chats]
+          };
         });
         
         setNewMessage("");
+        scrollToBottom(); // 메시지 전송 후 스크롤
     } catch (error) {
         console.error("메시지 전송 실패:", error);
         alert("메시지 전송에 실패했습니다.");
