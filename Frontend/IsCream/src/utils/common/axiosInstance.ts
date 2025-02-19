@@ -32,37 +32,6 @@ const isPublicPath = (path: string): boolean => {
   return PUBLIC_PATHS.some((publicPath) => path.startsWith(publicPath));
 };
 
-// access 토큰 갱신 함수
-const refreshAccessToken = async (): Promise<string | null> => {
-  try {
-    const response = await axios.post(
-      `${VITE_BASE_API}/auth/refresh`,
-      {},
-      { withCredentials: true } // refresh 토큰이 쿠키에 있으므로
-    );
-
-    const newAccessToken = response.data.accessToken;
-    if (newAccessToken) {
-      localStorage.setItem("accessToken", newAccessToken);
-      return newAccessToken;
-    }
-    return null;
-  } catch (error) {
-    console.error("Refresh token is invalid:", error);
-    return null;
-  }
-};
-
-export const api = axios.create({
-  baseURL: VITE_BASE_API,
-  withCredentials: true,
-  headers: {
-    "Content-Type": "application/json"
-  }
-});
-
-let isLoggingOut = false;
-let isTokenExpired = false;
 let isRefreshing = false;
 let refreshSubscribers: ((token: string) => void)[] = [];
 
@@ -77,16 +46,82 @@ const onRefreshed = (token: string) => {
   refreshSubscribers = [];
 };
 
+// access 토큰 갱신 함수
+const refreshAccessToken = async (): Promise<string | null> => {
+  try {
+    const response = await axios.post(
+      `${VITE_BASE_API}/auth/refresh`,
+      {},
+      { withCredentials: true }
+    );
+
+    const newAccessToken = response.data.accessToken;
+    if (newAccessToken) {
+      localStorage.setItem("accessToken", newAccessToken);
+      return newAccessToken;
+    }
+    return null;
+  } catch (error) {
+    console.error("Refresh token is invalid:", error);
+    return null;
+  }
+};
+
+// 로그아웃 처리 함수
+const handleLogout = () => {
+  const currentPath = window.location.pathname;
+
+  // Public 페이지에서는 로그아웃 처리만 하고 리다이렉트는 하지 않음
+  if (isPublicPath(currentPath)) {
+    isRefreshing = false;
+    refreshSubscribers = [];
+    localStorage.clear();
+
+    if (api.defaults.headers.common) {
+      delete api.defaults.headers.common["access"];
+    }
+
+    queryClient.setQueryData(["auth"], { isAuthenticated: false });
+    queryClient.clear();
+    return;
+  }
+
+  // Private 페이지에서만 전체 로그아웃 처리 및 리다이렉트
+  isRefreshing = false;
+  refreshSubscribers = [];
+  localStorage.clear();
+
+  if (api.defaults.headers.common) {
+    delete api.defaults.headers.common["access"];
+  }
+
+  queryClient.setQueryData(["auth"], { isAuthenticated: false });
+  queryClient.clear();
+
+  if (currentPath !== "/login") {
+    window.location.href = "/login";
+  }
+};
+
+export const api = axios.create({
+  baseURL: VITE_BASE_API,
+  withCredentials: true,
+  headers: {
+    "Content-Type": "application/json"
+  }
+});
+
 api.interceptors.request.use(
   async (config) => {
     const currentPath = window.location.pathname;
     const isPublicRequest = isPublicPath(currentPath);
 
-    if ((isTokenExpired || isLoggingOut) && !isPublicRequest) {
-      return Promise.reject(new Error("인증이 만료되었습니다."));
+    const token = localStorage.getItem("accessToken");
+    if (!token && !isPublicRequest) {
+      handleLogout();
+      return Promise.reject(new Error("인증이 필요합니다."));
     }
 
-    const token = localStorage.getItem("accessToken");
     if (token) {
       if (!isPublicRequest && !isTokenValid(token)) {
         if (!isRefreshing) {
@@ -101,11 +136,7 @@ api.interceptors.request.use(
             }
             return config;
           } else {
-            // refresh 토큰도 만료된 경우
-            isTokenExpired = true;
-            localStorage.removeItem("accessToken");
-            queryClient.setQueryData(["auth"], { isAuthenticated: false });
-            window.location.href = "/login";
+            handleLogout();
             return Promise.reject(new Error("인증이 만료되었습니다."));
           }
         } else {
@@ -133,18 +164,19 @@ api.interceptors.response.use(
   (response) => response,
   async (error: AxiosError) => {
     const originalRequest = error.config;
+    const currentPath = window.location.pathname;
 
     if (error.config?.url === "/users/logout") {
       return Promise.reject(error);
     }
 
-    // access 토큰이 만료된 경우
-    if (
-      error.response?.status === 401 &&
-      !isLoggingOut &&
-      !isTokenExpired &&
-      originalRequest
-    ) {
+    // Public 페이지에서는 401 에러를 그대로 전파
+    if (isPublicPath(currentPath)) {
+      return Promise.reject(error);
+    }
+
+    // Private 페이지에서만 토큰 갱신 시도
+    if (error.response?.status === 401 && originalRequest) {
       if (!isRefreshing) {
         isRefreshing = true;
         const newToken = await refreshAccessToken();
@@ -156,6 +188,9 @@ api.interceptors.response.use(
             originalRequest.headers["access"] = newToken;
           }
           return api(originalRequest);
+        } else {
+          handleLogout();
+          return Promise.reject(new Error("인증이 만료되었습니다."));
         }
       }
 
@@ -168,23 +203,6 @@ api.interceptors.response.use(
           resolve(api(originalRequest));
         });
       });
-    }
-
-    // refresh 토큰도 만료된 경우
-    const currentPath = window.location.pathname;
-    if (!isPublicPath(currentPath)) {
-      isLoggingOut = true;
-      isTokenExpired = true;
-      localStorage.removeItem("accessToken");
-      if (api.defaults.headers.common) {
-        delete api.defaults.headers.common["access"];
-      }
-      queryClient.setQueryData(["auth"], { isAuthenticated: false });
-      window.location.href = "/login";
-
-      setTimeout(() => {
-        isLoggingOut = false;
-      }, 1000);
     }
 
     return Promise.reject(error);
