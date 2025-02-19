@@ -23,7 +23,7 @@ public class User extends BaseTimeEntity {
     @Column(nullable = false)
     private String username;
 
-    @Column(unique = true, nullable = false, length = 50)
+    @Column(unique = true, length = 50)
     private String email;
 
     @Column(nullable = false)
@@ -31,14 +31,14 @@ public class User extends BaseTimeEntity {
 
     private LocalDate birthDate;
 
-    @Column(unique = true, length = 50)
+    @Column(length = 50)
     private String phone;
 
     @Enumerated(EnumType.STRING)
     @Column(nullable = false)
     private Status status;
 
-    @Column(unique = true, length = 50)
+    @Column(length = 50)
     private String nickname;
 
     @Column(length = 1024)

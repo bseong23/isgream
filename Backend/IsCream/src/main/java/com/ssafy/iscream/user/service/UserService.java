@@ -161,7 +161,13 @@ public class UserService {
         User user = userRepository.findById(userId)
                 .orElseThrow(() -> new UserNotFoundException(ErrorCode.USER_NOT_FOUND));
 
-        user.setStatus(Status.BANNED); // 탈퇴 처리
+        // 탈퇴 처리
+        user.setStatus(Status.BANNED);
+        user.setEmail(null);
+        user.setNickname("탈퇴한 사용자");
+
+        s3Service.deleteFile(user.getImageUrl());
+        user.setImageUrl(null);
 
         String refresh = tokenService.validateRefreshToken(request); // 쿠키에서 토큰 가져오기
         tokenService.deleteRefreshToken(refresh); // Redis에 저장된 리프레시 토큰 삭제
