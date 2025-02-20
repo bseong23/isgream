@@ -83,7 +83,7 @@ const LoginForm: React.FC<LoginFormProps> = () => {
   };
 
   return (
-    <div className="flex flex-col items-center justify-center min-h-screen w-full overflow-hidden">
+    <div className="flex flex-col items-center justify-start min-h-screen w-full overflow-hidden">
       <img
         src={LoginLogo}
         alt="로고"
