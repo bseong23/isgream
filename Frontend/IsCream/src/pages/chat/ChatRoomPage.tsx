@@ -401,7 +401,7 @@ const ChatRoomPage = () => {
                         1
                       </span>
                     )} */}
-                    <div className="p-3 rounded-lg bg-white text-black border border-gray-500">
+                    <div className="p-3 rounded-lg bg-white text-black border border-gray-500 w-full max-w-[70vw] break-words">
                       {chat.content}
                     </div>
                   </div>
@@ -414,7 +414,7 @@ const ChatRoomPage = () => {
                   <div className="text-base text-gray-600 mb-1">
                     {opponentName}
                   </div>
-                  <div className="p-3 rounded-lg bg-green-500 text-white">
+                  <div className="p-3 rounded-lg bg-green-500 text-white w-full max-w-[70vw] break-words">
                     {chat.content}
                   </div>
                   <div className="text-xs text-gray-500 mt-1 px-1">
@@ -434,7 +434,7 @@ const ChatRoomPage = () => {
             onChange={(e) => setNewMessage(e.target.value)}
             onKeyPress={handleKeyPress}
             placeholder="메시지를 입력하세요"
-            className="flex-1 border border-gray-500 rounded-lg p-2 mr-2 focus:outline-none focus:border-gray focus:ring-1 focus:ring-black"
+            className="flex-1 border border-gray-500 rounded-lg p-2 mr-2 focus:outline-none focus:border-black focus:ring-1 focus:ring-black"
           />
           <button
             onClick={handleSendMessage}
