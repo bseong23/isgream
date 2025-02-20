@@ -1,0 +1,492 @@
+-- MySQL dump 10.13  Distrib 8.0.41, for Linux (x86_64)
+--
+-- Host: localhost    Database: iscream
+-- ------------------------------------------------------
+-- Server version	8.0.41-0ubuntu0.22.04.1
+
+/*!40101 SET @OLD_CHARACTER_SET_CLIENT=@@CHARACTER_SET_CLIENT */;
+/*!40101 SET @OLD_CHARACTER_SET_RESULTS=@@CHARACTER_SET_RESULTS */;
+/*!40101 SET @OLD_COLLATION_CONNECTION=@@COLLATION_CONNECTION */;
+/*!50503 SET NAMES utf8mb4 */;
+/*!40103 SET @OLD_TIME_ZONE=@@TIME_ZONE */;
+/*!40103 SET TIME_ZONE='+00:00' */;
+/*!40014 SET @OLD_UNIQUE_CHECKS=@@UNIQUE_CHECKS, UNIQUE_CHECKS=0 */;
+/*!40014 SET @OLD_FOREIGN_KEY_CHECKS=@@FOREIGN_KEY_CHECKS, FOREIGN_KEY_CHECKS=0 */;
+/*!40101 SET @OLD_SQL_MODE=@@SQL_MODE, SQL_MODE='NO_AUTO_VALUE_ON_ZERO' */;
+/*!40111 SET @OLD_SQL_NOTES=@@SQL_NOTES, SQL_NOTES=0 */;
+
+--
+-- Table structure for table `big_five_question`
+--
+
+DROP TABLE IF EXISTS `big_five_question`;
+/*!40101 SET @saved_cs_client     = @@character_set_client */;
+/*!50503 SET character_set_client = utf8mb4 */;
+CREATE TABLE `big_five_question` (
+  `big_five_question_id` int NOT NULL AUTO_INCREMENT,
+  `question` varchar(255) COLLATE utf8mb4_unicode_ci NOT NULL,
+  `question_type` varchar(255) COLLATE utf8mb4_unicode_ci NOT NULL,
+  PRIMARY KEY (`big_five_question_id`)
+) ENGINE=InnoDB AUTO_INCREMENT=19 DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_unicode_ci;
+/*!40101 SET character_set_client = @saved_cs_client */;
+
+--
+-- Dumping data for table `big_five_question`
+--
+
+LOCK TABLES `big_five_question` WRITE;
+/*!40000 ALTER TABLE `big_five_question` DISABLE KEYS */;
+INSERT INTO `big_five_question` VALUES (1,'나는 의지가 강해서 내가 하는 일을 중간에 그만두지 않고 끝까지 해낼 수 있어요!','CONSCIENTIOUSNESS'),(2,'나는 어려운 문제도 포기하지 않고 열심히 해결할 수 있어요.','CONSCIENTIOUSNESS'),(3,'나는 많은 것들을 능숙하게 잘 해낼 수 있어요.','CONSCIENTIOUSNESS'),(4,'나는 내 마음 속 기준이 높아서 내가 하는 일을 매우 잘 해야 해요.','CONSCIENTIOUSNESS'),(5,'나는 스트레스를 받으면 어쩔줄 모르겠어요.','AGREEABLENESS'),(6,'나는 스트레스를 받으면 얼어버리거나 어떤 일을 반복적으로 해요.','AGREEABLENESS'),(7,'나는 일이 잘못되거나 스트레스를 받으면 몸이 아프기도 해요.','AGREEABLENESS'),(8,'나는 놀림을 받거나 비판을 받으면 마음이 쉽게 슬퍼져요.','AGREEABLENESS'),(9,'나는 다른 친구들에게 친절하고 배려하며 대해요.','EMOTIONAL_STABILITY'),(10,'나는 생각이 깊고 다른사람들을 배려해요.','EMOTIONAL_STABILITY'),(11,'나는 가까운 사람을 보호해주고 싶어요.','EMOTIONAL_STABILITY'),(12,'우리 반 친구들이랑 다른 어른들은 보통 나를 좋아하는 것 같아요.','EMOTIONAL_STABILITY'),(13,'나는 감정을 있는 그대로 표현할 수 있어요.','EXTRAVERSION'),(14,'나는 생각과 느낌을 잘 표현하지 않아요.','EXTRAVERSION'),(15,'나는 다른 사람들에게 편하게 다가가는게 어려워요.','EXTRAVERSION'),(16,'나는 말이 많은 편이에요.','EXTRAVERSION'),(17,'나는 어떤 물건을 두고 창의적으로 생각하는게 재미있어요.','OPENNESS'),(18,'나는 상상하는 걸 좋아해요.','OPENNESS');
+/*!40000 ALTER TABLE `big_five_question` ENABLE KEYS */;
+UNLOCK TABLES;
+
+--
+-- Table structure for table `big_five_score`
+--
+
+DROP TABLE IF EXISTS `big_five_score`;
+/*!40101 SET @saved_cs_client     = @@character_set_client */;
+/*!50503 SET character_set_client = utf8mb4 */;
+CREATE TABLE `big_five_score` (
+  `big_five_score_id` int NOT NULL AUTO_INCREMENT,
+  `big_five_type` varchar(255) COLLATE utf8mb4_unicode_ci NOT NULL,
+  `total_users` int NOT NULL,
+  `total_score` double NOT NULL,
+  `average_score` double NOT NULL,
+  PRIMARY KEY (`big_five_score_id`)
+) ENGINE=InnoDB AUTO_INCREMENT=6 DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_unicode_ci;
+/*!40101 SET character_set_client = @saved_cs_client */;
+
+--
+-- Dumping data for table `big_five_score`
+--
+
+LOCK TABLES `big_five_score` WRITE;
+/*!40000 ALTER TABLE `big_five_score` DISABLE KEYS */;
+INSERT INTO `big_five_score` VALUES (1,'CONSCIENTIOUSNESS',12,54,4.5),(2,'AGREEABLENESS',12,50,4.166666666666667),(3,'EMOTIONAL_STABILITY',12,7,0.5833333333333334),(4,'EXTRAVERSION',12,49,4.083333333333333),(5,'OPENNESS',12,57,4.75);
+/*!40000 ALTER TABLE `big_five_score` ENABLE KEYS */;
+UNLOCK TABLES;
+
+--
+-- Table structure for table `big_five_test`
+--
+
+DROP TABLE IF EXISTS `big_five_test`;
+/*!40101 SET @saved_cs_client     = @@character_set_client */;
+/*!50503 SET character_set_client = utf8mb4 */;
+CREATE TABLE `big_five_test` (
+  `big_five_test_id` int NOT NULL AUTO_INCREMENT,
+  `created_at` datetime(6) NOT NULL,
+  `updated_at` datetime(6) NOT NULL,
+  `agreeableness` double NOT NULL,
+  `analysis` text COLLATE utf8mb4_unicode_ci,
+  `child_id` int NOT NULL,
+  `conscientiousness` double NOT NULL,
+  `emotional_stability` double NOT NULL,
+  `extraversion` double NOT NULL,
+  `openness` double NOT NULL,
+  `pdf_url` varchar(255) COLLATE utf8mb4_unicode_ci DEFAULT NULL,
+  `test_date` date DEFAULT NULL,
+  `user_id` int NOT NULL,
+  PRIMARY KEY (`big_five_test_id`)
+) ENGINE=InnoDB AUTO_INCREMENT=5 DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_unicode_ci;
+/*!40101 SET character_set_client = @saved_cs_client */;
+
+--
+-- Dumping data for table `big_five_test`
+--
+
+LOCK TABLES `big_five_test` WRITE;
+/*!40000 ALTER TABLE `big_five_test` DISABLE KEYS */;
+INSERT INTO `big_five_test` VALUES (1,'2025-02-18 11:15:52.000000','2025-02-18 11:15:52.000000',1,'나빠',2,-1,1.1,-2,2.2,'www.naver.com','2023-01-01',3),(2,'2025-02-19 00:22:56.622168','2025-02-19 20:55:45.803507',0.7999999999999998,'성격 해석: \n성실성 (Conscientiousness):\n- 평균적인 수준: 특정 성향이 두드러지지 않으며 균형을 이루고 있습니다.\n\n친화성 (Agreeableness):\n- 평균보다 다소 높음: 협력적이고 배려하는 성향 경향이 있습니다.\n\n정서적 안정성 (Emotional Stability):\n- 평균보다 다소 낮음: 감정 기복이 크고 불안감이 높은 성향 경향이 있습니다.\n\n외향성 (Extraversion):\n- 평균보다 다소 높음: 활발하고 사교적인 성향 경향이 있습니다.\n\n개방성 (Openness):\n- 평균적인 수준: 특정 성향이 두드러지지 않으며 균형을 이루고 있습니다.\n\n',2,0.40000000000000036,-0.7,0.7000000000000002,0.09999999999999964,'https://a407-20250124.s3.ap-northeast-2.amazonaws.com/result/4a017b91-d02d-4e45-86ad-569079c01ca8_1739966145769.pdf','2025-02-19',3),(3,'2025-02-19 00:38:15.846965','2025-02-19 00:45:12.705822',-1.0909090909090908,'성격 해석: \n성실성 (Conscientiousness):\n- 평균보다 상당히 낮음: 즉흥적인 성향이 강한 편입니다.\n\n친화성 (Agreeableness):\n- 평균보다 상당히 낮음: 경쟁적이고 독립적인 성향이 강한 편입니다.\n\n정서적 안정성 (Emotional Stability):\n- 평균보다 다소 낮음: 감정 기복이 크고 불안감이 높은 성향 경향이 있습니다.\n\n외향성 (Extraversion):\n- 평균보다 상당히 낮음: 조용하고 내향적인 성향이 강한 편입니다.\n\n개방성 (Openness):\n- 평균보다 상당히 낮음: 전통적이고 익숙한 방식을 선호하는 성향이 강한 편입니다.\n\n',3,-1.4545454545454541,-0.6363636363636364,-1.1818181818181817,-1.7272727272727275,'https://a407-20250124.s3.ap-northeast-2.amazonaws.com/result/2d5c06a9-659c-4c82-a3e7-ad4ee7942d9c_1739925912656.pdf','2025-02-19',1),(4,'2025-02-19 03:31:50.122979','2025-02-19 03:31:50.149433',0.833333333333333,'성격 해석: \n성실성 (Conscientiousness):\n- 평균보다 다소 높음: 계획적이고 신중한 성향 경향이 있습니다.\n\n친화성 (Agreeableness):\n- 평균보다 다소 높음: 협력적이고 배려하는 성향 경향이 있습니다.\n\n정서적 안정성 (Emotional Stability):\n- 평균보다 다소 낮음: 감정 기복이 크고 불안감이 높은 성향 경향이 있습니다.\n\n외향성 (Extraversion):\n- 평균보다 상당히 낮음: 조용하고 내향적인 성향이 강한 편입니다.\n\n개방성 (Openness):\n- 평균적인 수준: 특정 성향이 두드러지지 않으며 균형을 이루고 있습니다.\n\n',5,0.5,-0.5833333333333334,-1.083333333333333,0.25,NULL,'2025-02-19',8);
+/*!40000 ALTER TABLE `big_five_test` ENABLE KEYS */;
+UNLOCK TABLES;
+
+--
+-- Table structure for table `child`
+--
+
+DROP TABLE IF EXISTS `child`;
+/*!40101 SET @saved_cs_client     = @@character_set_client */;
+/*!50503 SET character_set_client = utf8mb4 */;
+CREATE TABLE `child` (
+  `child_id` int NOT NULL AUTO_INCREMENT,
+  `user_id` int NOT NULL,
+  `nickname` varchar(255) COLLATE utf8mb4_unicode_ci DEFAULT NULL,
+  `birth_date` date DEFAULT NULL,
+  `gender` enum('M','F') COLLATE utf8mb4_unicode_ci DEFAULT NULL,
+  `created_at` datetime NOT NULL DEFAULT CURRENT_TIMESTAMP,
+  `updated_at` datetime NOT NULL DEFAULT CURRENT_TIMESTAMP ON UPDATE CURRENT_TIMESTAMP,
+  `status` enum('USED','DELETED') COLLATE utf8mb4_unicode_ci DEFAULT 'USED',
+  PRIMARY KEY (`child_id`),
+  KEY `user_id` (`user_id`),
+  CONSTRAINT `child_ibfk_1` FOREIGN KEY (`user_id`) REFERENCES `user` (`user_id`)
+) ENGINE=InnoDB AUTO_INCREMENT=14 DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_unicode_ci;
+/*!40101 SET character_set_client = @saved_cs_client */;
+
+--
+-- Dumping data for table `child`
+--
+
+LOCK TABLES `child` WRITE;
+/*!40000 ALTER TABLE `child` DISABLE KEYS */;
+INSERT INTO `child` VALUES (1,1,'good','2025-02-17','F','2025-02-17 00:44:15','2025-02-18 06:34:09','USED'),(2,3,'라떼','2025-02-05','F','2025-02-17 00:53:49','2025-02-18 06:34:09','USED'),(3,1,'test','2025-02-18','F','2025-02-18 05:14:44','2025-02-18 06:34:09','USED'),(5,8,'고싸피','2020-05-19','M','2025-02-19 00:41:19','2025-02-19 00:41:19','USED'),(6,13,'완득이','2019-06-14','M','2025-02-19 05:24:23','2025-02-19 05:24:23','USED'),(7,5,'자녀1','2025-02-18','F','2025-02-19 05:40:13','2025-02-19 05:40:13','USED'),(8,2,'김유정의자녀1_수정','2024-11-30','F','2025-02-19 22:27:59','2025-02-19 23:23:20','USED'),(9,16,'이미루','2025-01-26','F','2025-02-19 22:42:51','2025-02-19 22:42:51','USED'),(10,17,'ㅇㅇ','2025-02-19','F','2025-02-19 22:45:18','2025-02-19 22:45:18','USED'),(11,7,'이마루','2025-01-28','F','2025-02-19 22:50:21','2025-02-19 22:50:21','USED'),(12,18,'박동민2세','2020-02-02','F','2025-02-19 22:52:05','2025-02-19 22:52:05','USED'),(13,2,'나는야 김유정의 자녀라네','0001-12-30','M','2025-02-19 23:43:39','2025-02-19 23:43:39','USED');
+/*!40000 ALTER TABLE `child` ENABLE KEYS */;
+UNLOCK TABLES;
+
+--
+-- Table structure for table `comment`
+--
+
+DROP TABLE IF EXISTS `comment`;
+/*!40101 SET @saved_cs_client     = @@character_set_client */;
+/*!50503 SET character_set_client = utf8mb4 */;
+CREATE TABLE `comment` (
+  `comment_id` int NOT NULL AUTO_INCREMENT,
+  `post_id` int NOT NULL,
+  `user_id` int NOT NULL,
+  `parent_comment_id` int DEFAULT NULL,
+  `content` varchar(1024) COLLATE utf8mb4_unicode_ci DEFAULT NULL,
+  `created_at` datetime NOT NULL DEFAULT CURRENT_TIMESTAMP,
+  `updated_at` datetime NOT NULL DEFAULT CURRENT_TIMESTAMP ON UPDATE CURRENT_TIMESTAMP,
+  PRIMARY KEY (`comment_id`),
+  KEY `comment_ibfk_1` (`post_id`),
+  KEY `parent_comment_id_fk` (`parent_comment_id`),
+  KEY `user_id` (`user_id`),
+  CONSTRAINT `comment_ibfk_1` FOREIGN KEY (`post_id`) REFERENCES `post` (`post_id`) ON DELETE CASCADE,
+  CONSTRAINT `comment_ibfk_2` FOREIGN KEY (`user_id`) REFERENCES `user` (`user_id`),
+  CONSTRAINT `parent_comment_id_fk` FOREIGN KEY (`parent_comment_id`) REFERENCES `comment` (`comment_id`) ON DELETE CASCADE
+) ENGINE=InnoDB AUTO_INCREMENT=52 DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_unicode_ci;
+/*!40101 SET character_set_client = @saved_cs_client */;
+
+--
+-- Dumping data for table `comment`
+--
+
+LOCK TABLES `comment` WRITE;
+/*!40000 ALTER TABLE `comment` DISABLE KEYS */;
+INSERT INTO `comment` VALUES (4,2,3,NULL,'gg','2025-02-17 01:15:59','2025-02-17 01:15:59'),(5,2,4,4,'213123122131231221312312213123122131231221312312213123122131231221312312213123122131231221312312213123122131231221312312213123122131231221312312213123122131231221312312213123122131231221312312213123122131231221312312213123122131231221312312213123122131231221312312213123122131231221312312213123122131231221312312213123122131231221312312213123122131231221312312213123122131231221312312213123122131231221312312','2025-02-17 01:33:11','2025-02-17 01:33:44'),(6,1,1,NULL,'내용','2025-02-17 10:55:05','2025-02-17 10:55:05'),(7,1,1,NULL,'내용','2025-02-17 10:56:52','2025-02-17 10:56:52'),(8,3,3,NULL,'gg','2025-02-17 11:03:02','2025-02-17 11:03:02'),(9,1,6,NULL,'댓글 댓글','2025-02-17 12:22:02','2025-02-17 12:22:02'),(10,1,6,NULL,'댓글대댇ㅅ글','2025-02-17 12:22:05','2025-02-17 12:22:05'),(11,1,6,NULL,'대대대댓그르르르르대새새대대그릉','2025-02-17 12:22:10','2025-02-17 12:22:10'),(12,1,6,NULL,'대애애앳글','2025-02-17 12:22:15','2025-02-17 12:22:15'),(13,2,6,NULL,'여기도 댓글 저기도 댓글','2025-02-17 12:22:25','2025-02-17 12:22:25'),(14,2,6,NULL,'gggg','2025-02-17 13:40:46','2025-02-17 13:40:46'),(15,2,6,NULL,'ggggg','2025-02-17 13:40:48','2025-02-17 13:40:48'),(16,4,6,NULL,'ㅋㅋㅋ오냐?','2025-02-17 13:51:21','2025-02-17 13:51:21'),(18,4,3,NULL,'ㅋㅋㅋ','2025-02-18 02:31:16','2025-02-18 02:31:16'),(21,4,1,NULL,'tttttt','2025-02-18 07:57:40','2025-02-18 07:57:40'),(22,1,1,NULL,'내용','2025-02-18 16:59:47','2025-02-18 16:59:47'),(23,1,1,NULL,'내용','2025-02-18 17:01:27','2025-02-18 17:01:27'),(24,1,1,NULL,'내용','2025-02-18 17:02:20','2025-02-18 17:02:20'),(25,1,1,NULL,'내용','2025-02-18 17:03:30','2025-02-18 17:03:30'),(26,6,1,NULL,'내용','2025-02-18 17:03:38','2025-02-18 17:03:38'),(27,6,1,NULL,'내용ㅎㅎ','2025-02-18 17:03:58','2025-02-18 15:41:49'),(28,4,1,NULL,'알람?','2025-02-18 08:19:10','2025-02-18 08:19:10'),(29,4,1,NULL,'gggg','2025-02-18 08:21:58','2025-02-18 08:21:58'),(30,4,1,NULL,'123123','2025-02-18 08:24:53','2025-02-18 08:24:53'),(31,1,1,NULL,'123123','2025-02-18 08:25:21','2025-02-18 08:25:21'),(32,1,1,NULL,'asdfasdf','2025-02-18 08:26:09','2025-02-18 08:26:09'),(33,1,1,NULL,'asdfsadf','2025-02-18 08:26:18','2025-02-18 08:26:18'),(34,4,1,NULL,'ㅋㅋ','2025-02-18 09:00:12','2025-02-18 09:00:12'),(35,4,1,NULL,'되나?','2025-02-18 09:00:29','2025-02-18 09:00:29'),(36,4,1,NULL,'머야','2025-02-18 09:00:46','2025-02-18 09:00:46'),(37,6,3,NULL,'ㅎㅎ','2025-02-18 15:24:03','2025-02-18 15:24:03'),(38,6,1,NULL,'ㅎㅎㅎㅎ','2025-02-18 15:42:02','2025-02-18 15:42:02'),(39,4,3,NULL,'ㅎㅎ','2025-02-19 00:06:13','2025-02-19 00:06:13'),(40,4,3,NULL,'ㅎㅎㅎㅎ','2025-02-19 00:21:27','2025-02-19 00:21:27'),(41,4,3,NULL,'asdfasdf','2025-02-19 02:37:42','2025-02-19 02:37:42'),(42,6,3,NULL,'123123','2025-02-19 04:00:46','2025-02-19 04:00:46'),(43,6,3,NULL,'과연!','2025-02-19 05:02:23','2025-02-19 05:02:23'),(44,6,3,43,'ㅋㅋ','2025-02-19 05:02:33','2025-02-19 05:02:33'),(45,2,3,NULL,'ㅋㅋㅋㅋ','2025-02-19 05:02:49','2025-02-19 05:02:49'),(47,4,3,NULL,'ㅎㅎㅎ','2025-02-19 05:47:02','2025-02-19 05:47:02'),(48,8,3,NULL,'흐흐','2025-02-19 20:56:56','2025-02-19 20:56:56'),(49,8,3,48,'히히','2025-02-19 20:57:03','2025-02-19 20:57:03'),(50,10,2,NULL,'댓글1','2025-02-19 23:22:45','2025-02-19 23:22:45'),(51,11,3,NULL,'ㅎㅎㅎ','2025-02-19 23:59:08','2025-02-19 23:59:08');
+/*!40000 ALTER TABLE `comment` ENABLE KEYS */;
+UNLOCK TABLES;
+
+--
+-- Table structure for table `education`
+--
+
+DROP TABLE IF EXISTS `education`;
+/*!40101 SET @saved_cs_client     = @@character_set_client */;
+/*!50503 SET character_set_client = utf8mb4 */;
+CREATE TABLE `education` (
+  `education_id` int NOT NULL AUTO_INCREMENT,
+  `description` varchar(255) COLLATE utf8mb4_unicode_ci DEFAULT NULL,
+  `recommend_type` enum('AGREEABLENESS','CONSCIENTIOUSNESS','EMOTIONAL_STABILITY','EXTRAVERSION','OPENNESS') COLLATE utf8mb4_unicode_ci DEFAULT NULL,
+  `thumbnail_url` varchar(255) COLLATE utf8mb4_unicode_ci DEFAULT NULL,
+  `title` varchar(255) COLLATE utf8mb4_unicode_ci DEFAULT NULL,
+  `url` varchar(255) COLLATE utf8mb4_unicode_ci DEFAULT NULL,
+  PRIMARY KEY (`education_id`)
+) ENGINE=InnoDB AUTO_INCREMENT=27 DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_unicode_ci;
+/*!40101 SET character_set_client = @saved_cs_client */;
+
+--
+-- Dumping data for table `education`
+--
+
+LOCK TABLES `education` WRITE;
+/*!40000 ALTER TABLE `education` DISABLE KEYS */;
+INSERT INTO `education` VALUES (2,'겁 많은 아이는 어떻게 해야 창의성에 유리할까? 자기주장 강한 아이, 창의성도 더 높을까? 자유 놀이는 창의성 증진에 왜 중요할까? 한글 교육은 정말 창의성에 나쁠까?','OPENNESS','https://img.youtube.com/vi/MFphfVq5HoY/0.jpg','알아만 둬도 창의적인 아이로 키우는 데 도움되는 지식들','https://www.youtube.com/watch?v=MFphfVq5HoY'),(3,'창의적인 아이는 저절로 길러지지 않습니다. 어떻게 하면 아이를 창의적으로 기를 수 있을까요?','OPENNESS','https://img.youtube.com/vi/ktkTIQqKYu0/0.jpg','창의성이 그냥 생길리 있나요? 창의적인 아이로 키우는 부모는 이렇게 물어봅니다','https://www.youtube.com/watch?v=ktkTIQqKYu0'),(4,'부모가 \"이렇게\" 말하면, 아이의 창의력이 높아집니다','OPENNESS','https://img.youtube.com/vi/Vr8ezZutlaY/0.jpg','인문 교육 전문가 김종원의 아이의 삶을 바꾸는 대화법','https://www.youtube.com/watch?v=Vr8ezZutlaY'),(5,'아이를 창의적으로 키우고 싶다면 4가지 생활 태도에 집중!','OPENNESS','https://img.youtube.com/vi/YleuGhRClg0/0.jpg','창의성을 키우는 4가지 생활 태도','https://www.youtube.com/watch?v=YleuGhRClg0'),(6,'창의적인 아이로 키우는 쉬운 방법','OPENNESS','https://img.youtube.com/vi/JKEorn4fM_0/0.jpg','창의성을 잃지 않는 환경 조성','https://www.youtube.com/watch?v=JKEorn4fM_0'),(7,'아이의 자존감을 높여주는 부모의 행동수칙','EXTRAVERSION','https://img.youtube.com/vi/n2ZVyWjJSNA/0.jpg','육아전문가 오은영 박사의 자존감 강의','https://www.youtube.com/watch?v=n2ZVyWjJSNA'),(8,'내 아이를 건드리거나 약올리는 친구가 있을 때 | 오은영 박사의 해결법','EXTRAVERSION','https://img.youtube.com/vi/rYqjTcT8VpU/0.jpg','또래 친구와의 갈등 해결법','https://www.youtube.com/watch?v=rYqjTcT8VpU'),(9,'느리고 수줍음 많은 아이가 못마땅한 부모','EXTRAVERSION','https://img.youtube.com/vi/U2rn73R69_s/0.jpg','부모가 할 수 있는 올바른 지원 방법','https://www.youtube.com/watch?v=U2rn73R69_s'),(10,'소극적인 아이의 학교생활 적응법','EXTRAVERSION','https://img.youtube.com/vi/cZjLzRMxY3U/0.jpg','소극적인 아이를 돕는 부모의 역할','https://www.youtube.com/watch?v=cZjLzRMxY3U'),(11,'수줍음이 많은 아이 양육법','EXTRAVERSION','https://img.youtube.com/vi/e5mpaTp643Y/0.jpg','수줍음 많은 아이를 도와주는 방법','https://www.youtube.com/watch?v=e5mpaTp643Y'),(12,'아이의 짜증이 부쩍 늘어났다면?♨ 짜증에 대처하는 올바른 방법!','EMOTIONAL_STABILITY','https://img.youtube.com/vi/2zjY22NqLOY/0.jpg','아이의 짜증을 다루는 방법','https://www.youtube.com/watch?v=2zjY22NqLOY'),(13,'[EBS부모] 아이의 스트레스 이렇게 해주세요','EMOTIONAL_STABILITY','https://img.youtube.com/vi/O4HOqe4TbCo/0.jpg','아이의 스트레스 관리법','https://www.youtube.com/watch?v=O4HOqe4TbCo'),(14,'불안한 아이들이 자주 하는 질문','EMOTIONAL_STABILITY','https://img.youtube.com/vi/ki4_re9KLVY/0.jpg','아이의 불안을 다루는 대화법','https://www.youtube.com/watch?v=ki4_re9KLVY'),(15,'[육아] 훈육으로 해결되지 않는 영유아기 스트레스','EMOTIONAL_STABILITY','https://img.youtube.com/vi/IMGhTDxOyrY/0.jpg','훈육과 스트레스의 관계','https://www.youtube.com/watch?v=IMGhTDxOyrY'),(16,'아이의 스트레스를 인정하고 가정 안에서 해결하기 위한 방법','EMOTIONAL_STABILITY','https://img.youtube.com/vi/18qQmaXqEpc/0.jpg','가정에서 아이의 스트레스를 다루는 법','https://www.youtube.com/watch?v=18qQmaXqEpc'),(17,'★최초공개★ 오은영 박사의 어떻게 놀아줘야할까_1탄','AGREEABLENESS','https://img.youtube.com/vi/o3GbpgZ-jMs/0.jpg','아이와 놀이를 효과적으로 하는 방법','https://www.youtube.com/watch?v=o3GbpgZ-jMs'),(18,'아이와 ⭐️놀이터에 갔을때 ⭐️오은영 박사가 알려주는 꿀팁!','AGREEABLENESS','https://img.youtube.com/vi/flULwJu6TDE/0.jpg','놀이터에서 아이와 효과적으로 놀아주는 법','https://www.youtube.com/watch?v=flULwJu6TDE'),(19,'예의 바른 아이로 키우고 싶다면? 먼저 아이의 마음을 읽어주세요!','AGREEABLENESS','https://img.youtube.com/vi/HqyV1uPWrfY/0.jpg','아이에게 올바른 예의를 가르치는 법','https://www.youtube.com/watch?v=HqyV1uPWrfY'),(20,'성격 급한 아이, 규칙을 잘 못 지키는 아이 어떻게 가르쳐야 할까요?','AGREEABLENESS','https://img.youtube.com/vi/uLPsZNk12UM/0.jpg','아이의 성격을 존중하며 지도하는 법','https://www.youtube.com/watch?v=uLPsZNk12UM'),(21,'아이의 짜증이 부쩍 늘어났다면?♨ 짜증에 대처하는 올바른 방법!','AGREEABLENESS','https://img.youtube.com/vi/2zjY22NqLOY/0.jpg','아이의 감정을 이해하고 조절하는 법','https://www.youtube.com/watch?v=2zjY22NqLOY'),(22,'돼지우리가 따로 없는 아들의 방, 정리정돈을 잘하게 하는 방법','CONSCIENTIOUSNESS','https://img.youtube.com/vi/IerB-iV1kpU/0.jpg','아이의 정리정돈 습관 만들기','https://www.youtube.com/watch?v=IerB-iV1kpU'),(23,'절대 게으른 탓이 아니다! 침대·바닥·심지어 책상 밑, 계속 누워만 있었던 이유','CONSCIENTIOUSNESS','https://img.youtube.com/vi/wFjUOyHnQ5Y/0.jpg','아이의 행동을 이해하고 돕는 방법','https://www.youtube.com/watch?v=wFjUOyHnQ5Y'),(24,'지저분하고 정리 못하는 중1 아이, 어떻게 지도해야 할까요?','CONSCIENTIOUSNESS','https://img.youtube.com/vi/BpMxrmT_NUA/0.jpg','아이의 정리정돈 습관 지도법','https://www.youtube.com/watch?v=BpMxrmT_NUA'),(25,'유치원에서 정리정돈 잘 하는 아이, 집에서는 왜 안 할까요?','CONSCIENTIOUSNESS','https://img.youtube.com/vi/4dxq-dMek9s/0.jpg','아이의 생활 습관 일관되게 유지하기','https://www.youtube.com/watch?v=4dxq-dMek9s'),(26,'정리정돈을 잘하는 아이로 키우는 방법','CONSCIENTIOUSNESS','https://img.youtube.com/vi/_W_l_PGFBY0/0.jpg','정리 습관을 키우는 부모의 역할','https://www.youtube.com/watch?v=_W_l_PGFBY0');
+/*!40000 ALTER TABLE `education` ENABLE KEYS */;
+UNLOCK TABLES;
+
+--
+-- Table structure for table `htp_test`
+--
+
+DROP TABLE IF EXISTS `htp_test`;
+/*!40101 SET @saved_cs_client     = @@character_set_client */;
+/*!50503 SET character_set_client = utf8mb4 */;
+CREATE TABLE `htp_test` (
+  `htp_test_id` int NOT NULL AUTO_INCREMENT,
+  `child_id` int NOT NULL,
+  `test_date` date NOT NULL DEFAULT ((now() + interval 0 day)),
+  `house_drawing_url` varchar(1024) COLLATE utf8mb4_unicode_ci DEFAULT NULL,
+  `tree_drawing_url` varchar(1024) COLLATE utf8mb4_unicode_ci DEFAULT NULL,
+  `analysis_result` text COLLATE utf8mb4_unicode_ci,
+  `pdf_url` varchar(1024) COLLATE utf8mb4_unicode_ci DEFAULT NULL,
+  `emoji` tinyint DEFAULT NULL,
+  `created_at` datetime(6) NOT NULL,
+  `updated_at` datetime(6) NOT NULL,
+  `male_drawing_url` varchar(1024) COLLATE utf8mb4_unicode_ci DEFAULT NULL,
+  `female_drawing_url` varchar(1024) COLLATE utf8mb4_unicode_ci DEFAULT NULL,
+  `user_id` int NOT NULL,
+  PRIMARY KEY (`htp_test_id`),
+  KEY `htp_test_ibfk_1` (`child_id`),
+  CONSTRAINT `htp_test_ibfk_1` FOREIGN KEY (`child_id`) REFERENCES `child` (`child_id`) ON DELETE CASCADE
+) ENGINE=InnoDB AUTO_INCREMENT=240 DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_unicode_ci;
+/*!40101 SET character_set_client = @saved_cs_client */;
+
+--
+-- Dumping data for table `htp_test`
+--
+
+LOCK TABLES `htp_test` WRITE;
+/*!40000 ALTER TABLE `htp_test` DISABLE KEYS */;
+INSERT INTO `htp_test` VALUES (47,1,'2025-02-17','https://a407-20250124.s3.ap-northeast-2.amazonaws.com/images/ac0b9a4b-89c1-4089-a235-25e686212b6c_1739778681153.png','https://a407-20250124.s3.ap-northeast-2.amazonaws.com/images/7253258c-9bd0-48c6-adb1-ade2f7a68056_1739778684276.png','\"검사 순서: 1\\n검사 시간: 432\\n검사 유형: House\\n검사 결과를 자세히 살펴보니, 집 그림에 태양이 중앙 하단에 작게 그려져 있어 현재의 안정감과 기초적인 기반을 나타내지만, 자신감이 다소 부족할 수 있음을 시사합니다. 지붕과 전체 집의 위치가 왼쪽 상단에 그려져 있어 과거 지향적인 경향과 이상화된 사고를 반영하고 있습니다. 문, 창문, 굴뚝 등의 생략은 외부와의 연결이나 소통에 대한 부담감 또는 회피를 나타낼 수 있습니다. 이러한 요소들을 통해 내담자가 현재 안정을 중시하면서도, 과거에 대한 이상적인 생각을 많이 하고 있으며, 외부 세계와의 소통에 어려움을 느낄 가능성이 있음을 알 수 있습니다.\\n----\\n검사 순서: 2\\n검사 시간: 23\\n검사 유형: Tree\\n나무 그림에서 나타나는 여러 요소들을 살펴보면 아이가 과거에 대한 강한 연결과 안정감을 느끼고 있음을 알 수 있습니다. 나무의 위치가 왼쪽 하단에 그려져 있고 크기가 중간인 점은 아이가 현재 자신의 삶에 대해 평균적인 안정감과 균형을 느끼고 있지만, 구름의 작은 크기는 미래에 대한 자신감이 다소 부족할 수 있음을 시사합니다. 나머지 요소들이 생략된 것은 아이가 특정 감정이나 상태에 집중하고 있지 않음을 나타낼 수 있습니다. 이러한 그림을 통해 아이가 현재 어떤 심리적 상태에 있는지 더 깊이 이해할 수 있습니다.\\n----\\n검사 순서: 3\\n검사 시간: 12\\n검사 유형: Male\\n남성이 먼저 그려졌습니다. 이는 가족 내에서 남성이 중요한 역할을 하거나, 아이가 남성에게 더 큰 심리적 의미를 부여할 가능성을 시사합니다.\\n이 그림 분석을 통해 아이가 과거에 대한 경향성과 안정감을 추구하고 있지만, 자신감이 다소 부족할 수 있다는 점을 알 수 있습니다. 특히 손, 다리, 팔의 위치와 크기가 작게 표현된 것은 내면의 위축감을 나타내며, 발이 미래 지향적인 위치에 있음에도 작게 그려진 것은 미래에 대한 희망이 있으나 자신감이 필요함을 시사합니다. 중요한 얼굴이나 머리 등의 생략은 아이가 자신의 정체성이나 감정 표현에 어려움을 겪을 수 있음을 의미할 수 있어요. 이런 점들을 고려하여 아이가 더 자신감을 갖고 안정감을 느낄 수 있는 환경을 제공하는 것이 중요할 것 같습니다.\\n----\\n검사 순서: 4\\n검사 시간: 321\\n검사 유형: Female\\n이 그림을 통해 담당자분께서 표현하고자 한 심리적 상태를 자세히 살펴보겠습니다. 머리가 중앙 상단에 위치하며 크기가 평균적인 것은 현재의 안정감과 이상적인 사고를 반영합니다. 전체적으로 큰 사람의 그림은 자신감을 나타내지만, 눈이 작고 하단에 위치하는 것은 미래에 대한 기대감과 동시에 어느 정도의 자신감 부족을 시사합니다. 얼굴, 코, 입, 귀 등이 생략된 것은 현재 감정 표현에 있어서 어려움이 있을 수 있음을 의미할 수 있습니다. 이러한 요소들을 종합해 보면, 내담자분이 자신감과 미래 지향적인 태도를 가지고 있으나, 감정 표현에 있어서는 다소 조심스러움이 있을 수 있습니다.\"',NULL,NULL,'2025-02-17 16:51:21.143758','2025-02-17 16:52:12.009742','https://a407-20250124.s3.ap-northeast-2.amazonaws.com/images/bde636e0-2b2b-4bef-a2c6-e318c3f7c908_1739778687663.png','https://a407-20250124.s3.ap-northeast-2.amazonaws.com/images/68d2402e-5403-41c5-9a50-509a3908f189_1739778692004.png',1),(78,2,'2025-02-18','https://a407-20250124.s3.ap-northeast-2.amazonaws.com/images/fa69a4df-647e-42e3-ba1b-ba0225078d3b_1739863802247.png','https://a407-20250124.s3.ap-northeast-2.amazonaws.com/images/595885f0-9658-47ae-a751-8fa281f0fe66_1739863805835.png','\"검사 순서: 1\\n검사 시간: 2.28\\n검사 유형: House\\n검사 결과를 보면, 연못만 그려진 집 그림을 통해 현재 상태에 대해 생각해볼 수 있습니다. 연못이 가운데 위치하고 있으며 크기가 작다는 점은 현재의 삶에 대한 안정감과 균형을 느끼고 있지만, 동시에 자신감이 다소 부족하거나 자신을 충분히 표현하지 못하는 경향이 있을 수 있음을 의미합니다. 다른 집 관련 요소들이 생략된 것은 현재 자기 자신과 관련된 다양한 측면들, 예를 들어 가정 생활, 안전, 개인적 공간에 대한 신경을 쓰지 않거나 중요하게 생각하지 않는다는 것을 나타낼 수 있습니다. 이러한 그림은 내담자가 자신의 삶에서 중요한 요소들에 대해 어떻게 느끼고 있는지, 어떤 부분에 더 집중하고 있는지를 알아보는 데 도움이 됩니다.\\n----\\n검사 순서: 2\\n검사 시간: 1.90\\n검사 유형: Tree\\n나무 그림에서 중심에 위치한 달은 현재의 감정이나 상태가 안정적이며 균형을 잘 유지하고 있음을 나타냅니다. 그림에서 나무의 다른 부분들이 누락된 것을 볼 때, 아이가 자신의 내면이나 세부적인 감정을 표현하는 데 있어 어려움을 겪고 있을 수 있습니다. 이는 아마도 내면의 감정을 외부로 표현하는 것에 대한 불안 또는 자신감의 부족을 반영할 수 있습니다. 달만이 그려진 것은 아이가 현재 중요하게 생각하는 부분에 집중하고 있음을 보여주기도 합니다. 이러한 정보를 바탕으로 아이의 감정 표현을 돕고 자신감을 키울 수 있는 방법을 함께 모색해보는 것이 좋겠습니다.\\n----\\n검사 순서: 3\\n검사 시간: 1.89\\n검사 유형: Female\\n여성이 먼저 그려졌습니다. 이는 아이가 어머니 또는 여성 보호자에게 더 큰 애착을 가지고 있거나, 여성의 역할을 더 중요하게 생각할 가능성이 있습니다.\\n검사 결과에 따르면, 여자 사람 그림에서 구두만이 존재하고 다른 모든 신체 부분이 생략되었습니다. 이는 내담자가 자신의 정체성이나 자아에 대해 갖고 있는 불확실성이나 혼란을 나타낼 수 있습니다. 구두가 중앙에 위치하고 크기가 중간인 것은 내담자가 현재 안정감을 느끼며 자신의 삶에서 균형을 유지하고자 하는 의지를 보여줍니다. 그러나 전체적인 신체의 부재는 자기 표현에 있어서의 어려움이나 자신감 부족을 의미할 수 있어, 이 부분에 대한 지지와 이해를 제공하는 것이 도움이 될 것입니다.\\n----\\n검사 순서: 4\\n검사 시간: 3.37\\n검사 유형: Male\\n이 그림에서 손만 작게 그려진 것은 자신감이 다소 부족하거나 자신을 축소시키려는 경향을 나타낼 수 있습니다. 다른 신체 부위가 전혀 그려지지 않은 것은 자기표현에 어려움을 느끼거나 자신의 정체성과 감정을 외부에 드러내기를 꺼려하는 심리적 상태를 반영할 수 있어요. 이런 그림을 그린 아이는 현재 자신의 위치에 안정감을 느끼고 있지만, 자신에 대한 인식과 표현에 있어서는 많은 지지와 격려가 필요할 것 같습니다. 부드럽게 다가가 그의 이야기를 경청해 주세요.\"',NULL,NULL,'2025-02-18 07:30:02.217086','2025-02-18 07:30:35.850417','https://a407-20250124.s3.ap-northeast-2.amazonaws.com/images/3b9d61b2-6117-480b-bb33-2c4c5199462a_1739863814041.png','https://a407-20250124.s3.ap-northeast-2.amazonaws.com/images/0b1ea7cf-be30-4d71-ada4-4f8ff7c48a49_1739863809815.png',3),(140,3,'2025-02-18','https://a407-20250124.s3.ap-northeast-2.amazonaws.com/images/4b6d44ba-0c78-4ea5-8f4c-f035a27cd297_1739893495891.png','https://a407-20250124.s3.ap-northeast-2.amazonaws.com/images/00e55a11-a427-4d9a-8409-859d7dbea7b2_1739893508115.png','\"검사 순서: 1\\n검사 시간: 9.15\\n검사 유형: House\\n검사 결과를 통해 아이가 그린 집 그림은 중앙에 위치하고 있어 현재의 안정감과 집중을 나타내며, 평균적이고 균형 잡힌 상태를 의미합니다. 그러나 집의 벽, 창문, 문의 크기가 작게 표현된 점은 아이가 자신감이 다소 부족하거나 위축된 성향을 가지고 있을 수 있음을 시사합니다. 지붕이 중간 크기로 상단에 위치한 것은 아이가 현실적이면서도 이상적인 사고를 향해 나아가고자 하는 바람을 보여줍니다. 다른 요소들이 생략된 것은 아이가 현재 자신의 삶에서 중요하게 생각하는 부분에 집중하고 있음을 나타낼 수 있습니다. 이러한 분석을 통해 아이의 내면세계와 현재 감정 상태에 대해 더 깊이 이해할 수 있습니다.\\n----\\n검사 순서: 2\\n검사 시간: 10.74\\n검사 유형: Tree\\n아이의 나무 그림을 통해 아이의 내면을 조금 더 깊이 이해해 볼 수 있겠네요. 나무의 위치가 가운데 상단에 있고, 크기가 크다는 것은 아이가 현재 안정감을 느끼고 있으며, 미래에 대한 희망과 이상을 가지고 있음을 나타냅니다. 하지만 가지가 작은 것은 아이가 자신감이 다소 부족할 수 있으며, 좀 더 지지와 격려가 필요할 수 있음을 시사합니다. 뿌리나 나뭇잎 등의 부재는 아이가 자신의 기원이나 성장 과정에 대해 충분히 탐색하지 못했을 가능성을 보여줍니다. 아이와의 대화를 통해 자신감을 키우고, 자아 탐색을 돕는 것이 중요할 것 같습니다.\\n----\\n검사 순서: 3\\n검사 시간: 41.20\\n검사 유형: Male\\n남성이 먼저 그려졌습니다. 이는 가족 내에서 남성이 중요한 역할을 하거나, 아이가 남성에게 더 큰 심리적 의미를 부여할 가능성을 시사합니다.\\n이 그림을 통해 보여지는 아동의 심리 상태는 현재의 안정감과 집중력을 갖추고 있지만, 자신감이 다소 부족하거나 위축된 성향을 보입니다. 그림의 각 부위가 중앙에 위치해 있어 균형 잡힌 상태를 나타내지만, 그 크기가 작아서 자신에 대한 확신이 부족할 수 있음을 시사합니다. 이러한 특징은 아동이 현재 안정된 환경에서 자라고 있지만 자신감을 키워줄 필요가 있음을 나타냅니다. 부모님과 함께 이 부분에 대해 조금 더 주의 깊게 살펴보고 지지해주시면 좋겠습니다.\\n----\\n검사 순서: 4\\n검사 시간: 46.52\\n검사 유형: Female\\n검사 결과를 바탕으로 해석해보면, 이 여자 사람 그림에서는 머리카락과 팔, 눈이 존재하는데, 이는 현재 상태에 안정감과 미래에 대한 긍정적인 경향을 나타내는 것 같아요. 그러나 눈의 작은 크기가 자신감이 다소 부족할 수 있음을 암시하네요. 또한, 많은 부분이 생략되었는데, 이는 어떤 감정이나 생각을 외부에 드러내기 어려워하는 경향이 있을 수 있습니다. 전반적으로 균형 잡힌 상태이지만, 내면적으로 몇 가지 갈등이나 불안을 가지고 있을 가능성이 있어 보여요.\"',NULL,NULL,'2025-02-18 15:44:55.883301','2025-02-18 15:47:03.904042','https://a407-20250124.s3.ap-northeast-2.amazonaws.com/images/64f6c104-05a0-4d52-a5ee-0ed0c664b521_1739893551693.png','https://a407-20250124.s3.ap-northeast-2.amazonaws.com/images/721116a6-9c0d-419e-90a1-692a32fb4fa6_1739893599896.png',1),(145,1,'2025-02-18','https://a407-20250124.s3.ap-northeast-2.amazonaws.com/images/aa3a8280-d9de-4381-aa4e-d6a5936b9586_1739896165930.png','https://a407-20250124.s3.ap-northeast-2.amazonaws.com/images/a16378c8-d2a4-4d1a-ac36-944bc0de5f2e_1739896168743.png','\"검사 순서: 1\\n검사 시간: 3.35\\n검사 유형: House\\n검사 결과를 보면, 그림에 대부분의 요소가 생략된 것으로 나타났어요. 이는 내담자가 현실에서의 문제나 감정을 회피하거나 억제하려는 경향이 있을 수 있음을 시사합니다. 특히 집 그림에 오직 작은 산만 그려진 것은 그림자가 미래 지향적이지만 자신감이 부족하거나 자신의 역량을 소극적으로 평가하고 있을 가능성을 나타냅니다. 이러한 그림은 내담자가 자신의 능력이나 가능성을 충분히 인식하지 못하고 있을 수 있으니, 이에 대해 더 깊이 이야기를 나눠보는 것이 좋겠어요.\\n----\\n검사 순서: 2\\n검사 시간: 1.52\\n검사 유형: Tree\\n나무 그림에서 달만 존재하고 다른 모든 요소가 생략된 것은 특별한 의미를 가질 수 있습니다. 달이 중앙에 위치하고 크기가 평균적인 것은 현재의 안정감과 균형 잡힌 감정 상태를 나타낼 수 있습니다. 하지만 나무의 기본 요소들이 모두 생략된 것은 어쩌면 내면의 불안이나 공허함을 반영할 수 있습니다. 이는 아마도 자신의 내면이나 정체성에 대한 확신이 부족함을 의미할 수도 있겠네요. 이러한 그림을 통해 아이가 느끼는 감정과 생각에 대해 더 깊이 이해하고 지지해 줄 필요가 있어 보입니다.\\n----\\n검사 순서: 3\\n검사 시간: 1.42\\n검사 유형: Female\\n여성이 먼저 그려졌습니다. 이는 아이가 어머니 또는 여성 보호자에게 더 큰 애착을 가지고 있거나, 여성의 역할을 더 중요하게 생각할 가능성이 있습니다.\\n내담자가 그린 여자 사람 그림에서 모든 부분이 생략되었다는 것은 매우 중요한 심리적 의미를 지니고 있습니다. 이러한 전체적인 생략은 내담자가 자신의 정체성, 감정, 또는 대인 관계에 대해 매우 억제적이거나 혼란을 느끼고 있을 수 있음을 시사합니다. 특히 자아 이미지에 대한 강한 불안이나 자신을 표현하는 데 있어 매우 소극적이거나 회피적인 태도를 가질 수 있습니다. 이러한 그림을 통해 내담자가 자신을 어떻게 인식하고 있는지, 그리고 어떤 심리적 갈등이나 문제를 겪고 있는지에 대해 더 깊이 이해하고 지원할 수 있는 방법을 모색하는 것이 중요합니다.\\n----\\n검사 순서: 4\\n검사 시간: 4.95\\n검사 유형: Male\\n이 그림에서는 귀만이 그려져 있고 다른 모든 신체 부분이 생략되어 있는데요, 이는 아이가 자신의 목소리를 내는 데 어려움을 느낄 수 있음을 나타낼 수 있습니다. 귀의 위치가 중앙에 있고 크기가 작은 것은 아이가 타인의 말을 듣고 이해하려는 노력은 하고 있지만, 자신감이 부족하거나 자신의 의견을 표현하는 데 있어 소극적일 수 있음을 의미할 수 있습니다. 이러한 그림은 아이가 느끼는 내면의 불안정성이나 소통에 대한 어려움을 반영할 수 있으며, 아이가 자신을 표현하는 방식에 대해 더 많은 지지와 격려가 필요함을 보여줍니다.\"',NULL,NULL,'2025-02-18 16:29:25.928263','2025-02-18 16:29:53.730636','https://a407-20250124.s3.ap-northeast-2.amazonaws.com/images/699f3211-cdfe-48df-b004-eb03f723f703_1739896178238.png','https://a407-20250124.s3.ap-northeast-2.amazonaws.com/images/b7d876f7-b524-4dfe-94fe-71ba083eeb51_1739896172395.png',1),(150,3,'2025-02-19','https://a407-20250124.s3.ap-northeast-2.amazonaws.com/images/120f60a4-def4-4c79-b895-fb87e0a938e4_1739925983341.jpg','https://a407-20250124.s3.ap-northeast-2.amazonaws.com/images/37155b62-5812-43bd-8858-d918802c384d_1739925989080.jpg','\"검사 순서: 1\\n검사 시간: 2\\n검사 유형: House\\n이 집 그림에서는 여러 가지 심리적 요소가 나타나고 있습니다. 그림 중간에 위치한 대부분의 요소들은 현재의 안정감과 중립적인 태도를 반영합니다. 작게 표현된 요소들은 자신감의 부족 또는 위축된 성향을 나타낼 수 있습니다. 오른쪽 상단에 위치한 태양과 산은 미래를 향한 희망적이고 이상적인 사고를 의미하며, 왼쪽에 위치한 요소들은 과거에 대한 안정감과 기반을 의미합니다. 연못과 꽃 같은 자연 요소들은 평화롭고 안정적인 기분을 나타내는 것일 수 있습니다. 누락된 객체가 있다면 그것이 무엇을 의미하는지 추가적인 정보가 필요합니다. 이러한 해석을 통해 아이의 내면적 감정과 생각을 더 잘 이해할 수 있게 되기를 바랍니다.\\n----\\n검사 순서: 2\\n검사 시간: 2\\n검사 유형: Tree\\n이 그림 분석을 통해 아이가 과거와 미래에 대한 강한 연결감을 느끼고 있으나, 자신감이 다소 부족할 수 있음을 알 수 있습니다. 가운데 위치한 그네는 현재의 안정감과 균형 잡힌 상태를 보여줍니다. 달과 꽃이 과거와 미래 지향적 위치에 그려진 것은 아이가 이상과 현실 사이에서 어떻게 자신을 위치시키고 있는지를 보여줍니다. 또한, 뿌리와 가지의 작은 크기는 아이가 더 큰 자신감을 필요로 하고 있음을 나타냅니다. 누락된 요소들은 아이가 현재 그 부분에 대해서는 크게 중요하게 생각하지 않거나 아직 인식하지 못하고 있을 가능성이 있습니다.\\n----\\n검사 순서: 3\\n검사 시간: 2\\n검사 유형: Male\\n남성이 먼저 그려졌습니다. 이는 가족 내에서 남성이 중요한 역할을 하거나, 아이가 남성에게 더 큰 심리적 의미를 부여할 가능성을 시사합니다.\\n이 그림은 과거와 미래에 대한 아이의 감정과 태도를 반영합니다. 과거와 미래 지향적 경향은 아이가 현재보다는 시간의 양 끝에 더 많은 관심을 두고 있음을 보여줍니다. 전반적으로 중립적이고 현실적인 태도를 나타내지만, 작게 그려진 상체는 자신감이 다소 부족할 수 있음을 시사합니다. 또한 얼굴, 머리, 코, 입, 머리카락, 목, 팔 등의 생략은 자아 표현에 어려움을 겪고 있을 가능성을 나타냅니다. 이러한 요소들은 아이가 자신의 정체성과 감정을 표현하는 데 있어 어려움을 겪고 있음을 의미할 수 있습니다. 따라서 아이가 자신의 감정과 생각을 자유롭게 표현할 수 있는 환경을 조성해 주는 것이 중요합니다.\\n----\\n검사 순서: 4\\n검사 시간: 2\\n검사 유형: Female\\n이 그림을 통해 여러분은 일부 요소들을 강조하면서도 다른 중요한 부분들은 생략하신 것 같네요. 그림에 나타난 신발과 손, 주머니는 미래와 과거에 대한 지향성과 현실적, 중립적 태도를 반영합니다. 특히 신발이 여러 번 그려진 것은 기초적이고 안정감 있는 기반을 중요시하는 경향을 나타냅니다. 반면, 머리, 얼굴, 목과 같이 중요한 인체 부위의 생략은 자아에 대한 표현이 어렵거나 자신감의 결여를 의미할 수 있습니다. 이런 부분들을 통해 현재 자신의 내면과 대인 관계에서 어떤 갈등이나 어려움을 겪고 있을 수 있음을 알 수 있습니다. 이에 대해 더 이야기를 나누어 보는 것도 좋을 것 같아요.\"','https://a407-20250124.s3.ap-northeast-2.amazonaws.com/result/87267594-c174-4f97-9bf9-a9ea30eec62d_1739937712191.pdf',NULL,'2025-02-19 00:46:23.338800','2025-02-19 04:01:52.416250','https://a407-20250124.s3.ap-northeast-2.amazonaws.com/images/c58a66f3-d5b7-45a3-9e1c-c11889de5ad3_1739925997287.jpg','https://a407-20250124.s3.ap-northeast-2.amazonaws.com/images/5760bc86-a037-4433-a14c-f0d7c5aa0da8_1739926002968.jpg',1),(179,5,'2025-02-19','https://a407-20250124.s3.ap-northeast-2.amazonaws.com/images/d722ba23-055a-46e7-90ad-fee323016ad2_1739936009775.png','https://a407-20250124.s3.ap-northeast-2.amazonaws.com/images/5d3d8ca0-35b0-4bf0-b792-5e56494b6639_1739936013676.png','\"검사 순서: 1\\n검사 시간: 2.15\\n검사 유형: House\\n연못이 중앙에 위치한 것은 현실에 집중하고 중립적인 태도를 가지고 있음을 나타냅니다. 다른 전형적인 집의 요소들이 누락된 것은 현실에서의 격리감 또는 가정과의 연결 부족을 의미할 수 있습니다. 아이가 가정과의 관계나 안정감을 느끼지 못하고 있을 수 있어, 이에 대한 지지와 이해가 필요해 보입니다.\\n----\\n검사 순서: 2\\n검사 시간: 2.47\\n검사 유형: Tree\\n나무 그림에 어떠한 요소도 그려지지 않았다는 것은 매우 특별한 의미를 가질 수 있습니다. 이는 피검자가 현재 겪고 있는 갈등이나 심리적 어려움을 나타내며, 자신의 감정이나 상황에 대해 표현하는 데 어려움을 겪고 있을 가능성을 시사합니다. 생략된 모든 요소들이 표현의 결여나 내면적 위축감을 드러내는 것으로 해석될 수 있습니다. 이러한 그림은 피검자가 현재 어떤 심리적 압박이나 우울감을 경험하고 있을 수 있음을 나타낼 수 있으므로, 이에 대해 세심하게 접근하고 지원하는 것이 중요할 것입니다.\\n----\\n검사 순서: 3\\n검사 시간: 6.24\\n검사 유형: Female\\n여성이 먼저 그려졌습니다. 이는 아이가 어머니 또는 여성 보호자에게 더 큰 애착을 가지고 있거나, 여성의 역할을 더 중요하게 생각할 가능성이 있습니다.\\n이 그림에서는 여자 인물의 모든 부분이 생략되어 있습니다. 이러한 전체적인 생략은 아이가 자신의 정체성, 자아 이미지에 대해 혼란을 느끼거나, 자신을 표현하는 데 매우 소극적이거나 어려움을 겪고 있음을 시사할 수 있습니다. 또한, 이는 대인 관계나 자기 자신에 대한 갈등, 낮은 자존감을 의미할 수도 있습니다. 아이가 자신을 어떻게 바라보고 있는지, 혹은 어떤 심리적 어려움을 겪고 있는지 이해하고 지원하기 위해 좀 더 깊이 있는 대화가 필요할 것 같습니다.\\n----\\n검사 순서: 4\\n검사 시간: 4.45\\n검사 유형: Male\\n이 그림에서 눈과 구두만이 그려져 있는 것은 현재의 안정감과 현실적, 중립적인 태도를 반영하고 있습니다. 그러나 머리, 얼굴, 코, 입 등 대부분의 신체 부위가 생략된 것은 아동이 큰 내적 갈등이나 정서적 어려움을 경험하고 있을 수 있음을 시사합니다. 특히, 신체의 중요 부위가 빠진 것은 자아상의 불안정성이나 자신감 부족을 나타낼 수 있어요. 아이가 갖고 있는 불안감과 자아 관련 이슈에 대해 더 깊이 이해하고 지원할 필요가 있겠습니다.\"',NULL,NULL,'2025-02-19 03:33:29.767608','2025-02-19 03:34:06.696126','https://a407-20250124.s3.ap-northeast-2.amazonaws.com/images/03f6f5a0-7770-4e5b-8fe9-f29078926e86_1739936030000.png','https://a407-20250124.s3.ap-northeast-2.amazonaws.com/images/d6c4a583-e521-4a87-8ce3-382483297905_1739936022354.png',8),(211,1,'2025-02-19','https://a407-20250124.s3.ap-northeast-2.amazonaws.com/images/b5b87d64-80f8-49f6-9b17-aca60341c724_1739972623425.png','https://a407-20250124.s3.ap-northeast-2.amazonaws.com/images/130c0a1b-bed3-4d5a-809f-46a9ff7d9dd3_1739972643925.png','\"검사 순서: 1\\n검사 시간: 55.40\\n검사 유형: House\\n고객님의 집 그림에서는 집 벽, 지붕, 집 전체, 창문, 문이 중요하게 그려졌습니다. 집 벽이 작고 창문과 문이 작게 그려진 것은 자신감 부족을 나타낼 수 있습니다. 하지만 지붕과 집 전체는 중간 크기로 안정과 희망을 상징할 수 있습니다. 누락된 나무는 안정과 안락함을 상징하는 요소일 수 있습니다. 이러한 요소들을 ganzim하게 조망하여, 고객님의 내면을 탐색해보는 것이 중요합니다.\\n----\\n검사 순서: 2\\n검사 시간: 18.07\\n검사 유형: Tree\\n고객님의 그림 해석 결과를 종합해보면, 나무는 현재 안정과 집중, 그리고 현실적이고 중립적인 태도를 상징합니다. 가지의 작은 크기는 자신감 부족을 나타내며, 뿌리의 작은 크기는 안정감 부족을 의미할 수 있습니다. 누락된 나뿌리는 기반 부족을 시사할 수 있습니다. 이러한 요소들은 과거나 현재의 심리적 상태와 연관지어 생각해 볼 필요가 있습니다. 함께 이를 통해 자아를 탐색하고, 감정을 이해하며 자아 존중을 향해 나아갈 수 있습니다.\\n----\\n검사 순서: 3\\n검사 시간: 46.21\\n검사 유형: Male\\n남성이 먼저 그려졌습니다. 이는 가족 내에서 남성이 중요한 역할을 하거나, 아이가 남성에게 더 큰 심리적 의미를 부여할 가능성을 시사합니다.\\n이 그림은 현재의 안정과 집중을 나타내고 있습니다. 남자 사람의 모습은 이상적이고 희망적인 사고를 상징하며, 과거 지향적인 부분도 함께 나타나고 있습니다. 이는 과거의 경험을 바탕으로 미래를 향한 희망을 품고 있는 것을 의미합니다. 또한, 자신감 부족이나 위축된 성향을 보여주는 작은 상체와 큰 발은 안정감과 기반에 대한 중요성을 강조하고 있습니다. 누락된 꼬리(`누락된_객체`)는 타인과의 관계에 대한 부분적인 불안을 나타낼 수 있습니다. 이는 자기 성장과 관계에서의 도전에 대한 두려움이 있을 수 있다는 것을 시사합니다.\\n----\\n검사 순서: 4\\n검사 시간: 103.06\\n검사 유형: Female\\n이 그림은 여성의 안정과 집중을 상징하고 있습니다. 그림 전체적으로 중립적이고 현실적인 태도를 나타내며, 이상적이고 희망적인 사고를 갖고 있습니다. 여성의 자신감 부족과 위축된 성향을 나타내는 작은 상체와 과거 지향적인 요소가 함께 표현되어 있습니다. 귀가 없는 것은 누락된 부분으로, 무언가를 듣지 않거나 무시당하거나 소통에 어려움을 겪을 수 있다는 것을 의미할 수 있습니다. 함께 이를 통해 자아에 대한 더 깊은 이해와 자기 성장에 대한 관심을 두는 것이 중요합니다.\"',NULL,NULL,'2025-02-19 22:43:43.421988','2025-02-19 22:47:19.476590','https://a407-20250124.s3.ap-northeast-2.amazonaws.com/images/20680853-d33e-43e7-a303-af123421cf4c_1739972694245.png','https://a407-20250124.s3.ap-northeast-2.amazonaws.com/images/7324266c-e918-426f-baa3-4d94a4924830_1739972800005.png',1),(217,11,'2025-02-19','https://a407-20250124.s3.ap-northeast-2.amazonaws.com/images/8b296279-f573-4f99-9d37-b05fd85a4148_1739973260363.png','https://a407-20250124.s3.ap-northeast-2.amazonaws.com/images/ca281ca9-9572-438f-ae19-9ef0aa817974_1739973267994.png','\"검사 순서: 1\\n검사 시간: 9.59\\n검사 유형: House\\n고객님의 그림 해석 결과를 통해 보았을 때, 집은 현재 안정과 안정감을 중시하며, 자신감 부족과 위축된 성향을 나타낸다고 볼 수 있습니다. 집 전체의 크기가 큰 것은 자신감이 넘치는 표현을 의미하며, 지붕은 이상적이고 희망적인 사고를 상징합니다. 하지만 창문, 굴뚝, 울타리 등의 요소가 누락된 것으로 보아, 관련 요소가 부족한 상태로 현실을 이해하고 소통하는 데 어려움을 겪을 수 있음을 시사합니다. 이를 통해 고객님은 자신의 내면에서 부족한 부분을 깊이 생각해보고, 완전한 안정과 안정감을 찾아가는 과정이 필요할 것으로 판단됩니다.\\n----\\n검사 순서: 2\\n검사 시간: 5.13\\n검사 유형: Tree\\n고객님의 그림 속 나무는 안정과 집중을 상징합니다. 나무 전체의 크기가 크고, 기둥과 수관의 크기도 크거나 중간이라는 것은 자신감과 안정감을 나타냅니다. 그러나 뿌리, 나뿌리, 나뭇잎, 꽃, 열매, 새, 구름, 별이 빠져있는 것은 관련 요소가 부족하다는 것을 의미할 수 있습니다. 이는 일상에서 부족한 지지나 보살핌을 상징할 수 있습니다. 이를 통해 자신의 내면에 부족함을 느끼는 감정을 함께 탐구해보면 좋을 것 같습니다.\\n----\\n검사 순서: 3\\n검사 시간: 4.69\\n검사 유형: Male\\n남성이 먼저 그려졌습니다. 이는 가족 내에서 남성이 중요한 역할을 하거나, 아이가 남성에게 더 큰 심리적 의미를 부여할 가능성을 시사합니다.\\n고객님의 그림 결과를 보면, 남자 사람 그림에서 많은 부분이 생략되어 있습니다. 이는 현재의 안정과 집중, 현실적이고 중립적인 태도를 나타낼 수 있습니다. 머리, 얼굴, 눈, 코, 입, 귀, 상체, 팔, 손, 다리, 발이 없는 상태에서는 무언가를 가리키거나 숨기고자 하는 느낌을 줄 수 있습니다. 이러한 생략된 부분은 누락된 객체라고 볼 수 있으며, 이는 자아의 부족함이나 숨기고자 하는 감정을 상징할 수 있습니다. 계속해서 탐구하며 그 감정을 이해하고 해결해 나가는 과정이 필요할 것입니다.\\n----\\n검사 순서: 4\\n검사 시간: 175.13\\n검사 유형: Female\\n이 그림에서 여자 사람이 가운데에 위치하고, 손, 다리, 발이 중심에 있습니다. 이는 현재 안정과 집중, 안정감 있는 기반을 상징합니다. 그러나 머리, 얼굴, 눈, 코, 입, 귀, 머리카락, 목, 상체, 팔이 누락되어 있습니다. 이는 감정 표현이 부족하거나 어떤 측면을 감추고자 하는 심리적 요소를 나타낼 수 있습니다. 누락된 요소는 숨긴 감정이나 내면의 충돌을 의미할 수 있습니다. 이러한 부분을 함께 탐구하며 이해해 나가는 것이 중요합니다.\"',NULL,NULL,'2025-02-19 22:54:20.360655','2025-02-19 22:57:44.150490','https://a407-20250124.s3.ap-northeast-2.amazonaws.com/images/bd631429-78e7-4be9-9d74-7b9610a78130_1739973274544.png','https://a407-20250124.s3.ap-northeast-2.amazonaws.com/images/361b0165-c893-4c38-8fcc-77ab7d9bf9c1_1739973450618.png',7),(218,12,'2025-02-19','https://a407-20250124.s3.ap-northeast-2.amazonaws.com/images/56cae2a8-112d-4c11-a98f-81d1bd2f03c2_1739973278591.png','https://a407-20250124.s3.ap-northeast-2.amazonaws.com/images/30a7985f-feb7-4689-b6bc-31eaeb58da4b_1739973293617.png','\"검사 순서: 1\\n검사 시간: 141.80\\n검사 유형: House\\n고객님의 집 그림에서는 안정적이고 중립적인 태도를 나타내는 집 벽, 전체, 창문, 문 등이 중심에 위치하고 있습니다. 그러나 자신감 부족을 나타내는 작은 크기의 요소들이 있어 위축된 성향을 보일 수 있습니다. 누락된 나무 요소는 환경과의 상호작용을 나타내는데 중요한 역할을 합니다. 이는 자신의 능력과 가능성을 표현하며, 적응성을 반영합니다. 즉, 환경과의 상호작용에 대한 관심과 중요성을 갖고 있을 수 있습니다.\\n----\\n검사 순서: 2\\n검사 시간: 13.37\\n검사 유형: Tree\\n고객님의 나무 그림 속 객체들은 현재의 안정과 집중을 상징하고 있습니다. 나무 전체와 수관, 기둥, 가지 등의 위치와 크기는 현실적이고 중립적인 태도를 나타내며, 나무의 뿌리는 안정과 안정감을 상징합니다. 하지만 나뭇잎, 꽃, 새, 구름, 별이 누락된 것으로 보아, 아직 해결되지 않은 감정이나 생각이 있을 수 있습니다. 이를 통해 내면의 욕망이나 부족함을 인정하고 받아들이는 것이 중요합니다.\\n----\\n검사 순서: 3\\n검사 시간: 36.02\\n검사 유형: Female\\n여성이 먼저 그려졌습니다. 이는 아이가 어머니 또는 여성 보호자에게 더 큰 애착을 가지고 있거나, 여성의 역할을 더 중요하게 생각할 가능성이 있습니다.\\n여자 사람 그림에서 얼굴, 눈, 입, 머리, 팔, 다리, 귀, 발, 손이 중요한 요소로 나타났습니다. 이러한 부분들이 모두 가운데에 위치하고 있어서 현재의 안정과 집중, 중립적인 태도를 상징합니다. 특히 눈이 상단에 위치하여 이상적이고 희망적인 사고를 나타내며, 팔과 다리가 하단에 위치하여 안정과 기초적인 안정감을 상징합니다. 누락된 객체인 손은 자아 실현과 창의성을 의미할 수 있습니다. 모든 요소가 조화롭게 표현되어 있는 것은 자아의 안정과 균형을 나타낼 수 있습니다.\\n----\\n검사 순서: 4\\n검사 시간: 116.51\\n검사 유형: Male\\n이 그림에서 나타난 남자 사람은 안정과 집중, 현실적이고 중립적인 태도를 상징합니다. 입, 눈, 코, 머리카락 등이 중심에 위치하여 이상적이고 희망적인 사고를 나타내며, 귀와 팔이 과거 지향적인 경향을 보여줍니다. 그러나 사람 전체나 목, 상체, 손, 다리, 발이 누락된 것은 관련 요소가 생략되었을 가능성을 보여줍니다. 이는 자아 구조의 부족 또는 특정 부분에 대한 불안 또는 부정적인 감정을 나타낼 수 있습니다. 함부로 결론을 내리기보다는 보다 심층적인 탐구가 필요해 보입니다.\"',NULL,NULL,'2025-02-19 22:54:38.589439','2025-02-19 22:57:41.919071','https://a407-20250124.s3.ap-northeast-2.amazonaws.com/images/4964591a-5382-4c7f-a32e-f59c0bfe1c53_1739973450639.png','https://a407-20250124.s3.ap-northeast-2.amazonaws.com/images/90b5e5b1-5173-42cf-8929-bc9b5042764b_1739973332734.png',18),(219,6,'2025-02-19','https://a407-20250124.s3.ap-northeast-2.amazonaws.com/images/ac56a635-5a80-45a7-adf0-12f21f106ff0_1739973314306.png','https://a407-20250124.s3.ap-northeast-2.amazonaws.com/images/98c5ef35-b289-493c-a418-f531c5b15257_1739973330687.png','\"검사 순서: 1\\n검사 시간: 35.15\\n검사 유형: House\\n고객님의 집 그림에서 나타난 중간 위치의 집벽은 현재의 안정과 집중을 상징합니다. 작은 크기의 문은 자신감 부족을 나타내며, 상단의 지붕은 이상적인 희망을 상징합니다. 창문의 작은 크기는 자신감 부족을 나타내는 반면, 오른쪽 상단의 태양은 미래 지향적인 경향을 나타냅니다. 누락된 나무는 안정과 보호를 상징하며, 잔디는 안정과 안락함을 의미할 수 있습니다. 이를 통해, 고객님은 안정과 안락함을 추구하면서도 자신감 부족과 이상적인 희망을 가지고 있을 것으로 해석됩니다.\\n----\\n검사 순서: 2\\n검사 시간: 14.93\\n검사 유형: Tree\\n고객님의 그림 속 나무는 중간 크기로 안정적이고 균형 잡힌 상태를 상징합니다. 가지와 기둥이 작고 중간에 위치하여 자신감 부족이나 위축된 성향을 나타냅니다. 나무 속 뿌리, 나뿌리, 꽃, 열매, 새, 구름, 별이 빠져있는 것은 관련 요소가 생략되었을 가능성이 있습니다. 이는 자아의 일부분을 표현하지 못하는 미완성을 나타낼 수 있습니다. 이를 통해 자아에 대한 내적 탐구와 완전성을 추구하는 과정에 대해 생각해 볼 수 있을 것입니다.\\n----\\n검사 순서: 3\\n검사 시간: 22.91\\n검사 유형: Female\\n여성이 먼저 그려졌습니다. 이는 아이가 어머니 또는 여성 보호자에게 더 큰 애착을 가지고 있거나, 여성의 역할을 더 중요하게 생각할 가능성이 있습니다.\\n이 그림 속 여자 사람은 중심에 위치하여 안정과 집중을 상징합니다. 작은 상체는 자신감 부족을 나타내며, 하단에 위치한 다리와 발은 안정과 기반이 필요함을 시사합니다. 누락된 코, 귀, 손은 의사소통과 주변 환경과의 관계 부재를 나타낼 수 있습니다. 이는 자기표현과 타인과의 상호작용에 어려움을 겪을 수 있다는 의미일 수 있습니다. 함께 이를 통해 자아실현과 대인관계의 발전을 돕는 방향으로 함께 탐구해보는 것이 중요합니다.\\n----\\n검사 순서: 4\\n검사 시간: 92.89\\n검사 유형: Male\\n이 그림은 남자 사람을 중심으로 미래 지향적인 경향을 보여줍니다. 머리, 머리카락, 눈, 입, 얼굴, 목은 모두 이상적이고 희망적인 사고를 상징하며, 팔과 상체는 현실적이고 중립적인 태도를 나타냅니다. 다리와 발은 안정감과 기초적인 요소를 상징합니다. 귀와 손이 누락된 것은 대인관계나 소통에 어려움을 겪을 수 있음을 시사할 수 있습니다. 아이의 내면에는 자신에 대한 부족한 자신감이나 소통의 부재가 있을 수 있습니다.\"',NULL,NULL,'2025-02-19 22:55:14.303040','2025-02-19 22:57:43.023741','https://a407-20250124.s3.ap-northeast-2.amazonaws.com/images/4c10b89d-786b-4ec6-b959-4700a2435f8a_1739973450858.png','https://a407-20250124.s3.ap-northeast-2.amazonaws.com/images/ca95e4fd-91b1-4240-be0b-017d9d4f0577_1739973356762.png',13),(220,7,'2025-02-19','https://a407-20250124.s3.ap-northeast-2.amazonaws.com/images/ccdfb7d1-cdfc-499a-8956-1ff1ac24f595_1739973325012.png','https://a407-20250124.s3.ap-northeast-2.amazonaws.com/images/37b147fb-9ea6-4290-91df-7a7f6fa69c23_1739973345830.png','\"검사 순서: 1\\n검사 시간: 25.20\\n검사 유형: House\\n고객님의 그림 속 집은 중간에 위치하고 있어 안정과 집중을 상징합니다. 하지만 지붕이 작고 굴뚝이 작아서 자신감 부족을 나타낼 수 있습니다. 또한 울타리, 길, 연못, 산, 나무, 꽃, 잔디가 없다면 관계가 빈약할 수 있습니다. 이는 외부와의 소통이 부족하거나 내적 안정이 부족한 것을 시사할 수 있습니다. 함께 이야기를 나누며 더 깊이 있는 이해를 돕겠습니다.\\n----\\n검사 순서: 2\\n검사 시간: 18.28\\n검사 유형: Tree\\n아이가 그린 나무는 안정과 집중을 상징하며, 가지의 작은 크기는 자신감 부족을 나타냅니다. 열매와 기둥의 중간 크기는 현실적이고 중립적인 태도를 보여줍니다. 그러나 뿌리와 나뿌리가 누락된 것은 안정성과 근본적인 부분에서 부족함을 시사합니다. 이는 아이가 내적 안정과 성장에 대한 보완이 필요하다는 신호일 수 있습니다. 함께 아이가 자아를 안정시키고 발전시킬 수 있도록 도와주세요.\\n----\\n검사 순서: 3\\n검사 시간: 15.50\\n검사 유형: Female\\n여성이 먼저 그려졌습니다. 이는 아이가 어머니 또는 여성 보호자에게 더 큰 애착을 가지고 있거나, 여성의 역할을 더 중요하게 생각할 가능성이 있습니다.\\n이 그림은 여자 아동의 내면을 반영하고 있습니다. 중앙에 위치한 여자 아동은 안정적이고 중립적인 태도를 나타내며, 다리와 팔, 손 등이 중심에 있어 안정과 기반이 중요하다는 것을 시사합니다. 그러나 코와 귀가 없는 것으로 보아 관련 요소가 누락되었을 가능성이 있습니다. 이는 아이가 일상에서 무시당하거나 소통에 어려움을 겪고 있을 수 있음을 시사할 수 있습니다. 함께 이러한 부분을 다양한 관점에서 살펴보며 대화해 보면 도움이 될 것입니다.\\n----\\n검사 순서: 4\\n검사 시간: 86.54\\n검사 유형: Male\\n이 남자 사람 그림은 중심에 안정과 집중을 상징하는 요소들이 많이 나타나 있습니다. 다리와 발은 안정감 있는 기반을 의미하며, 머리카락은 이상적인 사고를 상징합니다. 그러나 코와 귀가 누락된 것으로 보아 자아에 대한 인식이나 대인 관계에 대한 부분적인 이해가 미흡할 수 있습니다. 이는 자기 인식이나 타인과의 소통에 어려움을 겪을 수 있는 신호일 수 있습니다. 이러한 부분을 함께 탐구해보며 자아를 더욱 발전시켜 나가는 과정에 도움이 될 것입니다.\"',NULL,NULL,'2025-02-19 22:55:25.010375','2025-02-19 22:57:48.080448','https://a407-20250124.s3.ap-northeast-2.amazonaws.com/images/b3dc2b50-67a2-498c-8b51-b67867f72e0c_1739973451162.png','https://a407-20250124.s3.ap-northeast-2.amazonaws.com/images/70b49228-cc6a-4a86-9482-88d8c5c947ef_1739973363253.png',5),(221,2,'2025-02-19','https://a407-20250124.s3.ap-northeast-2.amazonaws.com/images/c9eb59e5-8a34-4fcd-b0ca-0470c66c8c84_1739973325908.png','https://a407-20250124.s3.ap-northeast-2.amazonaws.com/images/5f90876f-9114-4dae-8b13-0cedd82c9326_1739973332654.png','\"검사 순서: 1\\n검사 시간: 12312\\n검사 유형: House\\n아이가 그린 집 그림에서는 집 전체가 없고, 지붕, 문, 창문, 굴뚝 등의 요소가 빠져 있습니다. 이는 가정이나 안정감에 대한 부정적인 감정이나 불안을 나타낼 수 있습니다. 또한 나무나 꽃, 태양 등의 요소도 빠져 있어 자연과의 연결이 부족함을 시사할 수 있습니다. 이는 아이가 현재 환경에 대한 불안이나 불안정함을 경험하고 있을 수 있다는 것을 시사할 수 있습니다. 이러한 부분을 통해 아이의 내면에 깊이 있는 감정과 관련된 이야기를 들어보는 것이 중요합니다.\\n----\\n검사 순서: 2\\n검사 시간: 123123\\n검사 유형: Tree\\n아이가 그린 나무 그림에서 여러 요소가 빠져있는 것으로 보입니다. 나무 전체, 기둥, 수관, 가지, 뿌리, 나뿌리, 나뭇잎, 꽃, 열매, 새, 구름, 별 등이 없는 것은 중요한 의미가 빠진 것으로 해석됩니다. 이는 아이가 어떤 부분을 생략하거나 감추려는 무언가가 있을 수 있음을 시사할 수 있습니다. 누락된 객체가 가진 의미를 함께 탐색하며, 아이의 내면을 이해하고자 노력해보는 것이 중요합니다.\\n----\\n검사 순서: 3\\n검사 시간: 123123\\n검사 유형: Female\\n여성이 먼저 그려졌습니다. 이는 아이가 어머니 또는 여성 보호자에게 더 큰 애착을 가지고 있거나, 여성의 역할을 더 중요하게 생각할 가능성이 있습니다.\\n아이가 여자 사람을 그릴 때, 모든 관련 요소가 생략된 것은 그 아이가 자신의 여성성에 대한 불안이나 부정적인 감정을 갖고 있을 수 있음을 시사합니다. 여성적인 측면을 표현하는 요소들을 누락한 것은 자아에 대한 부정적인 인식을 나타낼 수 있습니다. 이는 자아에 대한 부정적인 이미지나 부족한 자아 신뢰감을 보여줄 수 있습니다. 함께 이러한 부분을 탐구하고 아이가 안정감을 찾을 수 있도록 도와주는 것이 중요합니다.\\n----\\n검사 순서: 4\\n검사 시간: 123123\\n검사 유형: Male\\n검사 결과에서 남자 사람 그림의 모든 요소가 생략된 것은 심리적인 갈등이나 부정적인 감정을 나타낼 수 있습니다. 누락된 요소인 머리, 얼굴, 눈, 코, 입 등은 각각 자아의 일부분을 상징하며, 이들이 모두 생략된 것은 자아의 부정적인 면을 숨기거나 거부하는 태도를 보여줄 수 있습니다. 이를 통해 아동이 자신의 내적 갈등을 직면하고 있는 것으로 판단됩니다. 함께 이를 통해 아동의 자아 발전과 감정적 안정을 위한 상담이 필요할 것으로 보입니다.\"',NULL,NULL,'2025-02-19 22:55:25.905034','2025-02-19 22:57:42.523343','https://a407-20250124.s3.ap-northeast-2.amazonaws.com/images/95513919-8a2d-4650-a631-24047580b69d_1739973450946.png','https://a407-20250124.s3.ap-northeast-2.amazonaws.com/images/b2ed692b-baae-456b-9c2a-885d729d7dbb_1739973337506.png',3),(222,8,'2025-02-19','https://a407-20250124.s3.ap-northeast-2.amazonaws.com/images/dac6c938-4bc3-4ae7-9388-528c001e5db9_1739973391004.png','https://a407-20250124.s3.ap-northeast-2.amazonaws.com/images/8dae5a22-784e-4839-934b-afb88cad7fe2_1739973414673.png','\"검사 순서: 1\\n검사 시간: 20\\n검사 유형: House\\n이 그림은 안정과 집중을 중심으로 한 이상적이고 희망적인 사고를 나타내고 있습니다. 집의 위치와 크기, 그리고 다양한 부속물들이 자신감 부족이나 위축된 성향을 보여줍니다. 문, 창문, 울타리 등의 누락된 요소들은 관련된 부분이 생략되었을 가능성이 있습니다. 이는 현재의 상황이 완전히 그려지지 않았음을 시사할 수 있습니다. 누락된 객체들을 통해 미해결된 부분에 대한 관심과 해결의 필요성이 드러날 수 있습니다.\\n----\\n검사 순서: 2\\n검사 시간: 10\\n검사 유형: Tree\\n고객님의 나무 그림에서 수관이 작고 중간에 위치해 있어 자신감 부족을 나타내고, 전체적으로 안정과 안정감을 중시하는 모습입니다. 그러나 기둥과 가지, 뿌리 등이 누락되어 있어 관련된 부분이 생략된 것으로 보입니다. 이는 자아 구축 단계에서 어떤 측면이 부족하거나 무시되고 있는지를 암시할 수 있습니다. 이러한 부분에 대해 함께 탐구해보면서 자아 실현과 안정을 돕는 방향으로 함께 나아갈 수 있을 것입니다.\\n----\\n검사 순서: 3\\n검사 시간: 10\\n검사 유형: Male\\n남성이 먼저 그려졌습니다. 이는 가족 내에서 남성이 중요한 역할을 하거나, 아이가 남성에게 더 큰 심리적 의미를 부여할 가능성을 시사합니다.\\n주어진 분석 결과를 토대로 보면, 남자 사람 그림의 주머니, 운동화, 그리고 남자구두는 안정과 중립적인 태도를 상징합니다. 그러나 머리, 얼굴, 눈, 코, 입, 귀, 목, 상체, 팔, 손, 다리, 발이 누락된 것으로 나타났습니다. 이는 아마도 내면의 갈등이나 의사소통 과정에서 일어나는 어려움을 나타낼 수 있습니다. 누락된 요소는 자아의 일부가 누락되거나 무시된 것을 의미할 수 있습니다. 이러한 상황에서는 아동의 내면 갈등을 탐구하고, 자아의 부분들을 조화롭게 통합하는 데 도움이 될 수 있습니다.\\n----\\n검사 순서: 4\\n검사 시간: 10\\n검사 유형: Female\\n여자 사람 그림에서 다리가 왼쪽 상단에 위치하면서 과거를 지향하고 이상적인 사고를 나타내고, 발, 여자구두, 손, 다리가 가운데 중간에 위치하여 현재의 안정과 중립적인 태도를 상징합니다. 하지만 사람 전체 및 머리, 얼굴, 눈, 코, 입, 귀, 머리카락, 목, 상체가 누락되었는데, 이는 자아의 일부분을 표현하지 못하거나 감추려는 욕구를 나타낼 수 있습니다. 이것은 내담자가 자기 자신의 일부를 인식하거나 표현하는 데 어려움을 겪고 있을 수 있다는 것을 시사할 수 있습니다. 함께 이러한 부분을 탐구해보며 자아에 대한 이해와 수용을 도와주는 것이 중요합니다.\"',NULL,NULL,'2025-02-19 22:56:31.001944','2025-02-19 22:57:48.126847','https://a407-20250124.s3.ap-northeast-2.amazonaws.com/images/6c58961b-d908-4ec0-b233-6eacaad4ca03_1739973434840.png','https://a407-20250124.s3.ap-northeast-2.amazonaws.com/images/437e4105-5ca6-4d46-a93e-98121bd18f16_1739973451647.png',2),(223,7,'2025-02-20','https://a407-20250124.s3.ap-northeast-2.amazonaws.com/images/95c6885e-3925-4458-b3d2-0e4a903979dc_1739978153871.png','https://a407-20250124.s3.ap-northeast-2.amazonaws.com/images/ae09d3e7-5600-40e9-a5b2-deecde3cc056_1739978165740.png',NULL,NULL,NULL,'2025-02-20 00:15:53.865290','2025-02-20 00:16:05.846838',NULL,NULL,5),(238,11,'2025-02-20','https://a407-20250124.s3.ap-northeast-2.amazonaws.com/images/3ceae65a-b8c5-4766-9391-a57d7fd90f00_1739983472362.png','https://a407-20250124.s3.ap-northeast-2.amazonaws.com/images/669a5f8c-21be-45db-8569-b1a44327d190_1739983478613.png','\"검사 순서: 1\\n검사 시간: 3.88\\n검사 유형: House\\n아이가 그린 집 그림에서 여러 요소들이 생략되어 있는 것으로 보입니다. 집, 지붕, 문, 창문, 굴뚝, 울타리, 길, 연못, 산, 나무, 꽃, 잔디, 태양이 모두 없습니다. 이는 아이가 가정이나 안정감을 느끼지 못하고, 외로움을 느끼고 있을 수 있다는 신호일 수 있습니다. 누락된 객체가 많을수록 아이의 내면에 깊은 불안이나 무력감이 있을 수 있습니다. 아이의 감정을 경청하고, 안정감과 안락함을 주는 환경을 제공해주는 것이 중요합니다.\\n----\\n검사 순서: 2\\n검사 시간: 3.88\\n검사 유형: Tree\\n고객님의 그림 속 나무는 중간에 위치해 있어 현재의 안정과 집중을 상징합니다. 또한 크기가 크게 그려져 있어 자신감을 나타냅니다. 하지만 수관, 가지, 뿌리 등의 관련 요소가 빠져있어 완전한 해석이 어렵습니다. 이는 무언가가 누락되었거나 부족함을 나타낼 수 있습니다. 더 자세한 해석을 위해 다양한 관점으로 그림을 다시 살펴보는 것이 도움이 될 것입니다. 부족한 부분을 채워나가며 자아의 완성을 위해 노력해보세요.\\n----\\n검사 순서: 3\\n검사 시간: 1.26\\n검사 유형: Female\\n여성이 먼저 그려졌습니다. 이는 아이가 어머니 또는 여성 보호자에게 더 큰 애착을 가지고 있거나, 여성의 역할을 더 중요하게 생각할 가능성이 있습니다.\\n여자 사람 그림에서 머리카락과 사람 전체가 중심에 위치하고 있는 것은 안정과 집중, 그리고 현실적이고 중립적인 태도를 상징합니다. 그러나 얼굴, 눈, 코, 입, 귀, 상체, 팔, 손, 다리, 발 등의 요소가 모두 생략되어 있어서 표현이 불완전하고 누락된 부분이 있습니다. 이는 감정이나 정서적인 부분이 부족하거나 숨겨져 있다는 것을 의미할 수 있습니다. 누락된 부분을 통해 내부적인 갈등이나 어려움을 표현하고 있을 수 있습니다. 이러한 상황에서는 이야기를 통해 숨겨진 감정을 표현하고 해결해 나가는 과정이 필요할 것입니다.\\n----\\n검사 순서: 4\\n검사 시간: 1.35\\n검사 유형: Male\\n아이가 그린 남자 사람 그림에서 팔과 전체 인물이 가운데에 위치하여 안정과 집중을 상징합니다. 그러나 머리, 얼굴, 눈, 코, 입, 귀, 머리카락, 목, 상체, 손, 다리, 발이 생략되어 있습니다. 이는 아이가 자아에 대한 불안 또는 부족함을 경험하고 있는 것을 나타낼 수 있습니다. 머리부터 발까지 생략된 부분은 아이의 자아 구조나 심리적 측면에서의 빈 공간을 나타낼 수 있습니다. 아이가 자신을 인식하고 이해하는 데 어려움을 겪고 있을 수 있습니다. 함부로 해석하지 않고 아이의 마음을 경청해보는 것이 중요합니다.\"',NULL,NULL,'2025-02-20 01:44:32.360321','2025-02-20 01:44:52.818289','https://a407-20250124.s3.ap-northeast-2.amazonaws.com/images/02ae9038-5b9c-4332-ae30-3b2ca5711493_1739983488076.png','https://a407-20250124.s3.ap-northeast-2.amazonaws.com/images/4adeffc5-1f24-4f14-a51d-fbf4d9174fd0_1739983485031.png',7),(239,2,'2025-02-20','https://a407-20250124.s3.ap-northeast-2.amazonaws.com/images/abec37c0-b128-4241-ab64-33d0f680d83d_1739984294703.png','https://a407-20250124.s3.ap-northeast-2.amazonaws.com/images/ef234159-f17a-4e57-89c3-2d388971f3e1_1739984309994.png',NULL,NULL,NULL,'2025-02-20 01:58:14.678652','2025-02-20 01:58:34.214422',NULL,'https://a407-20250124.s3.ap-northeast-2.amazonaws.com/images/919a3ce8-5725-4a80-9219-b1f5d345bab7_1739984314175.png',3);
+/*!40000 ALTER TABLE `htp_test` ENABLE KEYS */;
+UNLOCK TABLES;
+
+--
+-- Table structure for table `memo`
+--
+
+DROP TABLE IF EXISTS `memo`;
+/*!40101 SET @saved_cs_client     = @@character_set_client */;
+/*!50503 SET character_set_client = utf8mb4 */;
+CREATE TABLE `memo` (
+  `memo_id` int NOT NULL AUTO_INCREMENT,
+  `created_at` datetime(6) NOT NULL,
+  `updated_at` datetime(6) NOT NULL,
+  `child_id` int DEFAULT NULL,
+  `content` varchar(255) COLLATE utf8mb4_unicode_ci DEFAULT NULL,
+  `selected_date` date DEFAULT NULL,
+  `user_id` int DEFAULT NULL,
+  PRIMARY KEY (`memo_id`),
+  KEY `memo_child_id_fk` (`child_id`),
+  CONSTRAINT `memo_child_id_fk` FOREIGN KEY (`child_id`) REFERENCES `child` (`child_id`) ON DELETE CASCADE
+) ENGINE=InnoDB AUTO_INCREMENT=13 DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_unicode_ci;
+/*!40101 SET character_set_client = @saved_cs_client */;
+
+--
+-- Dumping data for table `memo`
+--
+
+LOCK TABLES `memo` WRITE;
+/*!40000 ALTER TABLE `memo` DISABLE KEYS */;
+INSERT INTO `memo` VALUES (3,'2025-02-17 01:09:40.568235','2025-02-17 01:09:40.568235',2,'ㅁㄴㅇㄻㄴㅇㄹ','2025-02-17',3),(6,'2025-02-17 14:17:00.572439','2025-02-17 14:17:00.572439',2,'ㅕㅕ','2025-02-18',3),(8,'2025-02-18 15:23:21.390901','2025-02-18 15:23:21.390901',2,'저장','2025-02-19',3),(9,'2025-02-18 16:30:00.414148','2025-02-18 16:30:00.414148',3,'ㅎㅎㅎ','2025-02-18',1),(10,'2025-02-19 05:43:13.401973','2025-02-19 05:43:13.401973',6,'dsadsadsa','2025-02-18',13),(11,'2025-02-19 15:12:57.999570','2025-02-19 15:12:57.999570',6,'jfhrh','2025-02-19',13);
+/*!40000 ALTER TABLE `memo` ENABLE KEYS */;
+UNLOCK TABLES;
+
+--
+-- Table structure for table `notify`
+--
+
+DROP TABLE IF EXISTS `notify`;
+/*!40101 SET @saved_cs_client     = @@character_set_client */;
+/*!50503 SET character_set_client = utf8mb4 */;
+CREATE TABLE `notify` (
+  `notify_id` int NOT NULL AUTO_INCREMENT,
+  `created_at` datetime(6) NOT NULL,
+  `updated_at` datetime(6) NOT NULL,
+  `content` text COLLATE utf8mb4_unicode_ci,
+  `is_read` bit(1) NOT NULL,
+  `title` varchar(255) COLLATE utf8mb4_unicode_ci DEFAULT NULL,
+  `type` enum('NEW_MESSAGE','NOTIFY_CHAT','NOTIFY_COMMENT') COLLATE utf8mb4_unicode_ci DEFAULT NULL,
+  `user_id` int NOT NULL,
+  `chat_id` int DEFAULT NULL,
+  `post_id` int DEFAULT NULL,
+  PRIMARY KEY (`notify_id`),
+  KEY `FKfbw0pi68o4g3n1whir7ig8q9f` (`user_id`),
+  CONSTRAINT `FKfbw0pi68o4g3n1whir7ig8q9f` FOREIGN KEY (`user_id`) REFERENCES `user` (`user_id`) ON DELETE CASCADE
+) ENGINE=InnoDB AUTO_INCREMENT=117 DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_unicode_ci;
+/*!40101 SET character_set_client = @saved_cs_client */;
+
+--
+-- Dumping data for table `notify`
+--
+
+LOCK TABLES `notify` WRITE;
+/*!40000 ALTER TABLE `notify` DISABLE KEYS */;
+INSERT INTO `notify` VALUES (1,'2025-02-17 10:56:53.494323','2025-02-17 10:57:11.198920','회원님의 게시글에 댓글이 작성되었습니다.',_binary '','댓글 알림','NOTIFY_COMMENT',3,NULL,1),(8,'2025-02-18 09:00:29.063121','2025-02-18 09:04:56.058380','회원님의 게시글에 댓글이 작성되었습니다.',_binary '','댓글 알림','NOTIFY_COMMENT',3,NULL,4),(9,'2025-02-18 09:00:45.654703','2025-02-18 09:04:58.080440','회원님의 게시글에 댓글이 작성되었습니다.',_binary '','댓글 알림','NOTIFY_COMMENT',3,NULL,4),(10,'2025-02-18 15:24:02.859100','2025-02-18 15:41:57.798118','회원님의 게시글에 댓글이 작성되었습니다.',_binary '','댓글 알림','NOTIFY_COMMENT',1,NULL,6),(11,'2025-02-18 15:42:01.944232','2025-02-18 15:42:08.245839','회원님의 게시글에 댓글이 작성되었습니다.',_binary '','댓글 알림','NOTIFY_COMMENT',1,NULL,6),(12,'2025-02-19 00:53:14.375613','2025-02-19 00:53:14.375613','채팅 알림',_binary '\0','채팅 알림','NOTIFY_CHAT',2,NULL,NULL),(13,'2025-02-19 03:20:02.270875','2025-02-19 03:20:02.270875','채팅 알림',_binary '\0','채팅 알림','NOTIFY_CHAT',2,NULL,NULL),(14,'2025-02-18 18:30:30.471142','2025-02-18 18:30:30.471142','채팅 알림',_binary '\0','채팅 알림','NOTIFY_CHAT',2,NULL,NULL),(15,'2025-02-19 00:06:12.943583','2025-02-19 00:22:16.059498','회원님의 게시글에 댓글이 작성되었습니다.',_binary '','댓글 알림','NOTIFY_COMMENT',3,NULL,4),(16,'2025-02-19 00:21:27.454792','2025-02-19 00:22:12.917342','회원님의 게시글에 댓글이 작성되었습니다.',_binary '','댓글 알림','NOTIFY_COMMENT',3,NULL,4),(17,'2025-02-19 02:37:42.258806','2025-02-19 02:37:50.196295','회원님의 게시글에 댓글이 작성되었습니다.',_binary '','댓글 알림','NOTIFY_COMMENT',3,NULL,4),(18,'2025-02-19 04:00:46.140923','2025-02-19 04:00:46.140923','회원님의 게시글에 댓글이 작성되었습니다.',_binary '\0','댓글 알림','NOTIFY_COMMENT',1,NULL,6),(19,'2025-02-19 05:02:22.692110','2025-02-19 06:31:41.787727','회원님의 게시글에 댓글이 작성되었습니다.',_binary '','댓글 알림','NOTIFY_COMMENT',1,NULL,6),(20,'2025-02-19 05:02:32.851072','2025-02-19 05:55:34.417255','회원님의 게시글에 댓글이 작성되었습니다.',_binary '','댓글 알림','NOTIFY_COMMENT',1,NULL,6),(21,'2025-02-19 05:02:49.377112','2025-02-19 05:02:49.377112','회원님의 게시글에 댓글이 작성되었습니다.',_binary '\0','댓글 알림','NOTIFY_COMMENT',3,NULL,2),(22,'2025-02-19 05:02:53.187491','2025-02-19 05:02:53.187491','채팅 알림',_binary '\0','채팅 알림','NOTIFY_CHAT',2,NULL,NULL),(23,'2025-02-19 05:13:06.073023','2025-02-20 00:11:22.333748','채팅 알림',_binary '','채팅 알림','NOTIFY_CHAT',3,NULL,NULL),(24,'2025-02-19 05:16:28.611994','2025-02-19 05:16:28.611994','채팅 알림',_binary '\0','채팅 알림','NOTIFY_CHAT',3,NULL,NULL),(25,'2025-02-19 05:16:44.576317','2025-02-19 05:16:44.576317','채팅 알림',_binary '\0','채팅 알림','NOTIFY_CHAT',3,NULL,NULL),(26,'2025-02-19 05:17:39.550767','2025-02-19 05:43:13.620975','채팅 알림',_binary '','채팅 알림','NOTIFY_CHAT',3,NULL,NULL),(27,'2025-02-19 05:45:40.596077','2025-02-19 20:56:33.777985','회원님의 게시글에 댓글이 작성되었습니다.',_binary '','댓글 알림','NOTIFY_COMMENT',3,NULL,8),(28,'2025-02-19 05:47:01.870495','2025-02-19 20:56:28.783929','회원님의 게시글에 댓글이 작성되었습니다.',_binary '','댓글 알림','NOTIFY_COMMENT',3,NULL,4),(29,'2025-02-19 15:19:11.767039','2025-02-19 15:19:11.767039','채팅 알림',_binary '\0','채팅 알림','NOTIFY_CHAT',5,NULL,NULL),(30,'2025-02-19 15:19:16.037572','2025-02-19 15:19:16.037572','채팅 알림',_binary '\0','채팅 알림','NOTIFY_CHAT',5,NULL,NULL),(31,'2025-02-19 15:19:18.004853','2025-02-19 15:19:18.004853','채팅 알림',_binary '\0','채팅 알림','NOTIFY_CHAT',5,NULL,NULL),(32,'2025-02-19 15:19:18.991687','2025-02-19 15:19:18.991687','채팅 알림',_binary '\0','채팅 알림','NOTIFY_CHAT',5,NULL,NULL),(33,'2025-02-19 15:34:30.218260','2025-02-19 15:34:30.218260','채팅 알림',_binary '\0','채팅 알림','NOTIFY_CHAT',2,NULL,NULL),(34,'2025-02-19 18:29:59.965838','2025-02-19 18:29:59.965838','채팅 알림',_binary '\0','채팅 알림','NOTIFY_CHAT',5,NULL,NULL),(35,'2025-02-19 18:30:17.105075','2025-02-19 18:30:17.105075','채팅 알림',_binary '\0','채팅 알림','NOTIFY_CHAT',5,NULL,NULL),(36,'2025-02-19 18:30:22.151808','2025-02-19 18:30:22.151808','채팅 알림',_binary '\0','채팅 알림','NOTIFY_CHAT',5,NULL,NULL),(37,'2025-02-19 18:30:24.969975','2025-02-19 18:30:24.969975','채팅 알림',_binary '\0','채팅 알림','NOTIFY_CHAT',5,NULL,NULL),(38,'2025-02-19 18:30:26.866537','2025-02-19 18:30:26.866537','채팅 알림',_binary '\0','채팅 알림','NOTIFY_CHAT',5,NULL,NULL),(39,'2025-02-19 18:33:57.423331','2025-02-19 18:33:57.423331','채팅 알림',_binary '\0','채팅 알림','NOTIFY_CHAT',5,NULL,NULL),(40,'2025-02-19 18:36:12.718339','2025-02-19 18:36:12.718339','채팅 알림',_binary '\0','채팅 알림','NOTIFY_CHAT',5,NULL,NULL),(41,'2025-02-19 18:36:27.421374','2025-02-19 18:36:27.421374','채팅 알림',_binary '\0','채팅 알림','NOTIFY_CHAT',5,NULL,NULL),(42,'2025-02-19 18:36:31.304655','2025-02-19 18:36:31.304655','채팅 알림',_binary '\0','채팅 알림','NOTIFY_CHAT',5,NULL,NULL),(43,'2025-02-19 18:36:35.518615','2025-02-19 18:36:35.518615','채팅 알림',_binary '\0','채팅 알림','NOTIFY_CHAT',5,NULL,NULL),(44,'2025-02-19 18:37:13.587579','2025-02-19 18:37:13.587579','채팅 알림',_binary '\0','채팅 알림','NOTIFY_CHAT',5,NULL,NULL),(45,'2025-02-19 18:37:16.611280','2025-02-19 18:37:16.611280','채팅 알림',_binary '\0','채팅 알림','NOTIFY_CHAT',5,NULL,NULL),(46,'2025-02-19 18:37:18.492023','2025-02-19 18:37:18.492023','채팅 알림',_binary '\0','채팅 알림','NOTIFY_CHAT',5,NULL,NULL),(47,'2025-02-19 18:37:20.205657','2025-02-19 18:37:20.205657','채팅 알림',_binary '\0','채팅 알림','NOTIFY_CHAT',5,NULL,NULL),(48,'2025-02-19 18:37:21.615634','2025-02-19 18:37:21.615634','채팅 알림',_binary '\0','채팅 알림','NOTIFY_CHAT',5,NULL,NULL),(49,'2025-02-19 18:37:27.687938','2025-02-19 18:37:27.687938','채팅 알림',_binary '\0','채팅 알림','NOTIFY_CHAT',5,NULL,NULL),(50,'2025-02-19 18:37:29.346773','2025-02-19 18:37:29.346773','채팅 알림',_binary '\0','채팅 알림','NOTIFY_CHAT',5,NULL,NULL),(51,'2025-02-19 18:37:33.775397','2025-02-19 18:37:33.775397','채팅 알림',_binary '\0','채팅 알림','NOTIFY_CHAT',5,NULL,NULL),(52,'2025-02-19 18:44:24.528315','2025-02-19 18:44:24.528315','채팅 알림',_binary '\0','채팅 알림','NOTIFY_CHAT',2,NULL,NULL),(53,'2025-02-19 18:47:30.758135','2025-02-19 18:47:30.758135','채팅 알림',_binary '\0','채팅 알림','NOTIFY_CHAT',5,NULL,NULL),(54,'2025-02-19 18:47:32.364890','2025-02-19 18:47:32.364890','채팅 알림',_binary '\0','채팅 알림','NOTIFY_CHAT',5,NULL,NULL),(55,'2025-02-19 18:47:33.397580','2025-02-19 18:47:33.397580','채팅 알림',_binary '\0','채팅 알림','NOTIFY_CHAT',5,NULL,NULL),(56,'2025-02-19 18:47:34.245714','2025-02-19 18:47:34.245714','채팅 알림',_binary '\0','채팅 알림','NOTIFY_CHAT',5,NULL,NULL),(57,'2025-02-19 18:47:34.932572','2025-02-19 18:47:34.932572','채팅 알림',_binary '\0','채팅 알림','NOTIFY_CHAT',5,NULL,NULL),(58,'2025-02-19 18:47:35.530534','2025-02-19 18:47:35.530534','채팅 알림',_binary '\0','채팅 알림','NOTIFY_CHAT',5,NULL,NULL),(59,'2025-02-19 18:47:36.082174','2025-02-19 18:47:36.082174','채팅 알림',_binary '\0','채팅 알림','NOTIFY_CHAT',5,NULL,NULL),(60,'2025-02-19 18:47:36.627786','2025-02-19 18:47:36.627786','채팅 알림',_binary '\0','채팅 알림','NOTIFY_CHAT',5,NULL,NULL),(61,'2025-02-19 18:47:37.063629','2025-02-19 18:47:37.063629','채팅 알림',_binary '\0','채팅 알림','NOTIFY_CHAT',5,NULL,NULL),(62,'2025-02-19 18:47:37.491769','2025-02-19 18:47:37.491769','채팅 알림',_binary '\0','채팅 알림','NOTIFY_CHAT',5,NULL,NULL),(63,'2025-02-19 18:47:39.051628','2025-02-19 18:47:39.051628','채팅 알림',_binary '\0','채팅 알림','NOTIFY_CHAT',5,NULL,NULL),(64,'2025-02-19 18:47:39.547967','2025-02-19 18:47:39.547967','채팅 알림',_binary '\0','채팅 알림','NOTIFY_CHAT',5,NULL,NULL),(65,'2025-02-19 18:47:40.023534','2025-02-19 18:47:40.023534','채팅 알림',_binary '\0','채팅 알림','NOTIFY_CHAT',5,NULL,NULL),(66,'2025-02-19 18:47:40.583593','2025-02-19 18:47:40.583593','채팅 알림',_binary '\0','채팅 알림','NOTIFY_CHAT',5,NULL,NULL),(67,'2025-02-19 18:47:41.127880','2025-02-19 18:47:41.127880','채팅 알림',_binary '\0','채팅 알림','NOTIFY_CHAT',5,NULL,NULL),(68,'2025-02-19 18:47:41.671690','2025-02-19 18:47:41.671690','채팅 알림',_binary '\0','채팅 알림','NOTIFY_CHAT',5,NULL,NULL),(69,'2025-02-19 18:47:44.984740','2025-02-19 18:47:44.984740','채팅 알림',_binary '\0','채팅 알림','NOTIFY_CHAT',5,NULL,NULL),(70,'2025-02-19 18:47:45.574591','2025-02-19 18:47:45.574591','채팅 알림',_binary '\0','채팅 알림','NOTIFY_CHAT',5,NULL,NULL),(71,'2025-02-19 18:47:46.261407','2025-02-19 18:47:46.261407','채팅 알림',_binary '\0','채팅 알림','NOTIFY_CHAT',5,NULL,NULL),(72,'2025-02-19 18:47:47.027564','2025-02-19 18:47:47.027564','채팅 알림',_binary '\0','채팅 알림','NOTIFY_CHAT',5,NULL,NULL),(73,'2025-02-19 18:47:47.627491','2025-02-19 18:47:47.627491','채팅 알림',_binary '\0','채팅 알림','NOTIFY_CHAT',5,NULL,NULL),(74,'2025-02-19 18:47:48.169848','2025-02-19 18:47:48.169848','채팅 알림',_binary '\0','채팅 알림','NOTIFY_CHAT',5,NULL,NULL),(75,'2025-02-19 18:47:48.754067','2025-02-19 18:47:48.754067','채팅 알림',_binary '\0','채팅 알림','NOTIFY_CHAT',5,NULL,NULL),(76,'2025-02-19 18:47:49.373649','2025-02-19 18:47:49.373649','채팅 알림',_binary '\0','채팅 알림','NOTIFY_CHAT',5,NULL,NULL),(77,'2025-02-19 18:47:49.958826','2025-02-19 18:47:49.958826','채팅 알림',_binary '\0','채팅 알림','NOTIFY_CHAT',5,NULL,NULL),(78,'2025-02-19 18:47:50.545737','2025-02-19 18:47:50.545737','채팅 알림',_binary '\0','채팅 알림','NOTIFY_CHAT',5,NULL,NULL),(79,'2025-02-19 18:47:51.289927','2025-02-19 18:47:51.289927','채팅 알림',_binary '\0','채팅 알림','NOTIFY_CHAT',5,NULL,NULL),(80,'2025-02-19 18:47:52.075630','2025-02-19 18:47:52.075630','채팅 알림',_binary '\0','채팅 알림','NOTIFY_CHAT',5,NULL,NULL),(81,'2025-02-19 18:47:52.923977','2025-02-19 18:47:52.923977','채팅 알림',_binary '\0','채팅 알림','NOTIFY_CHAT',5,NULL,NULL),(82,'2025-02-19 18:47:53.550453','2025-02-19 18:47:53.550453','채팅 알림',_binary '\0','채팅 알림','NOTIFY_CHAT',5,NULL,NULL),(83,'2025-02-19 18:47:54.175251','2025-02-19 18:47:54.175251','채팅 알림',_binary '\0','채팅 알림','NOTIFY_CHAT',5,NULL,NULL),(84,'2025-02-19 18:47:54.835402','2025-02-19 18:47:54.835402','채팅 알림',_binary '\0','채팅 알림','NOTIFY_CHAT',5,NULL,NULL),(85,'2025-02-19 18:47:55.425916','2025-02-19 18:47:55.425916','채팅 알림',_binary '\0','채팅 알림','NOTIFY_CHAT',5,NULL,NULL),(86,'2025-02-19 18:47:56.226582','2025-02-19 18:47:56.226582','채팅 알림',_binary '\0','채팅 알림','NOTIFY_CHAT',5,NULL,NULL),(87,'2025-02-19 18:47:56.850779','2025-02-19 18:47:56.850779','채팅 알림',_binary '\0','채팅 알림','NOTIFY_CHAT',5,NULL,NULL),(88,'2025-02-19 18:47:57.606593','2025-02-19 18:47:57.606593','채팅 알림',_binary '\0','채팅 알림','NOTIFY_CHAT',5,NULL,NULL),(89,'2025-02-19 18:47:58.345751','2025-02-19 18:47:58.345751','채팅 알림',_binary '\0','채팅 알림','NOTIFY_CHAT',5,NULL,NULL),(90,'2025-02-19 18:47:59.136034','2025-02-19 18:47:59.136034','채팅 알림',_binary '\0','채팅 알림','NOTIFY_CHAT',5,NULL,NULL),(91,'2025-02-19 18:47:59.968809','2025-02-19 18:47:59.968809','채팅 알림',_binary '\0','채팅 알림','NOTIFY_CHAT',5,NULL,NULL),(92,'2025-02-19 18:48:00.680331','2025-02-19 18:48:00.680331','채팅 알림',_binary '\0','채팅 알림','NOTIFY_CHAT',5,NULL,NULL),(93,'2025-02-19 18:48:01.350544','2025-02-19 18:48:01.350544','채팅 알림',_binary '\0','채팅 알림','NOTIFY_CHAT',5,NULL,NULL),(94,'2025-02-19 18:48:02.194518','2025-02-19 18:48:02.194518','채팅 알림',_binary '\0','채팅 알림','NOTIFY_CHAT',5,NULL,NULL),(95,'2025-02-19 18:48:02.827016','2025-02-19 18:48:02.827016','채팅 알림',_binary '\0','채팅 알림','NOTIFY_CHAT',5,NULL,NULL),(96,'2025-02-19 18:48:03.475252','2025-02-19 18:48:03.475252','채팅 알림',_binary '\0','채팅 알림','NOTIFY_CHAT',5,NULL,NULL),(97,'2025-02-19 18:48:04.020262','2025-02-19 18:48:04.020262','채팅 알림',_binary '\0','채팅 알림','NOTIFY_CHAT',5,NULL,NULL),(98,'2025-02-19 18:48:04.583782','2025-02-19 18:48:04.583782','채팅 알림',_binary '\0','채팅 알림','NOTIFY_CHAT',5,NULL,NULL),(99,'2025-02-19 18:48:05.178868','2025-02-19 23:10:13.403718','채팅 알림',_binary '','채팅 알림','NOTIFY_CHAT',5,NULL,NULL),(100,'2025-02-19 18:48:05.797525','2025-02-19 23:10:15.144313','채팅 알림',_binary '','채팅 알림','NOTIFY_CHAT',5,NULL,NULL),(101,'2025-02-19 18:48:06.667357','2025-02-19 22:43:36.275042','채팅 알림',_binary '','채팅 알림','NOTIFY_CHAT',5,NULL,NULL),(102,'2025-02-19 18:48:07.375681','2025-02-19 23:10:04.965109','채팅 알림',_binary '','채팅 알림','NOTIFY_CHAT',5,NULL,NULL),(103,'2025-02-19 20:56:56.511705','2025-02-19 22:33:38.103725','회원님의 게시글에 댓글이 작성되었습니다.',_binary '','댓글 알림','NOTIFY_COMMENT',3,NULL,8),(104,'2025-02-19 20:57:03.308163','2025-02-19 21:52:23.293485','회원님의 게시글에 댓글이 작성되었습니다.',_binary '','댓글 알림','NOTIFY_COMMENT',3,NULL,8),(105,'2025-02-19 23:22:45.285352','2025-02-19 23:22:45.285352','회원님의 게시글에 댓글이 작성되었습니다.',_binary '\0','댓글 알림','NOTIFY_COMMENT',5,NULL,10),(106,'2025-02-19 23:27:01.195572','2025-02-19 23:27:01.195572','채팅 알림',_binary '\0','채팅 알림','NOTIFY_CHAT',5,NULL,NULL),(107,'2025-02-19 23:27:11.114973','2025-02-19 23:27:11.114973','채팅 알림',_binary '\0','채팅 알림','NOTIFY_CHAT',5,NULL,NULL),(108,'2025-02-19 23:53:09.417414','2025-02-19 23:53:09.417414','채팅 알림',_binary '\0','채팅 알림','NOTIFY_CHAT',5,NULL,NULL),(109,'2025-02-19 23:57:20.753419','2025-02-20 01:03:19.995663','채팅 알림',_binary '','채팅 알림','NOTIFY_CHAT',5,NULL,NULL),(110,'2025-02-19 23:59:07.643644','2025-02-20 01:03:15.329537','회원님의 게시글에 댓글이 작성되었습니다.',_binary '','댓글 알림','NOTIFY_COMMENT',5,NULL,11),(111,'2025-02-20 01:33:13.797117','2025-02-20 01:33:13.797117','채팅 알림',_binary '\0','채팅 알림','NOTIFY_CHAT',2,NULL,NULL),(112,'2025-02-20 01:34:34.611820','2025-02-20 01:34:34.611820','채팅 알림',_binary '\0','채팅 알림','NOTIFY_CHAT',2,NULL,NULL),(113,'2025-02-20 01:53:43.635732','2025-02-20 01:53:43.635732','채팅 알림',_binary '\0','채팅 알림','NOTIFY_CHAT',5,NULL,NULL),(114,'2025-02-20 01:59:39.796328','2025-02-20 01:59:39.796328','채팅 알림',_binary '\0','채팅 알림','NOTIFY_CHAT',5,NULL,NULL),(115,'2025-02-20 02:03:53.591772','2025-02-20 02:03:53.591772','채팅 알림',_binary '\0','채팅 알림','NOTIFY_CHAT',5,NULL,NULL),(116,'2025-02-20 02:05:16.759476','2025-02-20 02:05:16.759476','채팅 알림',_binary '\0','채팅 알림','NOTIFY_CHAT',5,NULL,NULL);
+/*!40000 ALTER TABLE `notify` ENABLE KEYS */;
+UNLOCK TABLES;
+
+--
+-- Table structure for table `pat_question`
+--
+
+DROP TABLE IF EXISTS `pat_question`;
+/*!40101 SET @saved_cs_client     = @@character_set_client */;
+/*!50503 SET character_set_client = utf8mb4 */;
+CREATE TABLE `pat_question` (
+  `question_id` int NOT NULL AUTO_INCREMENT,
+  `question` varchar(255) COLLATE utf8mb4_unicode_ci NOT NULL,
+  `answer1` varchar(255) COLLATE utf8mb4_unicode_ci NOT NULL DEFAULT '아이의 짜증을 멈추게 하기 위해 옆에서 도와준다',
+  `answer2` varchar(255) COLLATE utf8mb4_unicode_ci NOT NULL,
+  `answer3` varchar(255) COLLATE utf8mb4_unicode_ci NOT NULL,
+  PRIMARY KEY (`question_id`)
+) ENGINE=InnoDB AUTO_INCREMENT=20 DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_unicode_ci;
+/*!40101 SET character_set_client = @saved_cs_client */;
+
+--
+-- Dumping data for table `pat_question`
+--
+
+LOCK TABLES `pat_question` WRITE;
+/*!40000 ALTER TABLE `pat_question` DISABLE KEYS */;
+INSERT INTO `pat_question` VALUES (1,'식사시간이 얼마 남지 않았는데도 당신의 아이가 군것질을 먹겠다고 조르자 시어머님(장모님)께서 먹으라고 허락한다면?','그대로 먹게 내버려 둔다.','안 된다고 하며 못 먹게 한다.','밥을 먹고 난 다음에 후식으로만 먹게 한다.'),(2,'당신의 6살 난 아이가 청소년들이 볼 수 있는 만화영화를 보겠다고 때를 쓴다면?','보도록 내버려 둔다.','보지 못하게 TV를 끄거나 채널을 다른 프로그램으로 돌린다.','아이에게 적합한지를 직접 시청한 다음 보게 할 것인지를 결정한다.'),(3,'당신의 아이가 반찬고리(바느질고리)를 뒤집어엎어 온 방안에 해처 놓았다면?','아이이니까 그러려니 하고 손수 치운다.','화를 내며 지금 당장 치우라고 소리친다. (당장 치워!!!)','화를 내지는 않지만 아이에게 치우게 하고, 다 치울 때 까지 다른 일을 못하게 한다.'),(4,'아이가 당신이 아끼던 꽃병을 깨뜨리고선 옆집 친구가 그랬다고 거짓말을 했다면?','아깝지만 괜찮다고 이야기 한다.','깨뜨린 것과 거짓말 한 것 모두에 대해 야단을 치거나 벌을 준다.','거짓말 한 것에 대해 야단을 치고, 만일 솔직히 얘기했더라면 꽃병을 깬 것에 대해 혼내지 않았을 것이라고 말해준다.'),(5,'7살짜리 당신의 아이가 서너 살짜리 아이들과 노는 것을 보았다면?','속은 상하지만 그냥 놀게 내버려 둔다.','당장 놀지 못하게 한다.','같이 놀 또래 친구들을 찾아보도록 도와준다.'),(6,'당신의 아이가 다른 친구를 때려서 상처를 냈다면?','아이들 싸움이려니 하고 그냥 내버려 둔다.','핀가 나서 야단치거나 때론 체벌을 한다.','왜 싸웠는지에 대해 이야기를 나누되, 그래도 싸움은 나쁘다고 따끔히 꾸중한다.'),(7,'당신의 아이가 유치원(학교)에서 내준 숙제를 이번에도 또 잊고 안 해간다면?','선생님께 전화를 해준다.','그 자리에서 혼을 내고 다시는 그러지 못하도록 다짐해 둔다.','더 이상 잊어버리지 않도록 타이르고 다음부터는 일련장을 꼭 확인하도록 도와준다.'),(8,'당신의 아이가 크레용으로 온 방바닥에 낙서를 했다면?','낙서할 수 있는 종이를 한 묶음 갖다 주며 웃어넘긴다.','아이에게 화를 내며 당신이 직접 낙서를 지운 다음, 크레용을 모두 없애 버린다.','아이 스스로 지우게 하고, 다음부터는 크레용을 가지고 놀 때 세심히 지도한다.'),(9,'당신의 아이가 유치원(학교)에서 친구를 사귀는데 문제가 있다면?','친구들을 불러서 파티를 열어주고 선물을 나누어주며 당신의 아이와 사이좋게 지내달라고 부탁한다.','바보처럼 친구 하나도 못 사귄다고 야단을 친다.','당신의 자녀와 친구관계에 관한 이야기를 나누고, 친구를 사귈 수 있도록 단체 활동 프로그램 등에 가입시킨다.'),(10,'당신의 기분이 언짢은데 자녀가 당신의 관심을 받고자 보챈다면?','언짢은 기분은 되로 하고 자녀에게 관심을 기울인다.','아이에게 짜증내며 남편(아내)을 불러 떠넘긴다. \"네 아빠(엄마)한테나 가봐!\"','아이에게 당신의 기분이 언짢다는 것을 이야기 해주고, 좀 나아지면 함께 놀아주겠다고 한다.'),(11,'당신의 아이가 블록 쌓기 놀이를 하는데 원하는 대로 잘 되지 않아서 짜증을 부린다면?','아이의 짜증을 멈추게 하기 위해 옆에서 도와준다','짜증부리지 말라고 야단을 친다.','아이에게 짜증을 부리는 대신 말로 표현하도록 얘기해 주고 짜증난 이유에 대해 이야기를 나눈다.'),(12,'당신의 집에는 자녀가 지켜야 할 규칙이 얼마나 많습니까?','없다.','많은 규칙이 있고, 규칙마다 이를 어겼을 시 받게 될 규중이나 벌이 정해져 있다.','아이의 건강과 안전을 위한 몇 가지의 규칙이 있긴 하나, 그때마다 상황에 따라 그 때 그 때 대화를 통해 결정한다.'),(13,'당신이 좋아하는 수제비를 특별히 준비하였는데 아이가 먹기 싫다고 한다면?','귀찮더라도 아이를 위해 밥을 따로 준비한다.','억지로라도 먹게 한다.','수제비를 조금이라도 먹어보게 한 다음 그래도 싫다면 아이를 위해 밥을 따로 준비한다.'),(14,'자야 할 시간이 훨씬 지났는데도 아이가 하고 있던 놀이를 더 하고 자겠다고 고집을 피운다면?','놀만큼 더 놀다 자게 한다.','당장 가서 자라며 야단치거나 불을 꺼버린다.','그 시각부터 20~30분만 더 놀다 자게 한다.'),(15,'당신의 아이가 다른 어른의 말을 잘 따르지 않는다면?','아직 어리니까 그러려니 하고 내버려둔다.','화를 내며 어쨌든 어른의 말을 따르지 않는다는 건 나쁜 일이기에 야단친다.','어른에 대한 공경심과 그 어른의 말을 왜 따라야 하는지에 대해 이야기를 나눈다.'),(16,'아이와 함께 쇼핑 시, 쓸모없어 보이는 것들을 이것저것 사달라고 조른 다면?','가능한 다 들어준다.','화를 내면서 아이의 손목을 잡고 그 상점을 뜬다.','안 된다고 딱 잘라 말하고, 쇼핑을 계속하면서 아이에게 적합한 것을 골라 사준다.'),(17,'당신은 얼마나 자주 자녀에게 화를 냅니까?','거의 드물다.','매일 같이','일주일에 한번 정도'),(18,'당신의 아이가 자다가 무서운 꿈을 꾸어 당신의 방에서 자겠다고 오는 경우','함께 자도록 한다.','당장 네 방에 가서 자라고 소리 지른다.','일어나서 아이를 달래준 다음 아이들 방으로 데려가 재운다.'),(19,'당신의 아이를 생각할 때, 당신이 원하는 가정의 분위기는?','자유롭고 개방적인 가정','규율과 질서가 잡힌 가정','대화와 화합이 있는 가정');
+/*!40000 ALTER TABLE `pat_question` ENABLE KEYS */;
+UNLOCK TABLES;
+
+--
+-- Table structure for table `pat_test`
+--
+
+DROP TABLE IF EXISTS `pat_test`;
+/*!40101 SET @saved_cs_client     = @@character_set_client */;
+/*!50503 SET character_set_client = utf8mb4 */;
+CREATE TABLE `pat_test` (
+  `pat_test_id` int NOT NULL AUTO_INCREMENT,
+  `user_id` int NOT NULL,
+  `test_date` date NOT NULL,
+  `a_score` int NOT NULL,
+  `b_score` int NOT NULL,
+  `c_score` int NOT NULL,
+  `result` enum('A','B','C') COLLATE utf8mb4_unicode_ci NOT NULL,
+  `pdf_url` varchar(255) COLLATE utf8mb4_unicode_ci DEFAULT NULL,
+  PRIMARY KEY (`pat_test_id`),
+  KEY `pat_test_ibfk_1` (`user_id`),
+  CONSTRAINT `pat_test_ibfk_1` FOREIGN KEY (`user_id`) REFERENCES `user` (`user_id`) ON DELETE CASCADE
+) ENGINE=InnoDB AUTO_INCREMENT=60 DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_unicode_ci;
+/*!40101 SET character_set_client = @saved_cs_client */;
+
+--
+-- Dumping data for table `pat_test`
+--
+
+LOCK TABLES `pat_test` WRITE;
+/*!40000 ALTER TABLE `pat_test` DISABLE KEYS */;
+INSERT INTO `pat_test` VALUES (1,1,'2025-02-17',0,0,0,'A',NULL),(2,1,'2025-02-17',0,0,0,'A',NULL),(3,1,'2025-02-17',5,3,8,'C','https://a407-20250124.s3.ap-northeast-2.amazonaws.com/result/8b092f61-6c72-4de7-a39b-c90b219ee884_1739759273459.pdf'),(4,3,'2025-02-17',0,0,0,'A',NULL),(5,1,'2025-02-17',8,6,5,'A',NULL),(6,1,'2025-02-17',8,6,4,'A',NULL),(7,3,'2025-02-17',6,5,8,'C',NULL),(8,1,'2025-02-17',0,1,18,'C',NULL),(9,1,'2025-02-17',1,4,14,'C',NULL),(10,1,'2025-02-17',3,4,12,'C',NULL),(11,1,'2025-02-17',0,4,15,'C',NULL),(12,1,'2025-02-17',1,2,16,'C',NULL),(13,1,'2025-02-17',1,8,10,'C',NULL),(14,1,'2025-02-17',1,8,10,'C',NULL),(15,1,'2025-02-17',1,5,13,'C',NULL),(16,7,'2025-02-17',7,4,8,'C','https://a407-20250124.s3.ap-northeast-2.amazonaws.com/result/7b610b18-0e6b-48c0-a907-bd94f9165367_1739820611283.pdf'),(17,7,'2025-02-17',1,1,17,'C',NULL),(18,7,'2025-02-17',0,19,0,'B',NULL),(19,7,'2025-02-17',7,5,7,'A',NULL),(20,7,'2025-02-17',10,9,0,'A',NULL),(21,7,'2025-02-17',10,6,3,'A',NULL),(22,7,'2025-02-17',15,4,0,'A',NULL),(23,7,'2025-02-17',5,3,8,'C',NULL),(24,7,'2025-02-17',7,7,5,'A',NULL),(25,7,'2025-02-17',5,3,8,'C',NULL),(26,7,'2025-02-17',5,3,8,'C',NULL),(27,7,'2025-02-17',5,3,8,'C',NULL),(28,7,'2025-02-17',5,3,8,'C',NULL),(29,7,'2025-02-17',5,3,8,'C',NULL),(30,7,'2025-02-17',5,3,8,'C',NULL),(31,7,'2025-02-17',7,7,5,'A',NULL),(32,7,'2025-02-17',7,7,5,'A',NULL),(33,7,'2025-02-17',0,5,14,'C',NULL),(34,7,'2025-02-17',8,6,5,'A',NULL),(35,7,'2025-02-17',9,5,5,'A',NULL),(36,7,'2025-02-17',9,5,5,'A',NULL),(37,7,'2025-02-17',4,10,5,'B',NULL),(38,7,'2025-02-17',19,0,0,'A',NULL),(39,7,'2025-02-17',15,4,0,'A',NULL),(40,1,'2025-02-18',7,8,9,'C',NULL),(41,1,'2025-02-18',14,4,1,'A',NULL),(42,1,'2025-02-18',1,2,0,'B',NULL),(43,1,'2025-02-18',10,6,3,'A',NULL),(44,1,'2025-02-18',6,5,8,'C',NULL),(45,1,'2025-02-18',1,1,0,'A',NULL),(46,1,'2025-02-18',2,8,9,'C',NULL),(47,1,'2025-02-18',0,2,0,'B',NULL),(48,1,'2025-02-18',7,4,8,'C',NULL),(49,1,'2025-02-18',5,8,6,'B',NULL),(50,1,'2025-02-18',3,9,7,'B',NULL),(51,1,'2025-02-18',4,9,6,'B',NULL),(52,1,'2025-02-18',6,7,6,'B',NULL),(53,3,'2025-02-19',5,3,11,'C',NULL),(54,8,'2025-02-19',6,2,11,'C',NULL),(55,3,'2025-02-19',0,1,18,'C',NULL),(56,3,'2025-02-19',0,1,18,'C',NULL),(57,1,'2025-02-19',4,7,8,'C',NULL),(58,13,'2025-02-19',7,7,5,'A',NULL),(59,5,'2025-02-20',2,2,15,'C',NULL);
+/*!40000 ALTER TABLE `pat_test` ENABLE KEYS */;
+UNLOCK TABLES;
+
+--
+-- Table structure for table `post`
+--
+
+DROP TABLE IF EXISTS `post`;
+/*!40101 SET @saved_cs_client     = @@character_set_client */;
+/*!50503 SET character_set_client = utf8mb4 */;
+CREATE TABLE `post` (
+  `post_id` int NOT NULL AUTO_INCREMENT,
+  `user_id` int NOT NULL,
+  `title` varchar(255) COLLATE utf8mb4_unicode_ci NOT NULL,
+  `content` text COLLATE utf8mb4_unicode_ci,
+  `view_count` int NOT NULL DEFAULT '0',
+  `created_at` datetime NOT NULL DEFAULT CURRENT_TIMESTAMP,
+  `updated_at` datetime NOT NULL DEFAULT CURRENT_TIMESTAMP ON UPDATE CURRENT_TIMESTAMP,
+  `like_count` int DEFAULT '0',
+  PRIMARY KEY (`post_id`),
+  KEY `user_id` (`user_id`),
+  CONSTRAINT `post_ibfk_1` FOREIGN KEY (`user_id`) REFERENCES `user` (`user_id`)
+) ENGINE=InnoDB AUTO_INCREMENT=16 DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_unicode_ci;
+/*!40101 SET character_set_client = @saved_cs_client */;
+
+--
+-- Dumping data for table `post`
+--
+
+LOCK TABLES `post` WRITE;
+/*!40000 ALTER TABLE `post` DISABLE KEYS */;
+INSERT INTO `post` VALUES (1,3,'일등','게시글 1등 게시글 수정!',9,'2025-02-17 00:46:58','2025-02-18 08:30:00',1),(2,3,'ㅎㅎ','ㅎㅎ삭제',13,'2025-02-17 00:48:01','2025-02-19 23:00:00',3),(3,4,'test','testtesttesttesttesttesttesttesttesttesttesttesttesttesttesttesttesttesttesttesttesttesttesttesttesttesttesttesttesttesttesttesttesttesttesttesttesttesttesttesttesttesttesttesttesttesttesttesttesttesttesttesttesttesttesttesttesttesttesttesttesttesttesttesttesttesttesttesttesttesttesttesttesttesttesttesttesttesttesttesttesttesttesttesttesttesttesttesttesttesttesttesttesttesttesttesttesttesttesttesttesttesttesttesttesttesttesttesttesttesttesttesttesttesttesttesttesttesttesttesttesttesttesttesttesttesttesttesttesttesttesttesttesttesttesttesttesttesttesttesttesttesttesttesttesttesttesttesttesttesttesttesttesttesttesttesttesttesttesttesttesttesttesttesttesttesttesttesttesttesttesttesttesttesttesttesttesttesttesttesttesttesttesttesttesttesttesttesttesttesttesttesttesttesttesttesttesttesttesttesttesttesttesttesttesttesttesttesttesttesttesttesttesttesttesttesttesttesttesttesttesttesttesttesttesttesttesttesttesttesttesttesttesttesttesttesttesttesttesttest',15,'2025-02-17 01:31:35','2025-02-19 07:00:00',3),(4,3,'제발 알람와라','알람와라ㅎㅎㅎ',16,'2025-02-17 13:50:54','2025-02-19 21:00:00',1),(6,1,'1111','22222',6,'2025-02-18 08:02:51','2025-02-19 06:00:00',1),(8,3,'시간확인','시간확인용',4,'2025-02-19 04:01:10','2025-02-19 23:30:00',1),(9,3,'ㅎㅎ','ㅎㅎ',2,'2025-02-19 05:47:11','2025-02-19 06:00:00',0),(10,5,'안녕','안녕',5,'2025-02-19 15:11:14','2025-02-19 23:30:00',0),(11,5,'test','test',2,'2025-02-19 18:03:16','2025-02-19 21:00:00',0),(12,2,'채팅 테스트용 게시글 생성','채팅 테스트용 게시글 생성\n아이디 : tomato\n유저번호 : 2',2,'2025-02-20 01:00:44','2025-02-20 01:30:00',0),(13,1,'채팅 테스트용 게시글 생성','아이디 : test@naver.com\n유저 1번',3,'2025-02-20 01:01:39','2025-02-20 01:30:00',0),(14,13,'채팅 테스트용 게스글 작성','아이디 : jaehong@good.com\n유저 13번',1,'2025-02-20 01:02:27','2025-02-20 01:30:00',0),(15,5,'안녕','나는 민채야',4,'2025-02-20 01:03:04','2025-02-20 02:00:00',0);
+/*!40000 ALTER TABLE `post` ENABLE KEYS */;
+UNLOCK TABLES;
+
+--
+-- Table structure for table `post_image`
+--
+
+DROP TABLE IF EXISTS `post_image`;
+/*!40101 SET @saved_cs_client     = @@character_set_client */;
+/*!50503 SET character_set_client = utf8mb4 */;
+CREATE TABLE `post_image` (
+  `post_image_id` int NOT NULL AUTO_INCREMENT,
+  `post_id` int NOT NULL,
+  `image_url` varchar(1024) COLLATE utf8mb4_unicode_ci NOT NULL,
+  `created_at` datetime NOT NULL DEFAULT CURRENT_TIMESTAMP,
+  PRIMARY KEY (`post_image_id`),
+  KEY `post_image_ibfk_1` (`post_id`),
+  CONSTRAINT `post_image_ibfk_1` FOREIGN KEY (`post_id`) REFERENCES `post` (`post_id`) ON DELETE CASCADE
+) ENGINE=InnoDB AUTO_INCREMENT=6 DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_unicode_ci;
+/*!40101 SET character_set_client = @saved_cs_client */;
+
+--
+-- Dumping data for table `post_image`
+--
+
+LOCK TABLES `post_image` WRITE;
+/*!40000 ALTER TABLE `post_image` DISABLE KEYS */;
+/*!40000 ALTER TABLE `post_image` ENABLE KEYS */;
+UNLOCK TABLES;
+
+--
+-- Table structure for table `post_like`
+--
+
+DROP TABLE IF EXISTS `post_like`;
+/*!40101 SET @saved_cs_client     = @@character_set_client */;
+/*!50503 SET character_set_client = utf8mb4 */;
+CREATE TABLE `post_like` (
+  `post_id` int NOT NULL,
+  `user_id` int NOT NULL,
+  UNIQUE KEY `unique_post_user` (`post_id`,`user_id`),
+  KEY `user_id` (`user_id`),
+  CONSTRAINT `post_like_ibfk_1` FOREIGN KEY (`post_id`) REFERENCES `post` (`post_id`) ON DELETE CASCADE,
+  CONSTRAINT `post_like_ibfk_2` FOREIGN KEY (`user_id`) REFERENCES `user` (`user_id`)
+) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_unicode_ci;
+/*!40101 SET character_set_client = @saved_cs_client */;
+
+--
+-- Dumping data for table `post_like`
+--
+
+LOCK TABLES `post_like` WRITE;
+/*!40000 ALTER TABLE `post_like` DISABLE KEYS */;
+INSERT INTO `post_like` VALUES (3,1),(1,3),(2,3),(3,3),(4,3),(6,3),(8,3),(2,4),(3,4),(2,5);
+/*!40000 ALTER TABLE `post_like` ENABLE KEYS */;
+UNLOCK TABLES;
+
+--
+-- Table structure for table `user`
+--
+
+DROP TABLE IF EXISTS `user`;
+/*!40101 SET @saved_cs_client     = @@character_set_client */;
+/*!50503 SET character_set_client = utf8mb4 */;
+CREATE TABLE `user` (
+  `user_id` int NOT NULL AUTO_INCREMENT,
+  `username` varchar(255) COLLATE utf8mb4_unicode_ci NOT NULL,
+  `email` varchar(50) COLLATE utf8mb4_unicode_ci DEFAULT NULL,
+  `password` varchar(255) COLLATE utf8mb4_unicode_ci NOT NULL,
+  `birth_date` date DEFAULT NULL,
+  `phone` varchar(50) COLLATE utf8mb4_unicode_ci DEFAULT NULL,
+  `created_at` datetime NOT NULL DEFAULT CURRENT_TIMESTAMP,
+  `updated_at` datetime NOT NULL DEFAULT CURRENT_TIMESTAMP ON UPDATE CURRENT_TIMESTAMP,
+  `status` enum('ACTIVE','INACTIVE','BANNED') COLLATE utf8mb4_unicode_ci NOT NULL DEFAULT 'ACTIVE',
+  `nickname` varchar(50) COLLATE utf8mb4_unicode_ci DEFAULT NULL,
+  `image_url` varchar(1024) COLLATE utf8mb4_unicode_ci DEFAULT NULL,
+  `relation` enum('MOTHER','FATHER','REST') COLLATE utf8mb4_unicode_ci NOT NULL DEFAULT 'REST',
+  `role` enum('ADMIN','USER') COLLATE utf8mb4_unicode_ci DEFAULT 'USER',
+  PRIMARY KEY (`user_id`),
+  UNIQUE KEY `email` (`email`)
+) ENGINE=InnoDB AUTO_INCREMENT=19 DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_unicode_ci;
+/*!40101 SET character_set_client = @saved_cs_client */;
+
+--
+-- Dumping data for table `user`
+--
+
+LOCK TABLES `user` WRITE;
+/*!40000 ALTER TABLE `user` DISABLE KEYS */;
+INSERT INTO `user` VALUES (1,'test','test@naver.com','$2a$10$kILeDQbTrEXEv5SIKxJrmOFuUx9tGXoQQVB2tNjFRbTITBrKbGqA2','2024-01-31','010-1111-2222','2025-02-17 00:41:37','2025-02-18 17:31:56','ACTIVE','test',NULL,'MOTHER','USER'),(2,'김유정','tomato@naver.com','$2a$10$oK0UF3VbWNRBrd7Ck1pg.uvuqAVutu8dZMNwC0vLztZMnxrCNLlmK','2000-01-18','010-2835-9914','2025-02-17 00:43:49','2025-02-17 00:43:49','ACTIVE','김유정',NULL,'MOTHER','USER'),(3,'박보성','qkrqhd23@naver.com','$2a$10$AI8oGj2OBU38z.xhZhusV.3WlzmobzJZNzIy07XXJ5EShJyopoGxK','1997-07-16','010-3422-0247','2025-02-17 00:46:29','2025-02-17 13:53:11','ACTIVE','보난','https://a407-20250124.s3.ap-northeast-2.amazonaws.com/images/da59d0a3-3f33-4cdb-8bea-87fc48b06dfe_1739767990958.png','MOTHER','USER'),(4,'testtest','test@example.com','$2a$10$Z1G2a2jKiutZa.rOh5vOMeAlpcR9niV4XGPMzHeLR4b6rf1zABJ7q','2025-02-17','010-0000-0000','2025-02-17 01:24:30','2025-02-17 01:24:30','ACTIVE','testtest',NULL,'FATHER','USER'),(5,'minchae','minchae@naver.com','$2a$10$aUVaQcSl4iGDpYQ8lXLvV.ryZx6KWbLxc.IQZrv.rbZJxNIgpbtM6','2024-01-31','010-2222-2','2025-02-17 11:41:14','2025-02-19 05:52:36','ACTIVE','minchae',NULL,'REST','USER'),(6,'박보셩','boseong@naver.com','$2a$10$cHe7ZuLMFF7E9IklAhuXfevghJpXJWrARioKJRAcwqnWQFy9w2GlK','2000-10-20','010-1234-5678','2025-02-17 12:21:36','2025-02-17 12:21:36','ACTIVE','ㅂㅈㄷㄱ',NULL,'MOTHER','USER'),(7,'서건호','jjkkgh123@naver.com','$2a$10$gI9QbKOovDQCe9nYw.s0Xe0YwQFUOgoR063wtrWJsZ9ZPSa6s3yyW','1997-12-30','010-3311-4128','2025-02-17 17:33:50','2025-02-17 17:33:50','ACTIVE','시싫',NULL,'FATHER','USER'),(8,'고성현','cavalier7@naver.com','$2a$10$/UG.3fGgOX6lilV/rOsgZu.G6AU2SC/15QZkyUvY40sTeotIO9Q2C','1976-10-09','010-2010-5910','2025-02-19 00:39:49','2025-02-19 00:39:49','ACTIVE','서4컨',NULL,'FATHER','USER'),(9,'서건호','','$2a$10$AGp0cLKRru5U29GF/PGMUOOQ1zfcB/k7f2Y2fwP4uMzbALhmjH4Tu','1997-12-30','010-3311-4129','2025-02-19 00:57:28','2025-02-19 03:53:48','BANNED','탈퇴한 사용자',NULL,'FATHER','USER'),(10,'test11','test11@naver.com','$2a$10$IiXtJSvhUThkpmn3JaaGYePhFFm42mLWD5O54gOjnX9ukDFQL5g5O','2024-01-31','010-1111-2222','2025-02-19 10:02:49','2025-02-19 10:02:49','ACTIVE','test11',NULL,'REST','USER'),(11,'서건호',NULL,'$2a$10$kmDHo8h6yv1DrWAgg0UbWuBad8OaoL0UJ2DAyQCGGJyNtDr6CmU7.','1997-12-30','010-3311-4128','2025-02-19 03:34:01','2025-02-19 05:27:14','BANNED','탈퇴한 사용자',NULL,'MOTHER','USER'),(12,'testtest',NULL,'$2a$10$YmdMj9kUL5dEUc31ZLhSRuoD90sm6E8H5iN5FRK2z4ckNP/wAv5TC','2024-01-31','010-1111-2222','2025-02-19 12:59:56','2025-02-19 13:00:35','BANNED','탈퇴한 사용자',NULL,'REST','USER'),(13,'이이재재홍홍','jaehong@good.com','$2a$10$L/HvRjMnywV2yANyDQIfyOtfUK4NJ2pZZQWAdLWmnC8MpkOC2H26G','1998-09-15','010-0101-0101','2025-02-19 05:23:25','2025-02-19 05:23:25','ACTIVE','홍',NULL,'FATHER','USER'),(14,'서건호',NULL,'$2a$10$WSkx1J21OMFW4TidhBa3eOrG7kA3176mAonoAirHTeL2myzckofiq','1997-12-30','010-3311-4128','2025-02-19 05:28:11','2025-02-19 05:28:18','BANNED','탈퇴한 사용자',NULL,'FATHER','USER'),(15,'서건호','test23@naver.com','$2a$10$e7dT8h/2EWFCqSufJJ4aXeDtH7EB2ZEpTRvrNhjYSBi3fe7hmOI8G','1997-12-29','010-3311-4128','2025-02-19 05:56:49','2025-02-19 05:56:49','ACTIVE','삶이팍팍',NULL,'FATHER','USER'),(16,'서건호','jjkkgh@naver.com','$2a$10$9b4.9u6V45seRhKLoJ0vGexoylH8pGIRMrSyo8gbdbA4QxtsCf/iq','1997-12-30','010-1123-2321','2025-02-19 22:37:54','2025-02-19 22:37:54','ACTIVE','하지마',NULL,'FATHER','USER'),(17,'히히히히','abc@naver.com','$2a$10$828/l/nbTq/DaWYQtsw5Q.TcVEeSZyCEvktALnrU/pdrw3tXIY4QC','1997-01-10','010-8886-6677','2025-02-19 22:44:48','2025-02-19 22:44:48','ACTIVE','기미이이니미',NULL,'MOTHER','USER'),(18,'박동민임','eyeben@naver.com','$2a$10$z/a8xb38jgHk5lXIl22N1.fQVhiyGBRJpUcFoRe.N/ePghoUYEOqu','1997-04-24','010-8181-3908','2025-02-19 22:51:08','2025-02-19 22:51:08','ACTIVE','eyeben',NULL,'MOTHER','USER');
+/*!40000 ALTER TABLE `user` ENABLE KEYS */;
+UNLOCK TABLES;
+/*!40103 SET TIME_ZONE=@OLD_TIME_ZONE */;
+
+/*!40101 SET SQL_MODE=@OLD_SQL_MODE */;
+/*!40014 SET FOREIGN_KEY_CHECKS=@OLD_FOREIGN_KEY_CHECKS */;
+/*!40014 SET UNIQUE_CHECKS=@OLD_UNIQUE_CHECKS */;
+/*!40101 SET CHARACTER_SET_CLIENT=@OLD_CHARACTER_SET_CLIENT */;
+/*!40101 SET CHARACTER_SET_RESULTS=@OLD_CHARACTER_SET_RESULTS */;
+/*!40101 SET COLLATION_CONNECTION=@OLD_COLLATION_CONNECTION */;
+/*!40111 SET SQL_NOTES=@OLD_SQL_NOTES */;
+
+-- Dump completed on 2025-02-20  2:23:20

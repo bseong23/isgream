@@ -3,6 +3,7 @@ package com.ssafy.iscream.children.controller;
 import com.ssafy.iscream.auth.user.Login;
 import com.ssafy.iscream.children.dto.req.ChildrenCreateReq;
 import com.ssafy.iscream.children.dto.req.ChildrenUpdateReq;
+import com.ssafy.iscream.children.service.ChildrenFacade;
 import com.ssafy.iscream.children.service.ChildrenService;
 import com.ssafy.iscream.common.util.ResponseUtil;
 import com.ssafy.iscream.user.domain.User;
@@ -19,7 +20,7 @@ import org.springframework.web.bind.annotation.*;
 public class ChildrenController {
 
     private final ChildrenService childrenService;
-
+    private final ChildrenFacade childrenFacade;
 
     @GetMapping()
     @Operation(summary = "전체 자녀 목록 조회")
@@ -44,7 +45,7 @@ public class ChildrenController {
     @DeleteMapping("/{childrenId}")
     @Operation(summary = "자녀 삭제")
     public ResponseEntity<?> deleteChildren(@Login User user, @PathVariable Integer childrenId){
-        childrenService.deleteChildren(user.getUserId(), childrenId);
+        childrenFacade.deleteChildren(user.getUserId(), childrenId);
         return ResponseUtil.success();
     }
 

@@ -9,7 +9,7 @@ from dotenv import load_dotenv
 load_dotenv(override=True)
 
 # OpenAI 모델 설정
-llm = ChatOpenAI(model="gpt-4-turbo")
+llm = ChatOpenAI(model="gpt-3.5-turbo")
 
 # OpenAI 임베딩 모델 로드 최적화
 embedding_function = OpenAIEmbeddings()
