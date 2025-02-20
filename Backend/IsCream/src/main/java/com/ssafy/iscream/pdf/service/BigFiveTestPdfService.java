@@ -58,7 +58,11 @@ public class BigFiveTestPdfService {
             pdfDocument.addNewPage();
 
             document.add(getTitle("Big Five 성격 검사 보고서"));
-
+            document.add(new Paragraph("검사 날짜: " + bigFiveTest.getTestDate().toString())
+                    .setFontSize(12)
+                    .setFontColor(TEXT_COLOR)
+                    .setTextAlignment(TextAlignment.RIGHT)
+                    .setMarginTop(3).setMarginBottom(3));
             // ✅ 부모 정보
             document.add(getSectionTitle("부모 정보"));
             document.add(getStyledTable(new String[][]{
