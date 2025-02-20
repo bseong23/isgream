@@ -52,15 +52,15 @@ public class ChildrenFacade {
 
         // 모든 HtpTest 조회
         List<String> htpFiles = htpSelectService.getHtpTestFileUrl(childIds);
-
         // 모든 BigFiveTest 조회
         List<String> bigFiveFiles = bigFiveTestService.getBigFiveTestPdfUrl(childIds);
 
         // S3에서 파일 한 번에 삭제
-        List<String> allFiles = Stream.concat(htpFiles.stream(), bigFiveFiles.stream()).toList();
-        if (!allFiles.isEmpty()) {
-            s3Service.deleteFile(allFiles);
-        }
+
+//        List<String> allFiles = Stream.concat(htpFiles.stream(), bigFiveFiles.stream()).toList();
+//        if (!allFiles.isEmpty()) {
+//            s3Service.deleteFile(allFiles);
+//        }
 
         // 자녀 정보 삭제
         childrenService.deleteChild(childIds);
