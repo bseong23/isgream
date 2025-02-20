@@ -89,7 +89,8 @@ const ChatPage = () => {
                   roomData: {
                     roomId: room.roomId,
                     receiver: room.receiver, // 상대방 id
-                    opponentName: room.opponentName // 상대방 이름
+                    opponentName: room.opponentName, // 상대방 이름
+                    lastMessageUnread: room.lastMessageUnread
                   }
                 }
               })}

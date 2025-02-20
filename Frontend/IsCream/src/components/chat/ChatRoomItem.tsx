@@ -1,23 +1,39 @@
-import { useState } from "react";
+import { useState, useEffect } from "react";
 
 interface ChatRoomProps {
   roomId: string;
   opponentName: string;
   newMessageCount: number;
   lastMessageTime: string;
+  lastMessageUnread: string;
   onDelete: () => void;
   onClick: () => void;
 }
 
 const ChatRoomItem = ({
-  // roomId,
   opponentName,
   newMessageCount,
   lastMessageTime,
+  lastMessageUnread,
   onDelete,
   onClick
 }: ChatRoomProps) => {
   const [showOptions, setShowOptions] = useState(false);
+
+  // 외부 클릭 감지를 위한 이벤트 리스너
+  useEffect(() => {
+    const handleClickOutside = () => {
+      setShowOptions(false);
+    };
+
+    if (showOptions) {
+      document.addEventListener('click', handleClickOutside);
+    }
+
+    return () => {
+      document.removeEventListener('click', handleClickOutside);
+    };
+  }, [showOptions]);
 
   const formatRelativeTime = (lastMessageTime: string) => {
     const now = new Date();
@@ -35,7 +51,6 @@ const ChatRoomItem = ({
     const diffInDays = Math.floor(diffInHours / 24);
     if (diffInDays < 7) return `${diffInDays}일 전`;
 
-    // 7일 이상이면 날짜 표시
     return messageTime.toLocaleDateString("ko-KR", {
       month: "long",
       day: "numeric"
@@ -47,23 +62,15 @@ const ChatRoomItem = ({
       onClick={onClick}
       className="flex items-center p-4 border-b hover:bg-gray-50 cursor-pointer"
     >
-
-      {/* 채팅방 정보 */}
       <div className="flex-1">
         <div className="font-medium">{opponentName}</div>
         <div className="text-sm text-gray-500 truncate">
-          최근 메시지가 여기에 표시됩니다
+          {lastMessageUnread}
         </div>
       </div>
 
-      {/* 새 메시지 수 & 시간 */}
       <div className="flex flex-col items-end">
         <div className="text-xs text-gray-400 mb-1">
-          {/* {new Date(lastMessageTime).toLocaleTimeString('ko-KR', {
-              hour: '2-digit',
-              minute: '2-digit',
-              hour12: false
-            })} */}
           {formatRelativeTime(lastMessageTime)}
         </div>
         {newMessageCount > 0 && (
@@ -73,32 +80,32 @@ const ChatRoomItem = ({
         )}
       </div>
 
-      {/* 채팅방이 존재할 때만 옵션 버튼 표시 */}
       {opponentName && (
-        <button
-          onClick={(e) => {
-            e.stopPropagation();
-            setShowOptions(!showOptions);
-          }}
-          className="ml-4 p-2 hover:bg-red-50 rounded"
-        >
-          ⋮
-        </button>
-      )}
-
-      {/* 드롭다운 메뉴 */}
-      {showOptions && (
-        <div className="absolute right-0 top-12 bg-white shadow-lg rounded-lg py-2 z-10">
+        <div className="relative">
           <button
             onClick={(e) => {
               e.stopPropagation();
-              onDelete();
-              setShowOptions(false);
+              setShowOptions(!showOptions);
             }}
-            className="w-full px-4 py-2 text-left text-red-500 hover:bg-gray-50"
+            className="ml-4 p-2 hover:bg-red-50 rounded"
           >
-            나가기
+            ⋮
           </button>
+
+          {showOptions && (
+            <div className="absolute right-0 bottom-full mb-1 bg-white shadow-lg rounded-lg py-2 z-20">
+              <button
+                onClick={(e) => {
+                  e.stopPropagation();
+                  onDelete();
+                  setShowOptions(false);
+                }}
+                className="w-24 px-4 py-2 text-left text-red-500 hover:bg-gray-50"
+              >
+                나가기
+              </button>
+            </div>
+          )}
         </div>
       )}
     </div>
