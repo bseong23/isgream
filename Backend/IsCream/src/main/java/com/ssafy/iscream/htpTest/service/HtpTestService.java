@@ -135,7 +135,7 @@ public class HtpTestService {
 
     // ✅ 특정 날짜의 HTP 테스트 조회
     public HtpTest getByChildIdAndDate(Integer childId, LocalDate selectedDate) {
-        return htpTestRepository.findByChildIdAndDate(childId, selectedDate).orElse(null);
+        return htpTestRepository.findByChildIdAndDateAndValid(childId, selectedDate).orElse(null);
     }
 
     // ✅ PDF URL 생성 및 반환

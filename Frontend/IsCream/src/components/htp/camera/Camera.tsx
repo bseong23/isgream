@@ -113,7 +113,7 @@ const Camera: React.FC<CameraProps> = ({
             className="w-full h-full object-contain"
             videoConstraints={{
               facingMode: "environment",
-              aspectRatio: 16 / 9
+              aspectRatio: 9 / 16, // 비율 강제
             }}
           />
         ) : (

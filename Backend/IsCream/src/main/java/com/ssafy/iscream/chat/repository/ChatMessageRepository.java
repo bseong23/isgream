@@ -10,4 +10,8 @@ import org.springframework.stereotype.Repository;
 public interface ChatMessageRepository extends MongoRepository<ChatMessage, String> {
     void deleteByRoomId(String roomId);
     Page<ChatMessage> findByRoomId(String roomId, Pageable pageable);
+
+    int countByRoomIdAndReceiverAndIsRead(String roomId, String userId, boolean b);
+
+    ChatMessage findTopByRoomIdOrderByTimestampDesc(String roomId);
 }
