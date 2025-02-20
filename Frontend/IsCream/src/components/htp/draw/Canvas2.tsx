@@ -108,7 +108,7 @@ const Canvas2: React.FC<Canvas2Props> = ({
           onClick={handleGoBack}
           className="w-[30%] h-[50px] bg-blue-400 text-white font-semibold rounded-lg text-lg shadow-md"
         >
-          검사 그만하기
+          그만하기
         </button>
         <button
           onClick={handleClear}
