@@ -103,7 +103,7 @@ const Camera2: React.FC<Camera2Props> = ({
             className="w-full h-full object-cover"
             videoConstraints={{
               facingMode: "environment",
-              aspectRatio: 4 / 3
+              aspectRatio: 16 / 9
             }}
           />
         ) : (
