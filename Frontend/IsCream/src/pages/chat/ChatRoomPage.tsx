@@ -434,7 +434,7 @@ const ChatRoomPage = () => {
             onChange={(e) => setNewMessage(e.target.value)}
             onKeyPress={handleKeyPress}
             placeholder="메시지를 입력하세요"
-            className="flex-1 border border-gray-500 rounded-lg p-2 mr-2"
+            className="flex-1 border border-gray-500 rounded-lg p-2 mr-2 focus:outline-none focus:border-gray focus:ring-1 focus:ring-black"
           />
           <button
             onClick={handleSendMessage}
