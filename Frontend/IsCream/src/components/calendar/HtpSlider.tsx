@@ -86,7 +86,7 @@ const HTPSlider: React.FC<HTPSliderProps> = ({
       <div className="relative h-[calc(100%-4rem)]">
         <div className="h-full overflow-y-auto px-4 md:px-8 pt-12">
           <div className="flex flex-col items-center">
-            <div className="absolute top-0 left-0 right-0 flex items-center justify-between px-4 md:px-8 mb-4 z-10">
+            <div className="absolute top-0 left-0 right-0 flex items-center justify-between px-4 md:px-8 mb-4">
               <button
                 onClick={goToPrevSlide}
                 className="bg-white hover:bg-gray-100 rounded-full p-1 md:p-2 transition-all shadow-md"
