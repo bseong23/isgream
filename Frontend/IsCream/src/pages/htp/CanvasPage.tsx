@@ -11,11 +11,17 @@ import LoadingGIF from "../../assets/loading.gif";
 type DrawingType = "house" | "tree" | "male" | "female";
 
 const CanvasPage: React.FC = () => {
-  const [step, setStep] = useState<"intro" | "drawing" | "gender" | "result">("intro");
+  const [step, setStep] = useState<"intro" | "drawing" | "gender" | "result">(
+    "intro"
+  );
   const [currentType, setCurrentType] = useState<DrawingType>("house");
-  const [firstGender, setFirstGender] = useState<"male" | "female" | null>(null);
+  const [firstGender, setFirstGender] = useState<"male" | "female" | null>(
+    null
+  );
   const [index, setIndex] = useState(1);
-  const [resultData, setResultData] = useState<UploadDrawingResponse | null>(null);
+  const [resultData, setResultData] = useState<UploadDrawingResponse | null>(
+    null
+  );
   const [isAnalyzing, setIsAnalyzing] = useState(false);
   const [showOppositeGenderModal, setShowOppositeGenderModal] = useState(false);
 
@@ -38,47 +44,56 @@ const CanvasPage: React.FC = () => {
     }
   }, [currentType, firstGender, index]);
 
-  const handleSelectGender = useCallback((selectedGender: "male" | "female") => {
-    setFirstGender(selectedGender);
-    setCurrentType(selectedGender);
-    setStep("drawing");
-  }, []);
+  const handleSelectGender = useCallback(
+    (selectedGender: "male" | "female") => {
+      setFirstGender(selectedGender);
+      setCurrentType(selectedGender);
+      setStep("drawing");
+    },
+    []
+  );
 
-  const handleSaveComplete = useCallback((data: UploadDrawingResponse) => {
-    console.log("📌 handleSaveComplete 호출됨! 전달된 데이터:", data);
-    setIsAnalyzing(false);
+  const handleSaveComplete = useCallback(
+    (data: UploadDrawingResponse) => {
+      console.log("📌 handleSaveComplete 호출됨! 전달된 데이터:", data);
+      setIsAnalyzing(false);
 
-    if (!data?.data || Object.keys(data.data).length === 0) {
-      console.error("❌ handleSaveComplete에서 받은 데이터가 올바르지 않습니다!", data);
-      return;
-    }
+      if (!data?.data || Object.keys(data.data).length === 0) {
+        console.error(
+          "❌ handleSaveComplete에서 받은 데이터가 올바르지 않습니다!",
+          data
+        );
+        return;
+      }
 
-    if (currentType === "house") {
-      setCurrentType("tree");
-      setIndex(2);
-      setStep("intro");
-    } else if (currentType === "tree") {
-      setCurrentType("male");
-      setIndex(3);
-      setStep("intro");
-    } else if (currentType === firstGender) {
-      setCurrentType(firstGender === "male" ? "female" : "male");
-      setIndex(4);
-      setStep("intro");
-    } else {
-      console.log("✅ 모든 그림 완료! 결과 표시 중...");
-      setResultData({
-        data: {
-          houseDrawingUrl: data.data?.houseDrawingUrl ?? "",
-          treeDrawingUrl: data.data?.treeDrawingUrl ?? "",
-          maleDrawingUrl: data.data?.maleDrawingUrl ?? "",
-          femaleDrawingUrl: data.data?.femaleDrawingUrl ?? "",
-          result: data.data?.result ?? ""
-        }
-      });
-      setStep("result");
-    }
-  }, [currentType, firstGender]);
+      if (currentType === "house") {
+        setCurrentType("tree");
+        setIndex(2);
+        setStep("intro");
+      } else if (currentType === "tree") {
+        setCurrentType("male");
+        setIndex(3);
+        setStep("intro");
+      } else if (currentType === firstGender) {
+        setCurrentType(firstGender === "male" ? "female" : "male");
+        setIndex(4);
+        setStep("intro");
+      } else {
+        console.log("✅ 모든 그림 완료! 결과 표시 중...");
+        setResultData({
+          data: {
+            houseDrawingUrl: data.data?.houseDrawingUrl ?? "",
+            treeDrawingUrl: data.data?.treeDrawingUrl ?? "",
+            maleDrawingUrl: data.data?.maleDrawingUrl ?? "",
+            femaleDrawingUrl: data.data?.femaleDrawingUrl ?? "",
+            result: data.data?.result ?? ""
+          }
+        });
+        setStep("result");
+      }
+    },
+    [currentType, firstGender]
+  );
 
   const handleSaveStart = useCallback(() => {
     setIsAnalyzing(true);
@@ -93,8 +108,8 @@ const CanvasPage: React.FC = () => {
     <div className="relative w-full flex flex-col items-center bg-white pb-20">
       {/* 반대 성별 모달 */}
       {showOppositeGenderModal && (
-        <div className="fixed inset-0 bg-white/30 bg-opacity-50 flex items-center justify-center z-50">
-          <div className="bg-white p-6 rounded-lg shadow-lg">
+        <div className="fixed inset-0 bg-black/30 bg-opacity-50 backdrop-blur-md flex items-center justify-center z-50">
+          <div className="bg-white border-[#333333] px-10 py-7 rounded-[15px]">
             <h2 className="text-xl font-bold mb-4">추가 분석</h2>
             <p>
               {firstGender === "male"
@@ -103,7 +118,7 @@ const CanvasPage: React.FC = () => {
             </p>
             <div className="mt-4 flex justify-end">
               <button
-                className="px-4 py-2 bg-blue-500 text-white rounded"
+                className="px-4 py-2 bg-green-700 text-white rounded-[15px]"
                 onClick={handleOppositeGenderContinue}
               >
                 확인
@@ -146,7 +161,7 @@ const CanvasPage: React.FC = () => {
 
       {/* AI 분석 중 로딩 스피너 */}
       {isAnalyzing && (
-        <div className="fixed inset-0 backdrop-blur-sm bg-black/30 flex items-center justify-center z-50">
+        <div className="fixed inset-0 backdrop-blur-md bg-black/30 flex items-center justify-center z-50">
           <div className="bg-white backdrop-blur-md p-8 rounded-2xl flex flex-col items-center">
             <img
               src={LoadingGIF}

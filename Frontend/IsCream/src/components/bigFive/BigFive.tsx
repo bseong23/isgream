@@ -9,9 +9,9 @@ const BigFive = () => {
     navigate("/big-five/question");
   };
   return (
-    <>
+    <div className="max-w-[706px] mx-auto">
       <TestExamCard onStartExam={handleStartExam} />
-    </>
+    </div>
   );
 };
 

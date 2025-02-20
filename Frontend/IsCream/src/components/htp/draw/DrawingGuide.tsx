@@ -29,12 +29,19 @@ interface DrawingGuideProps {
 }
 
 const DrawingGuide: React.FC<DrawingGuideProps> = ({ step }) => {
-  const guide = step === "male" || step === "female" ? DRAWING_GUIDE["person"] : DRAWING_GUIDE[step];
+  const guide =
+    step === "male" || step === "female"
+      ? DRAWING_GUIDE["person"]
+      : DRAWING_GUIDE[step];
 
   return (
     <div className="text-lg text-gray-700 text-left w-full">
       {guide.map((line, index) => (
-        <p key={index} className="mb-1" dangerouslySetInnerHTML={{ __html: line }}></p>
+        <p
+          key={index}
+          className="mb-1"
+          dangerouslySetInnerHTML={{ __html: line }}
+        ></p>
       ))}
     </div>
   );

@@ -6,7 +6,6 @@ import { DrawingType, UploadDrawingResponse } from "../../../types/htp";
 import { createUploadFormData } from "../../../utils/common/formDataHelper";
 import { useNavigate } from "react-router-dom"; // 추가된 부분
 
-
 interface CanvasProps {
   type: DrawingType;
   gender?: "male" | "female";
@@ -94,9 +93,11 @@ const Canvas: React.FC<CanvasProps> = ({
 
   return (
     <div className="fixed inset-0 flex justify-center items-center bg-[#EAF8E6] overflow-hidden">
-      <div className={`flex w-full h-full px-2 ${
-        type === "house" ? "flex-row" : "flex-col"
-      } justify-between items-center relative`}>
+      <div
+        className={`flex w-full h-full px-2 ${
+          type === "house" ? "flex-row" : "flex-col"
+        } justify-between items-center relative`}
+      >
         {/* 그림판 */}
         <div className="border-[1.5px] border-gray-400 border-opacity-50 rounded-[15px] overflow-hidden w-[90%] h-[95%] my-auto">
           <ReactSketchCanvas
@@ -106,30 +107,30 @@ const Canvas: React.FC<CanvasProps> = ({
             strokeColor="black"
           />
         </div>
-  
+
         {/* 버튼 + 캐릭터 컨테이너 */}
         <div className="flex flex-col items-center justify-between h-[90%] w-[12%] ml-2 my-auto">
-          <div className="flex flex-col gap-2 w-full">
-            <button
-              onClick={handleClear}
-              className="w-full h-[50px] bg-green-600 text-white font-semibold rounded-lg text-md shadow-md"
-            >
-              다시
-            </button>
+          <div className="flex flex-col justify-between gap-2 w-full">
             <button
               onClick={handleSave}
-              className="w-full h-[50px] bg-green-600 text-white font-semibold rounded-lg text-md shadow-md"
+              className="w-full h-[50px] bg-green-600 text-white font-semibold cursor-pointer rounded-lg text-md shadow-md"
             >
-              저장
+              검사 완료
+            </button>
+            <button
+              onClick={handleClear}
+              className="w-full h-[50px] bg-green-600 text-white font-semibold cursor-pointer rounded-lg text-md shadow-md"
+            >
+              다시 그리기
             </button>
             <button
               onClick={handleGoBack}
-              className="w-full h-[50px] bg-green-600 text-white font-semibold rounded-lg text-md shadow-md"
+              className="w-full h-[50px] bg-blue-400 text-white font-semibold cursor-pointer rounded-lg text-md shadow-md"
             >
-              뒤로가기
+              검사 그만하기
             </button>
           </div>
-  
+
           {/* 캐릭터 */}
           <div className="flex justify-center w-full">
             <img
@@ -142,8 +143,6 @@ const Canvas: React.FC<CanvasProps> = ({
       </div>
     </div>
   );
-  
-  
 };
 
 export default Canvas;
