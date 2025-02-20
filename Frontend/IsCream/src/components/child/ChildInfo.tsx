@@ -5,113 +5,90 @@ import cancelIcon from "../../assets/icons/cancle-default.png";
 import { childApi } from "../../api/child";
 import { useState } from "react";
 import ChildeModal from "../../components/modal/ChildModal";
+import { persistor } from "../../store";
 
-interface ChildInfoProps{
-    childId: number;
-    childNickName:string;
-    childGender: string;
-    childBirth: string;
-    onUpdateSuccess?: () => void;
-    onDeleteSuccess?: () => void;
+interface ChildInfoProps {
+  childId: number;
+  childNickName: string;
+  childGender: string;
+  childBirth: string;
+  onUpdateSuccess?: () => void;
+  onDeleteSuccess?: () => void;
 }
 
-const ChildInfo: React.FC<ChildInfoProps> = ({ 
-    childId,
-    childNickName, 
-    childGender, 
-    childBirth,
-    onUpdateSuccess,
-    onDeleteSuccess
+const ChildInfo: React.FC<ChildInfoProps> = ({
+  childId,
+  childNickName,
+  childGender,
+  childBirth
+  //   onUpdateSuccess,
+  //   onDeleteSuccess
 }) => {
-    const [isModalOpen, setIsModalOpen] = useState(false);
-    const [nickname, setNickname] = useState(childNickName);
-    const [gender, setGender] = useState(childGender);
-    const [birth, setBirth] = useState(childBirth);
-    
-    const handleUpdate = async () => {
-        setIsModalOpen(true);
-    };
+  const [isModalOpen, setIsModalOpen] = useState(false);
+  const [nickname, setNickname] = useState(childNickName);
+  const [gender, setGender] = useState(childGender);
+  const [birth, setBirth] = useState(childBirth);
 
-    const handleModalSubmit = async (childData: {
-        childNickname: string;
-        childGender: string;
-        childBirth: string;
-    }) => {
+  const handleUpdate = async () => {
+    setIsModalOpen(true);
+  };
 
-        try {
-            console.log('수정 시도 데이터:', childData);
+  const handleModalSubmit = async (childData: {
+    childNickname: string;
+    childGender: string;
+    childBirth: string;
+  }) => {
+    try {
+      console.log("수정 시도 데이터:", childData);
 
-            const response = await childApi.updateChild(
-                childId,
-                childData.childNickname,
-                childData.childGender === '남자아이' ? 'M' : 'F',
-                childData.childBirth
-            );
-    
-            console.log('수정 API 응답:', response);
+      const response = await childApi.updateChild(
+        childId,
+        childData.childNickname,
+        childData.childGender === "남자아이" ? "M" : "F",
+        childData.childBirth
+      );
 
-            if (response) {
-                // 로컬 상태 업데이트
-                setNickname(childData.childNickname);
-                setGender(childData.childGender);
-                setBirth(childData.childBirth);
+      console.log("수정 API 응답:", response);
 
-                // 부모 컴포넌트의 목록 새로고침
-                // console.log('onUpdateSuccess 호출 직전');
-                // onUpdateSuccess?.();
-                // console.log('onUpdateSuccess 호출 완료');
+      if (response) {
+        setNickname(childData.childNickname);
+        setGender(childData.childGender);
+        setBirth(childData.childBirth);
+        setIsModalOpen(false);
 
-                setIsModalOpen(false);
-                // window.location.reload();
-                // onUpdateSuccess가 완료될 때까지 기다림
-                if (onUpdateSuccess) {
-                    console.log('상태 업데이트 시작');
-                    await onUpdateSuccess();
-                    console.log('상태 업데이트 완료');
-                }
-                console.log('수정 성공!');
-                
-            }
-        } catch (error: any) {
-            console.error('자녀 정보 수정 실패:', error);
-            if (error.response) {
-                console.error('서버 에러 응답:', error.response.data);
-                console.error('서버 에러 상태:', error.response.status);
-            }
-            alert(`자녀 정보 수정에 실패했습니다. ${error.message}`);
-        }
-    };
+        await persistor.purge();
+        window.location.reload();
+      }
+    } catch (error: any) {
+      console.error("자녀 정보 수정 실패:", error);
+      if (error.response) {
+        console.error("서버 에러 응답:", error.response.data);
+        console.error("서버 에러 상태:", error.response.status);
+      }
+      alert(`자녀 정보 수정에 실패했습니다. ${error.message}`);
+    }
+  };
 
-    const handleDelete = async () => {
-        try {
-            const isConfirmed = window.confirm('정말로 자녀를 삭제하시겠습니까?');
-            if (!isConfirmed) return;
-    
-            console.log('자녀 삭제 시도');
-            
-            await childApi.deleteChild(childId);
+  const handleDelete = async () => {
+    try {
+      const isConfirmed = window.confirm("정말로 자녀를 삭제하시겠습니까?");
+      if (!isConfirmed) return;
 
-            // console.log("응답: ", response);
-            onDeleteSuccess?.();
-            console.log('자녀 삭제 성공!');
-        } catch (error: any) {
-            // 백엔드에서 반환한 구체적인 에러 메시지 우선 사용
-            const errorMessage = error.response?.data?.message || 
-                                 error.message || 
-                                 '자녀 삭제 중 오류가 발생했습니다.';
-    
-            console.error('자녀 삭제 실패:', error);
-            
-            // 사용자에게 구체적인 에러 메시지 표시
-            alert(errorMessage);
-    
-            // 필요하다면 추가 에러 처리 (예: 에러 로깅, 특정 조건에 따른 다른 처리)
-            if (error.response?.data?.code === 'E2001') {
-                // 시스템 에러의 경우 추가 조치
-                // 예: 고객 지원팀에 문의 안내
-            }
-        }
-    };
+      console.log("자녀 삭제 시도");
+
+      await childApi.deleteChild(childId);
+      await persistor.purge();
+      window.location.reload();
+    } catch (error: any) {
+      const errorMessage =
+        error.response?.data?.message ||
+        error.message ||
+        "자녀 삭제 중 오류가 발생했습니다.";
+
+      console.error("자녀 삭제 실패:", error);
+      alert(errorMessage);
+    }
+  };
 
     return(
         <>
@@ -138,18 +115,18 @@ const ChildInfo: React.FC<ChildInfoProps> = ({
                 <p className="text-gray-600">생년월일: {birth}</p>
             </div>
 
-            <ChildeModal
-                isOpen={isModalOpen}
-                onClose={() => setIsModalOpen(false)}
-                onSubmit={handleModalSubmit}
-                initialData={{
-                    childNickname: childNickName,
-                    childGender: childGender,
-                    childBirth: childBirth
-                }}
-            />
-        </>
-    )
-}
+      <ChildeModal
+        isOpen={isModalOpen}
+        onClose={() => setIsModalOpen(false)}
+        onSubmit={handleModalSubmit}
+        initialData={{
+          childNickname: childNickName,
+          childGender: childGender,
+          childBirth: childBirth
+        }}
+      />
+    </>
+  );
+};
 
 export default ChildInfo;

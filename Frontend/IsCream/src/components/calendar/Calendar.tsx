@@ -66,7 +66,7 @@ const Calendar: React.FC<CalendarProps> = ({ className }) => {
   };
 
   return (
-    <div className={`w-[95%] max-w-2xl mx-auto p-4 ${className}`}>
+    <div className={`w-[95%] mx-auto p-4 ${className}`}>
       <CalendarHeader
         currentDate={currentDate}
         onDateChange={handleDateChange}

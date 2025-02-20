@@ -127,7 +127,7 @@ const Canvas: React.FC<CanvasProps> = ({
               onClick={handleGoBack}
               className="w-full h-[50px] bg-blue-400 text-white font-semibold cursor-pointer rounded-lg text-md shadow-md"
             >
-              검사 그만하기
+              그만하기
             </button>
           </div>
 
