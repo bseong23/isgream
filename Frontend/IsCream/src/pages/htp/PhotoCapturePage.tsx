@@ -27,11 +27,18 @@ const LoadingSpinner = () => (
 type PhotoType = "house" | "tree" | "male" | "female";
 
 const CameraPage: React.FC = () => {
-  const [step, setStep] = useState<"intro" | "camera" | "gender" | "result">("intro");
+  const [step, setStep] = useState<"intro" | "camera" | "gender" | "result">(
+    "intro"
+  );
   const [currentType, setCurrentType] = useState<PhotoType>("house");
-  const [firstGender, setFirstGender] = useState<"male" | "female" | null>(null);
+  const [firstGender, setFirstGender] = useState<"male" | "female" | null>(
+    null
+  );
   const [index, setIndex] = useState(1);
-  const [resultData, setResultData] = useState<Record<string, undefined> | null>(null);
+  const [resultData, setResultData] = useState<Record<
+    string,
+    undefined
+  > | null>(null);
   const [isLoading, setIsLoading] = useState(false);
   const [showOppositeGenderModal, setShowOppositeGenderModal] = useState(false);
 
@@ -54,38 +61,47 @@ const CameraPage: React.FC = () => {
     }
   }, [currentType, firstGender, index]);
 
-  const handleSelectGender = useCallback((selectedGender: "male" | "female") => {
-    setFirstGender(selectedGender);
-    setCurrentType(selectedGender);
-    setStep("camera");
-  }, []);
+  const handleSelectGender = useCallback(
+    (selectedGender: "male" | "female") => {
+      setFirstGender(selectedGender);
+      setCurrentType(selectedGender);
+      setStep("camera");
+    },
+    []
+  );
 
-  const handleSaveComplete = useCallback((data) => {
-    setIsLoading(false);
+  const handleSaveComplete = useCallback(
+    (data) => {
+      setIsLoading(false);
 
-    if (!data || Object.keys(data).length === 0) {
-      console.error("❌ handleSaveComplete에서 받은 데이터가 올바르지 않습니다!", data);
-      return;
-    }
+      if (!data || Object.keys(data).length === 0) {
+        console.error(
+          "❌ handleSaveComplete에서 받은 데이터가 올바르지 않습니다!",
+          data
+        );
+        return;
+      }
 
-    if (currentType === "house") {
-      setCurrentType("tree");
-      setIndex(2);
-      setStep("intro");
-    } else if (currentType === "tree") {
-      setCurrentType("male");
-      setIndex(3);
-      setStep("intro");
-    } else if (currentType === firstGender) {
-      setCurrentType(firstGender === "male" ? "female" : "male");
-      setIndex(4);
-      setStep("intro");
-    } else {
-      console.log("✅ 모든 그림 완료! 결과 표시 중...");
-      setResultData(data);
-      setStep("result");
-    }
-  }, [currentType, firstGender]);
+      if (currentType === "house") {
+        setCurrentType("tree");
+        setIndex(2);
+        setStep("intro");
+      } else if (currentType === "tree") {
+        setCurrentType("male");
+        setIndex(3);
+        setStep("intro");
+      } else if (currentType === firstGender) {
+        setCurrentType(firstGender === "male" ? "female" : "male");
+        setIndex(4);
+        setStep("intro");
+      } else {
+        console.log("✅ 모든 그림 완료! 결과 표시 중...");
+        setResultData(data);
+        setStep("result");
+      }
+    },
+    [currentType, firstGender]
+  );
 
   const handleSaveStart = useCallback(() => {
     setIsLoading(true);
@@ -97,7 +113,7 @@ const CameraPage: React.FC = () => {
   };
 
   return (
-    <div className="w-screen h-screen flex flex-col justify-center items-center bg-gray-100 overflow-hidden fixed top-0 left-0">
+    <div className="w-screen h-screen flex flex-col justify-center items-center bg-white overflow-hidden fixed top-0 left-0">
       {/* 반대 성별 모달 */}
       {showOppositeGenderModal && (
         <div className="fixed inset-0 bg-black bg-opacity-50 flex items-center justify-center z-50">

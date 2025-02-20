@@ -7,6 +7,9 @@ importScripts(
   "https://www.gstatic.com/firebasejs/9.0.0/firebase-messaging-compat.js"
 );
 
+// Workbox 매니페스트 주입
+self.__WB_MANIFEST;
+
 // Firebase 설정 및 초기화 로직
 const firebaseConfig = {
   apiKey: "AIzaSyCP8mGauQdH-F9Wb6_r6ZDH7CcANiOEmjE",

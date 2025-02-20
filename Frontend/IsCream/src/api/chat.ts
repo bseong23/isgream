@@ -48,6 +48,7 @@ let currentSubscription: any = null;
 
 export const chatApi = {
   // 채팅방 목록 불러오기
+
   async getChatList(): Promise<GetChatListResponse> {
     try {
       const response = await api.get("/chatrooms");
@@ -66,7 +67,9 @@ export const chatApi = {
   // 채팅방 생성하기
   async createChatroom(receiverId: string): Promise<CreateChatroomResponse> {
     try {
-      const response = await api.post(`/chatrooms/create?receiverId=${receiverId}`);
+      const response = await api.post(
+        `/chatrooms/create?receiverId=${receiverId}`
+      );
       if (response.data.code === "S0000") {
         return response.data;
       }
@@ -115,10 +118,10 @@ export const chatApi = {
     return new Promise((resolve, reject) => {
       try {
         if (stompClient?.connected) {
-            // 이미 연결되어 있으면 바로 resolve
-            resolve();
-            return;
-          }
+          // 이미 연결되어 있으면 바로 resolve
+          resolve();
+          return;
+        }
 
         stompClient = new Client({
           brokerURL: "https://i12a407.p.ssafy.io/api/ws",
@@ -181,9 +184,9 @@ export const chatApi = {
         console.log("Sending message:", messageData);
 
         if (stompClient === null) {
-            console.log("stomp문제ㅜㅜ");
-            
-            return;
+          console.log("stomp문제ㅜㅜ");
+
+          return;
         }
 
         stompClient.publish({
@@ -211,7 +214,7 @@ export const chatApi = {
     });
   },
 
-  // // 채팅방 입장시 연결 성공 직후, 구독
+  // 채팅방 입장시 연결 성공 직후, 구독
   async subscribeChatroom(
     roomId: string,
     onMessageReceived: (message: any) => void
@@ -229,10 +232,10 @@ export const chatApi = {
         `/sub/chat/room/${roomId}`,
         (message) => {
           console.log("새로운 메시지 수신:", message);
-          try{
-              const receivedMessage = JSON.parse(message.body);
-              onMessageReceived(receivedMessage);
-          }catch(error){
+          try {
+            const receivedMessage = JSON.parse(message.body);
+            onMessageReceived(receivedMessage);
+          } catch (error) {
             console.error("메시지 파싱 오류:", error);
             console.log("원본 메시지:", message.body);
           }
@@ -252,6 +255,8 @@ export const chatApi = {
   },
 
   // // 채팅방 안에서, 메시지 읽음 처리
+  // 메시지 전송을 위한 별도의 일회성 구독 ID 관리
+  _tempSubscriptionId: 0,
   async messageRead(
     messageId: string,
     readerId: string,
@@ -270,39 +275,75 @@ export const chatApi = {
         };
         console.log("sending read message: ", messageData);
 
-        stompClient?.publish({
+        // 읽음 처리를 위한 별도의 일회성 구독
+        const tempSubId = `temp-ack-${this._tempSubscriptionId++}`;
+        if (!stompClient) return;
+        const tempSubscription = stompClient.subscribe(
+          `/sub/chat/room/${roomId}`,
+          (message) => {
+            try {
+              const responseData = JSON.parse(message.body);
+
+              if (responseData.timestamp) {
+                responseData.timestamp = new Date(responseData.timestamp);
+              }
+
+              tempSubscription.unsubscribe(); // 일회성 구독만 해제
+              resolve(responseData);
+              console.log("읽음 처리 응답 데이터: ", responseData);
+            } catch (parseError) {
+              tempSubscription.unsubscribe();
+              reject(parseError);
+            }
+          },
+          { id: tempSubId }
+        );
+
+        // 읽음 처리 메시지 발행
+        stompClient.publish({
           destination: "/pub/chat/ack",
           body: JSON.stringify(messageData),
           headers: { "content-type": "application/json" }
         });
-
-        // 서버 응답을 기다림
-        const subscription = stompClient?.subscribe(
-          `/sub/chat/room/${roomId}`,
-          (message) => {
-            try{
-                const responseData = JSON.parse(message.body);
-                
-                // 타임스탬프 파싱 시 안전한 방법 사용
-                if (responseData.timestamp) {
-                    responseData.timestamp = new Date(responseData.timestamp);
-                }
-
-                subscription?.unsubscribe(); // 응답을 받은 후 구독 해제
-                resolve(responseData);
-                console.log("백엔드 응답 데이터: ", responseData);
-            } catch (parseError) {
-                console.error("메시지 파싱 중 오류: ", parseError);
-                console.log("원본 메시지 본문: ", message.body);
-                reject(parseError);
-            }
-          }
-        );
-        
       } catch (error) {
-        console.log("메세지 전송 실패: ", error);
+        console.log("읽음 처리 실패: ", error);
         reject(error);
       }
     });
   }
+  //         stompClient?.publish({
+  //           destination: "/pub/chat/ack",
+  //           body: JSON.stringify(messageData),
+  //           headers: { "content-type": "application/json" }
+  //         });
+
+  //         // 서버 응답을 기다림
+  //         const subscription = stompClient?.subscribe(
+  //           `/sub/chat/room/${roomId}`,
+  //           (message) => {
+  //             try{
+  //                 const responseData = JSON.parse(message.body);
+
+  //                 // 타임스탬프 파싱 시 안전한 방법 사용
+  //                 if (responseData.timestamp) {
+  //                     responseData.timestamp = new Date(responseData.timestamp);
+  //                 }
+
+  //                 subscription?.unsubscribe(); // 응답을 받은 후 구독 해제
+  //                 resolve(responseData);
+  //                 console.log("백엔드 응답 데이터: ", responseData);
+  //             } catch (parseError) {
+  //                 console.error("메시지 파싱 중 오류: ", parseError);
+  //                 console.log("원본 메시지 본문: ", message.body);
+  //                 reject(parseError);
+  //             }
+  //           }
+  //         );
+
+  //       } catch (error) {
+  //         console.log("메세지 전송 실패: ", error);
+  //         reject(error);
+  //       }
+  //     });
+  //   }
 };

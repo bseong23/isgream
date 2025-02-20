@@ -15,17 +15,17 @@ interface SlideType {
 const Banner = () => {
   const originalSlides: SlideType[] = [
     { image: Banner1, to: "/ai-analysis", isVertical: true },
-    { image: Banner2, to: "/parenting-test", isVertical: true },
+    { image: Banner2, to: "/ai-analysis", isVertical: true },
     // { image: Banner4, to: "/parenting-test" },
     { image: Banner3, to: "/big5-test" },
-    { image: Banner5, to: "/parenting-test" }
+    { image: Banner5, to: "/pat" }
   ];
 
   const slides = [
     originalSlides[originalSlides.length - 1],
     ...originalSlides,
     originalSlides[0]
-  ]; 
+  ];
 
   const [currentSlide, setCurrentSlide] = useState(1);
   const [isPaused, setIsPaused] = useState(false);

@@ -8,7 +8,16 @@ interface DecodedToken {
   iat: number;
 }
 
-const PUBLIC_PATHS = ["/", "/login", "/signup", "/board", "/board/detail"];
+const PUBLIC_PATHS = [
+  "/", 
+  "/login", 
+  "/signup", 
+  "/board", 
+  "/board/detail",
+  "/users/find-password",  // 추가
+  "/reset-password"        // 비밀번호 재설정 페이지도 추가
+];
+
 const MAX_RETRY_COUNT = 3;
 let retryCount = 0;
 let tokenCheckInterval: number | null = null;
