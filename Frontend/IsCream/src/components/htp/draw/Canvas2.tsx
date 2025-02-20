@@ -1,10 +1,20 @@
 import React, { useRef, useState, useEffect } from "react";
 import { ReactSketchCanvas, ReactSketchCanvasRef } from "react-sketch-canvas";
-import characterImage from "../../../assets/image/character2.png"; // 캐릭터 이미지 import
+import characterImage from "../../../assets/image/character2.png";
 import { useUploadDrawing } from "../../../hooks/htp/useUploadDrawing";
 import { DrawingType, UploadDrawingResponse } from "../../../types/htp";
-import { createUploadFormData } from "../../../utils/common/formDataHelper"; // ✅ FormData 변환 함수 임포트
-import { useNavigate } from "react-router-dom"; // 추가된 부분
+import { createUploadFormData } from "../../../utils/common/formDataHelper";
+import { useNavigate } from "react-router-dom";
+
+// 오디오 URL 상수 (순서 중요)
+const AUDIO_URLS = [
+  "https://a407-20250124.s3.ap-northeast-2.amazonaws.com/audio/htp_2.mp3", // 2번 첫 오디오
+  "https://a407-20250124.s3.ap-northeast-2.amazonaws.com/audio/htp_2-1.mp3", // 2번 두 번째 오디오
+  "https://a407-20250124.s3.ap-northeast-2.amazonaws.com/audio/htp_3.mp3", // 3번 첫 오디오
+  "https://a407-20250124.s3.ap-northeast-2.amazonaws.com/audio/htp_3-1.mp3", // 3번 두 번째 오디오
+  "https://a407-20250124.s3.ap-northeast-2.amazonaws.com/audio/htp_4.mp3", // 4번 첫 오디오
+  "https://a407-20250124.s3.ap-northeast-2.amazonaws.com/audio/htp_4-1.mp3" // 4번 두 번째 오디오
+];
 
 interface Canvas2Props {
   type: DrawingType;
@@ -23,14 +33,57 @@ const Canvas2: React.FC<Canvas2Props> = ({
   onSaveComplete,
   onSaveStart
 }) => {
-  const navigate = useNavigate(); // 추가된 부분
+  const navigate = useNavigate();
   const canvasRef = useRef<ReactSketchCanvasRef | null>(null);
+  const audioRef = useRef<HTMLAudioElement>(new Audio());
   const [startTime, setStartTime] = useState<number | null>(null);
   const { mutate: uploadDrawing } = useUploadDrawing();
 
+  // 오디오 재생 함수
+  const playAudio = (isEntryAudio: boolean): Promise<void> => {
+    return new Promise((resolve) => {
+      const audioIndex = (index - 2) * 2 + (isEntryAudio ? 0 : 1);
+
+      console.log(`index: ${index}, audioIndex: ${audioIndex}`);
+      console.log(`선택된 오디오 URL: ${AUDIO_URLS[audioIndex]}`);
+
+      audioRef.current.src = AUDIO_URLS[audioIndex];
+
+      // 오디오 재생 완료 이벤트 리스너 추가
+      const onEnded = () => {
+        audioRef.current.removeEventListener("ended", onEnded);
+        resolve();
+      };
+
+      // 에러 핸들러 추가
+      const onError = (error: any) => {
+        console.error("오디오 재생 실패:", error);
+        resolve(); // 재생 실패해도 계속 진행
+      };
+
+      audioRef.current.addEventListener("ended", onEnded);
+      audioRef.current.addEventListener("error", onError);
+
+      audioRef.current.play().catch(onError);
+    });
+  };
+
   useEffect(() => {
     setStartTime(Date.now());
+
+    // 페이지 진입 시 첫 번째 오디오 재생
+    playAudio(true);
+
+    // 컴포넌트 언마운트 시 오디오 정리
+    return () => {
+      audioRef.current.pause();
+      audioRef.current.src = "";
+    };
   }, []);
+
+  const handleGoBack = () => {
+    navigate("/ai-analysis");
+  };
 
   const handleClear = () => {
     canvasRef.current?.clearCanvas();
@@ -39,7 +92,9 @@ const Canvas2: React.FC<Canvas2Props> = ({
   const handleSave = async () => {
     if (!canvasRef.current || !startTime) return;
 
-    // 저장 시작 시 로딩 상태 활성화
+    // 검사 완료 시 두 번째 오디오 재생하고 완료 대기
+    await playAudio(false);
+
     onSaveStart();
 
     const timeTaken = ((Date.now() - startTime) / 1000).toFixed(2);
@@ -86,10 +141,6 @@ const Canvas2: React.FC<Canvas2Props> = ({
         alert("저장 실패! 다시 시도해주세요.");
       }
     });
-  };
-
-  const handleGoBack = () => {
-    navigate("/ai-analysis"); // 뒤로가기 버튼 클릭 시 /ai-analysis로 이동
   };
 
   return (
