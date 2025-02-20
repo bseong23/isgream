@@ -25,6 +25,7 @@ const DRAWING_GUIDE: Record<"house" | "tree" | "person", string[]> = {
   person: [
     "✅ <span class='text-green-600 font-bold'>사람</span>을 떠올리며 그려주세요!",
     "✅ <span class='text-green-600 font-bold'>검은색</span>만 사용할거에요!",
+    "✅ <span class='text-green-600 font-bold'>여성</span>이나 <span class='text-green-600 font-bold'>남성</span>을 선택해서 그려주세요",
     "✅ 그림 실력을 검사하는 것이 아니에요!",
     "✅ 즐거운 마음으로 그림을 그려 주세요!"
   ]
