@@ -41,9 +41,9 @@ public class WebSocketEventListener {
             token = token.substring(7); // "Bearer " 제거
         }
 
-        Integer userId = null;
+        String userId = null;
         if (token != null && tokenProvider.validateToken(token)) {
-            userId = tokenProvider.getUserId(token); // ✅ 기존 TokenProvider 활용
+            userId = String.valueOf(tokenProvider.getUserId(token)); // ✅ 기존 TokenProvider 활용
             log.info("🛠 Extracted Token: {}", token);
         }else {
             log.warn("🚨 No valid Authorization token found in headers");
