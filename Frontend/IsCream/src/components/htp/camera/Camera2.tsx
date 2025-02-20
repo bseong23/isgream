@@ -3,6 +3,7 @@ import Webcam from "react-webcam";
 import { useUploadDrawing } from "../../../hooks/htp/useUploadDrawing";
 import { DrawingType } from "../../../types/htp";
 import { createUploadFormData } from "../../../utils/common/formDataHelper";
+import { useNavigate } from "react-router-dom"; // 추가된 부분
 
 interface Camera2Props {
   type: DrawingType;
@@ -21,6 +22,7 @@ const Camera2: React.FC<Camera2Props> = ({
   onSaveComplete,
   onSaveStart
 }) => {
+  const navigate = useNavigate();
   const webcamRef = useRef<Webcam | null>(null);
   const [capturedImage, setCapturedImage] = useState<string | null>(null);
   const [manualTime, setManualTime] = useState<string>("");
@@ -92,6 +94,10 @@ const Camera2: React.FC<Camera2Props> = ({
     });
   };
 
+  const handleGoBack = () => {
+    navigate("/ai-analysis"); // 추가된 부분: 뒤로가기 버튼 클릭 시 /ai-analysis로 이동
+  };
+
   return (
     <div className="fixed inset-0 flex flex-col pb-20 mt-15 items-center justify-start bg-gray-50 px-4 py-6 gap-6 overflow-y-auto">
       {/* 카메라/이미지 영역 */}
@@ -132,7 +138,7 @@ const Camera2: React.FC<Camera2Props> = ({
       <div className="w-full max-w-xl flex flex-col sm:flex-row gap-4 mb-6">
         <button
           onClick={handleCapture}
-          className="w-full h-14 bg-blue-600 text-white text-lg font-semibold rounded-xl shadow-md hover:bg-blue-700 transition-colors duration-200 flex items-center justify-center gap-2"
+          className="w-full h-14 bg-green-600 text-white text-lg font-semibold rounded-xl shadow-md hover:bg-blue-700 transition-colors duration-200 flex items-center justify-center gap-2"
         >
           촬영하기
         </button>
@@ -141,6 +147,12 @@ const Camera2: React.FC<Camera2Props> = ({
           className="w-full h-14 bg-green-600 text-white text-lg font-semibold rounded-xl shadow-md hover:bg-green-700 transition-colors duration-200 flex items-center justify-center gap-2"
         >
           저장하기
+        </button>
+        <button
+          onClick={handleGoBack}
+          className="w-full h-14 bg-blue-600 text-white text-lg font-semibold rounded-xl shadow-md hover:bg-blue-700 transition-colors duration-200 flex items-center justify-center gap-2"
+        >
+          촬영하기
         </button>
       </div>
     </div>
