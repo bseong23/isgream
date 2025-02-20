@@ -26,15 +26,13 @@ const ChildrenSection: React.FC<ChildrenSectionProps> = () => {
       const children = await childApi.getChildren();
       console.log("ChildrenSection 조회 잘돼!!", children);
 
-      setChildren(children);
+      const childrenData = children;
+      setChildren(childrenData);
+      console.log(children);
     } catch (error) {
       console.error("자녀 정보 조회 실패:", error);
     }
   }, []);
-
-  useEffect(() => {
-    fetchChildren();
-  }, [fetchChildren]);
 
   const handleOpenAddChildModal = () => {
     setIsAddModalOpen(true);
@@ -79,7 +77,7 @@ const ChildrenSection: React.FC<ChildrenSectionProps> = () => {
         <div className="overflow-x-auto">
           <div className="flex min-w-max">
             {children.map((child, index) => (
-              <div key={index} className="m-2">
+              <div key={child.childId} className="m-2">
                 <ChildInfo
                   key={index}
                   childId={child.childId}
