@@ -235,7 +235,7 @@ const BigFiveQuestionPage: React.FC = () => {
   const hasCurrentAnswer = answers[currentQuestion.question] !== undefined;
 
   return (
-    <div className="fixed inset-0 bg-gray-50 overflow-hidden">
+    <div className="inset-0 mt-5 mb-5 bg-white overflow-hidden">
       {/* 배경 데코레이션과 공룡들 */}
       <div className="absolute inset-0 overflow-hidden pointer-events-none">
         <div className="dino-1 absolute left-[10%] top-[20%]">

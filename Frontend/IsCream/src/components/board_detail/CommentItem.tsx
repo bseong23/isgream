@@ -59,18 +59,38 @@ const CommentItem = ({
               disabled={
                 !editContent.trim() || editContent.trim() === comment.content
               }
-              className={`px-4 py-2 rounded-[15px] ${
-                editContent.trim()
-                  ? "bg-green-600 text-white"
-                  : "bg-gray-300 text-gray-500 cursor-not-allowed"
-              }`}
+              className={`
+    px-3 
+    py-1 
+    text-sm 
+    rounded-[15px] 
+    ${
+      editContent.trim()
+        ? "bg-green-600 text-white"
+        : "bg-gray-300 text-gray-500 cursor-not-allowed"
+    }
+    min-w-[60px] 
+    flex 
+    items-center 
+    justify-center
+  `}
             >
               저장
             </button>
             <button
               type="button"
               onClick={() => onEdit?.(comment.commentId, comment.content)}
-              className="text-gray-500 hover:text-gray-700 py-2 px-2"
+              className="
+    text-sm 
+    text-gray-500 
+    hover:text-gray-700 
+    py-1 
+    px-2 
+    min-w-[60px] 
+    flex 
+    items-center 
+    justify-center
+  "
             >
               취소
             </button>
