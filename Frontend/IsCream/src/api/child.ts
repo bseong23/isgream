@@ -64,8 +64,10 @@ export const childApi = {
         birthDate
       });
 
+      console.log("응답데이터: ", response);
+      
       if (response.data.code === "S0000") {
-        return response.data.data;
+        return response.data;
       }
 
       throw new Error(

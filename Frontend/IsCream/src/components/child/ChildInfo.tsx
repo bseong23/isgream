@@ -37,6 +37,7 @@ const ChildInfo: React.FC<ChildInfoProps> = ({
         childGender: string;
         childBirth: string;
     }) => {
+
         try {
             console.log('수정 시도 데이터:', childData);
 
@@ -56,12 +57,20 @@ const ChildInfo: React.FC<ChildInfoProps> = ({
                 setBirth(childData.childBirth);
 
                 // 부모 컴포넌트의 목록 새로고침
-                console.log('onUpdateSuccess 호출 직전');
-                onUpdateSuccess?.();
-                console.log('onUpdateSuccess 호출 완료');
+                // console.log('onUpdateSuccess 호출 직전');
+                // onUpdateSuccess?.();
+                // console.log('onUpdateSuccess 호출 완료');
 
                 setIsModalOpen(false);
+                // window.location.reload();
+                // onUpdateSuccess가 완료될 때까지 기다림
+                if (onUpdateSuccess) {
+                    console.log('상태 업데이트 시작');
+                    await onUpdateSuccess();
+                    console.log('상태 업데이트 완료');
+                }
                 console.log('수정 성공!');
+                
             }
         } catch (error: any) {
             console.error('자녀 정보 수정 실패:', error);
