@@ -43,12 +43,19 @@ const DetailContent: React.FC<DetailContentProps> = ({
 
       const response = await chatApi.createChatroom(post.userId.toString());
       console.log("채팅방 생성하기 버튼 눌렀을 때의 응답: ",response);
+      console.log("게시글에서의 receiver: ", post.userId);
       
       if (response.code === "S0000") {
         // 채팅방 생성 성공시 채팅방으로 이동
         if (response.data?.id) {
           onChat?.(post.userId?.toString());
-          navigate(`/chat/room/${response.data.id}`);
+          navigate(`/chat/room/${response.data.id}`, {
+            state: { 
+              roomData: {
+                receiver: post.userId.toString() 
+              }
+            } 
+          });
         }
       } else {
         throw new Error(response.message || "채팅방 생성에 실패했습니다.");
