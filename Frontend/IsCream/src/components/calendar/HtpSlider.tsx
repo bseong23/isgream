@@ -78,16 +78,15 @@ const HTPSlider: React.FC<HTPSliderProps> = ({
   };
 
   return (
-    <div className="relative h-full">
+    <div className="relative">
       <h3 className="font-medium mb-6 text-lg md:text-xl px-4 md:px-0">
         {date.year}년 {date.month}월 {date.day}일의 HTP 검사
       </h3>
 
-      <div className="relative h-[calc(100%-4rem)]">
-        <div className="h-full overflow-y-auto px-4 md:px-8 pt-12">
+      <div className="relative h-auto">
+        <div className="h-auto overflow-y-auto px-4 md:px-8 pt-12">
           <div className="flex flex-col items-center">
             <div className="absolute top-0 left-0 right-0 flex items-center justify-between px-4 md:px-8 mb-4 bg-white">
-              
               <button
                 onClick={goToPrevSlide}
                 className="bg-white hover:bg-gray-100 rounded-full p-1 md:p-2 transition-all shadow-md"
