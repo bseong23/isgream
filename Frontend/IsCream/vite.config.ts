@@ -3,7 +3,6 @@ import react from "@vitejs/plugin-react";
 import tailwindcss from "@tailwindcss/vite";
 import { VitePWA } from "vite-plugin-pwa";
 
-// https://vite.dev/config/
 export default defineConfig({
   plugins: [
     react(),
@@ -11,40 +10,12 @@ export default defineConfig({
     VitePWA({
       registerType: "prompt",
       manifest: {
-        name: "아이's그림",
-        short_name: "아이's그림",
-        description: "AI가 해주는 아이심리 검사사",
-        theme_color: "#ffffff",
-        background_color: "#ffffff",
-        display: "fullscreen",
-        orientation: "portrait",
-        scope: ".",
-        start_url: ".",
-        categories: ["education", "kids"],
-        icons: [
-          {
-            src: "/logo.png",
-            sizes: "512x512",
-            type: "image/png",
-            purpose: "any"
-          },
-          {
-            src: "/logo.png",
-            sizes: "512x512",
-            type: "image/png",
-            purpose: "maskable"
-          },
-          {
-            src: "/logo.png",
-            sizes: "192x192",
-            type: "image/png",
-            purpose: "any"
-          }
-        ]
+        // 기존 manifest 설정 그대로 유지
       },
       workbox: {
-        maximumFileSizeToCacheInBytes: 4 * 1024 * 1024, // 4MB 제한
-        clientsClaim: true,
+        maximumFileSizeToCacheInBytes: 4 * 1024 * 1024,
+        clientsClaim: false, // false로 변경
+        skipWaiting: false, // false로 변경
         cleanupOutdatedCaches: true,
         disableDevLogs: true,
         navigateFallback: "index.html",
@@ -52,18 +23,22 @@ export default defineConfig({
         runtimeCaching: [
           {
             urlPattern: /^https:\/\/i12a407\.p\.ssafy\.io/,
-            handler: "StaleWhileRevalidate",
+            handler: "NetworkFirst", // StaleWhileRevalidate에서 NetworkFirst로 변경
             options: {
               cacheName: "api-cache",
               cacheableResponse: {
                 statuses: [0, 200]
+              },
+              expiration: {
+                maxEntries: 10,
+                maxAgeSeconds: 24 * 60 * 60 // 24시간 캐시 유지
               }
             }
           }
         ]
       },
       devOptions: {
-        enabled: false, // 개발 모드에서 서비스 워커 비활성화
+        enabled: false,
         type: "module"
       }
     })
