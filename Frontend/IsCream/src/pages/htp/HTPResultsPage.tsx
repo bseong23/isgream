@@ -130,64 +130,98 @@ export default function HTPResultPage({
   }
 
   return (
-    <div className="w-screen h-screen flex flex-col items-center bg-white overflow-auto p-4">
+    <div className="w-full -mt-15 -mb-30 pb-0 flex flex-col items-center bg-white px-4">
       {parsedResults.length > 0 ? (
-        <>
-          <div className="relative w-full max-w-md">
-            {parsedResults[currentIndex].imageUrl && (
-              <img
-                src={parsedResults[currentIndex].imageUrl}
-                alt={parsedResults[currentIndex].type}
-                className="w-full h-64 object-contain rounded-lg shadow-md transition-all duration-300 ease-in-out"
-              />
-            )}
+        <div className="w-full max-w-xl space-y-6">
+          <div className="text-center">
+            <h1 className="text-2xl md:text-3xl font-bold text-gray-700 mb-2">
+              <p>
+                <span className="text-pink-200 drop-shadow-[0_1.2px_1.2px_rgba(0,0,0,0.8)]">
+                  아
+                </span>
+                <span className="text-blue-200 drop-shadow-[0_1.2px_1.2px_rgba(0,0,0,0.8)]">
+                  이
+                </span>
+                <span className="text-yellow-200 drop-shadow-[0_1.2px_1.2px_rgba(0,0,0,0.8)]">
+                  's
+                </span>
+                <span className="text-pink-200 drop-shadow-[0_1.2px_1.2px_rgba(0,0,0,0.8)]">
+                  그
+                </span>
+                <span className="text-blue-200 drop-shadow-[0_1.2px_1.2px_rgba(0,0,0,0.8)]">
+                  림
+                </span>
+                과 같이
+              </p>
+              <p>아이의 심리를 깊이 들여다봐요</p>
+            </h1>
+          </div>
 
+          {/* 헤더 섹션 */}
+          <div className="flex items-center justify-center space-x-6">
             {parsedResults.length > 1 && (
               <button
-                className="absolute left-2 top-1/2 transform -translate-y-1/2 bg-gray-800 text-white px-4 py-2 rounded-full shadow-md hover:bg-gray-600 transition"
+                className="text-gray-800 w-10 h-10 rounded-full flex items-center justify-center hover:bg-gray-300 transition"
                 onClick={prevSlide}
               >
-                ◀
+                <span className="text-xl">◀</span>
               </button>
             )}
-
+            <p className="text-lg md:text-xl text-gray-700 font-semibold">
+              {parsedResults[currentIndex].type} 검사 결과
+            </p>
             {parsedResults.length > 1 && (
               <button
-                className="absolute right-2 top-1/2 transform -translate-y-1/2 bg-gray-800 text-white px-4 py-2 rounded-full shadow-md hover:bg-gray-600 transition"
+                className="text-gray-800 w-10 h-10 rounded-full flex items-center justify-center hover:bg-gray-300 transition"
                 onClick={nextSlide}
               >
-                ▶
+                <span className="text-xl">▶</span>
               </button>
             )}
           </div>
 
-          <h2 className="text-xl font-semibold text-center mt-4">
-            {parsedResults[currentIndex].type}
-          </h2>
+          {/* 이미지 섹션 */}
+          <div className="relative aspect-square flex items-center justify-center">
+            {parsedResults[currentIndex].imageUrl && (
+              <div className="w-full border-2 border-[#BEBEBE] max-w-md">
+                <img
+                  src={parsedResults[currentIndex].imageUrl}
+                  alt={parsedResults[currentIndex].type}
+                  className="w-full h-full object-contain rounded-xl shadow-lg transition-all duration-300 ease-in-out"
+                />
+              </div>
+            )}
+          </div>
 
-          <div className="w-[90%] max-w-md mt-2 p-5 bg-gray-100 border rounded-lg shadow-sm">
-            <p className="text-gray-800 whitespace-pre-line leading-relaxed">
+          {/* 분석 리포트 섹션 */}
+          <div className="rounded-xl p-6 md:p-8 border border-[#BEBEBE]">
+            <h2 className="text-2xl md:text-3xl font-semibold text-black mb-4">
+              심리 분석 리포트
+            </h2>
+            <p className="text-gray-700 leading-relaxed whitespace-pre-line">
               {parsedResults[currentIndex].analysis}
             </p>
           </div>
-        </>
+
+          {/* 액션 버튼 섹션 */}
+          <div className="grid grid-cols-2 gap-4">
+            <button
+              className="w-full p-3 bg-blue-400 text-white font-semibold rounded-[15px] shadow-md hover:bg-blue-500 transition"
+              onClick={handleRetry}
+            >
+              다시하기
+            </button>
+            <button
+              className="w-full p-3 bg-green-600 text-white font-semibold rounded-[15px] shadow-md hover:bg-green-700 transition"
+              onClick={handleGoHome}
+            >
+              홈으로
+            </button>
+          </div>
+        </div>
       ) : (
         <p className="text-center text-gray-500 mt-10">검사 결과가 없습니다.</p>
       )}
-
-      <button
-        className="w-[90%] max-w-md mt-6 p-3 bg-red-500 text-white font-semibold text-lg rounded-lg shadow-md hover:bg-red-600 transition"
-        onClick={handleRetry}
-      >
-        다시하기
-      </button>
-
-      <button
-        className="w-[90%] max-w-md mt-4 p-3 bg-blue-500 text-white font-semibold text-lg rounded-lg shadow-md hover:bg-blue-600 transition"
-        onClick={handleGoHome}
-      >
-        홈으로
-      </button>
     </div>
   );
 }

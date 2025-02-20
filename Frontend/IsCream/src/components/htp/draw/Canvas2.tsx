@@ -102,29 +102,28 @@ const Canvas2: React.FC<Canvas2Props> = ({
           strokeColor="black"
         />
       </div>
-  
+
       <div className="w-full max-w-lg flex justify-between items-center mt-4 p-4">
+        <button
+          onClick={handleGoBack}
+          className="w-[30%] h-[50px] bg-blue-400 text-white font-semibold rounded-lg text-lg shadow-md"
+        >
+          검사 그만하기
+        </button>
         <button
           onClick={handleClear}
           className="w-[30%] h-[50px] bg-green-600 text-white font-semibold rounded-lg text-lg shadow-md"
         >
-          다시그리기
-        </button>
-        <button
-          onClick={handleGoBack}
-          className="w-[30%] h-[50px] bg-green-600 text-white font-semibold rounded-lg text-lg shadow-md"
-        >
-          뒤로가기
+          다시 그리기
         </button>
         <button
           onClick={handleSave}
           className="w-[30%] h-[50px] bg-green-600 text-white font-semibold rounded-lg text-lg shadow-md"
         >
-          저장하기
+          검사 완료
         </button>
-
       </div>
-  
+
       <img
         src={characterImage}
         alt="캐릭터"
