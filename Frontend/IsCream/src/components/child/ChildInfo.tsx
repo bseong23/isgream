@@ -90,32 +90,30 @@ const ChildInfo: React.FC<ChildInfoProps> = ({
     }
   };
 
-  return (
-    <>
-      <div className="p-4 border border-gray-300 rounded-lg w-[160px]">
-        <div className="flex justify-between mb-2">
-          <div>
-            {childGender === "여자아이" ? (
-              <img src={girlImg} alt="여자아이 이미지" />
-            ) : (
-              <img src={boyImg} alt="남자아이 이미지" />
-            )}
-          </div>
-          <div>
-            <button onClick={handleUpdate}>
-              <img src={editIcon} alt="수정" />
-            </button>
-            <button onClick={handleDelete}>
-              <img src={cancelIcon} alt="삭제" />
-            </button>
-          </div>
-        </div>
-        <h3 className="text-gray-600 overflow-hidden text-ellipsis whitespace-nowrap">
-          이름: {nickname}
-        </h3>
-        <p className="text-gray-600">성별: {gender}</p>
-        <p className="text-gray-600">생년월일: {birth}</p>
-      </div>
+    return(
+        <>
+            <div className="p-4 border border-gray-300 rounded-lg w-[180px]">
+                <div className="flex justify-between mb-2">
+                    <div>
+                        {childGender === '여자아이' ? (
+                            <img src={girlImg} alt="여자아이 이미지" />
+                        ) : (
+                            <img src={boyImg} alt="남자아이 이미지" />
+                        )}
+                    </div>
+                    <div>
+                        <button onClick={handleUpdate}>
+                            <img src={editIcon} alt="수정" />
+                        </button>
+                        <button onClick={handleDelete}>
+                            <img src={cancelIcon} alt="삭제" />
+                        </button>
+                    </div>
+                </div>
+                <h3 className="text-gray-600 overflow-hidden text-ellipsis whitespace-nowrap">이름: {nickname}</h3>
+                <p className="text-gray-600">성별: {gender}</p>
+                <p className="text-gray-600">생년월일: {birth}</p>
+            </div>
 
       <ChildeModal
         isOpen={isModalOpen}

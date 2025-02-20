@@ -3,6 +3,7 @@ import Webcam from "react-webcam";
 import { useUploadDrawing } from "../../../hooks/htp/useUploadDrawing";
 import { DrawingType } from "../../../types/htp";
 import { createUploadFormData } from "../../../utils/common/formDataHelper";
+import { useNavigate } from "react-router-dom"; // 추가된 부분
 
 interface Camera2Props {
   type: DrawingType;
@@ -21,11 +22,14 @@ const Camera2: React.FC<Camera2Props> = ({
   onSaveComplete,
   onSaveStart
 }) => {
+  const navigate = useNavigate();
   const webcamRef = useRef<Webcam | null>(null);
   const [capturedImage, setCapturedImage] = useState<string | null>(null);
   const [manualTime, setManualTime] = useState<string>("");
   const { mutate: uploadPhoto } = useUploadDrawing();
 
+  console.log(index);
+  
   const handleCapture = async () => {
     if (!webcamRef.current) return;
     const imageSrc = webcamRef.current.getScreenshot();
@@ -92,8 +96,32 @@ const Camera2: React.FC<Camera2Props> = ({
     });
   };
 
+  const handleGoBack = () => {
+    navigate("/ai-analysis"); // 추가된 부분: 뒤로가기 버튼 클릭 시 /ai-analysis로 이동
+  };
+
   return (
-    <div className="fixed inset-0 flex flex-col pb-20 mt-15 items-center justify-start bg-gray-50 px-4 py-6 gap-6 overflow-y-auto">
+    <>
+      <div className="min-h-screen bg-gray-50 p-4 overflow-y-auto ">
+    {/* 제목 영역 */}
+    <div className="flex justify-center p-2">
+    <div className="inline-flex items-center">
+      {index === 2 ? (
+        <>
+          <span className="text-5xl mr-2">나무</span>
+          <span className="text-3xl">🌳</span>
+        </>
+      ) : (
+        <>
+          <span className="text-5xl mr-2">사람</span>
+          <span className="text-3xl">🧑‍🤝‍🧑</span>
+        </>
+      )}
+    </div>
+    </div>
+
+    {/* 카메라 및 컨트롤 영역 */}
+    <div className="flex flex-col items-center gap-6">
       {/* 카메라/이미지 영역 */}
       <div className="w-full max-w-xl aspect-[3/4] bg-black rounded-2xl overflow-hidden shadow-lg">
         {!capturedImage ? (
@@ -103,47 +131,55 @@ const Camera2: React.FC<Camera2Props> = ({
             className="w-full h-full object-cover"
             videoConstraints={{
               facingMode: "environment",
-              aspectRatio: 16 / 9
+              aspectRatio: 3/4
             }}
           />
         ) : (
           <img
             src={capturedImage}
             alt="Captured"
-            className="w-full h-full object-contain bg-black"
+            className="w-full h-full object-cover"
           />
         )}
       </div>
 
-      {/* 시간 입력 */}
-      <div className="w-full max-w-xl bg-white rounded-xl shadow-md p-4 flex flex-col sm:flex-row items-center gap-4">
-        <label className="text-gray-700 font-medium">소요 시간 (초)</label>
-        <input
-          type="number"
-          value={manualTime}
-          onChange={(e) => setManualTime(e.target.value)}
-          className="flex-1 w-full sm:w-48 border border-gray-300 px-4 py-3 rounded-lg text-center text-lg focus:outline-none focus:ring-2 focus:ring-green-500 focus:border-transparent"
-          placeholder="예: 300"
-          min="0"
-        />
-      </div>
+          {/* 시간 입력 */}
+          <div className="w-full max-w-xl bg-white rounded-xl shadow-md p-4 flex flex-col sm:flex-row items-center gap-4">
+            <label className="text-gray-700 font-medium">소요 시간 (초)</label>
+            <input
+              type="number"
+              value={manualTime}
+              onChange={(e) => setManualTime(e.target.value)}
+              className="flex-1 w-full sm:w-48 border border-gray-300 px-4 py-3 rounded-lg text-center text-lg focus:outline-none focus:ring-2 focus:ring-green-500 focus:border-transparent"
+              placeholder="예: 300"
+              min="0"
+            />
+          </div>
 
-      {/* 버튼 그룹 */}
-      <div className="w-full max-w-xl flex flex-col sm:flex-row gap-4 mb-6">
-        <button
-          onClick={handleCapture}
-          className="w-full h-14 bg-blue-600 text-white text-lg font-semibold rounded-xl shadow-md hover:bg-blue-700 transition-colors duration-200 flex items-center justify-center gap-2"
-        >
-          촬영하기
-        </button>
-        <button
-          onClick={handleSave}
-          className="w-full h-14 bg-green-600 text-white text-lg font-semibold rounded-xl shadow-md hover:bg-green-700 transition-colors duration-200 flex items-center justify-center gap-2"
-        >
-          저장하기
-        </button>
+          {/* 버튼 그룹 */}
+          <div className="w-full max-w-xl flex flex-col sm:flex-row gap-4 mb-6">
+            <button
+              onClick={handleCapture}
+              className="w-full h-14 bg-green-600 text-white text-lg font-semibold rounded-xl shadow-md hover:bg-blue-700 transition-colors duration-200 flex items-center justify-center gap-2"
+            >
+              촬영하기
+            </button>
+            <button
+              onClick={handleSave}
+              className="w-full h-14 bg-green-600 text-white text-lg font-semibold rounded-xl shadow-md hover:bg-green-700 transition-colors duration-200 flex items-center justify-center gap-2"
+            >
+              저장하기
+            </button>
+            <button
+              onClick={handleGoBack}
+              className="w-full h-14 bg-blue-600 text-white text-lg font-semibold rounded-xl shadow-md hover:bg-blue-700 transition-colors duration-200 flex items-center justify-center gap-2"
+            >
+              검사 그만하기
+            </button>
+          </div>
+        </div>
       </div>
-    </div>
+    </>
   );
 };
 
