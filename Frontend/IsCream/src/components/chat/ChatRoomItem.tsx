@@ -12,7 +12,7 @@ interface ChatRoomProps {
 
 const ChatRoomItem = ({
   opponentName,
-  newMessageCount,
+  // newMessageCount,
   lastMessageTime,
   lastMessageUnread,
   onDelete,
@@ -27,11 +27,11 @@ const ChatRoomItem = ({
     };
 
     if (showOptions) {
-      document.addEventListener('click', handleClickOutside);
+      document.addEventListener("click", handleClickOutside);
     }
 
     return () => {
-      document.removeEventListener('click', handleClickOutside);
+      document.removeEventListener("click", handleClickOutside);
     };
   }, [showOptions]);
 
