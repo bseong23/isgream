@@ -113,7 +113,7 @@ const CameraPage: React.FC = () => {
   };
 
   return (
-    <div className="w-screen h-screen flex flex-col justify-center items-center bg-white overflow-hidden fixed top-0 left-0">
+    <div className="w-screen h-screen flex flex-col justify-center items-center bg-white  top-0 left-0">
       {/* 반대 성별 모달 */}
       {showOppositeGenderModal && (
         <div className="fixed inset-0 bg-black bg-opacity-50 flex items-center justify-center z-50">
