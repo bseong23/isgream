@@ -17,7 +17,7 @@ const EducationCard = ({
       onClick={() => onVideoClick?.(videoUrl)}
     >
       <div className="relative p-2">
-        <div className="w-full h-64 relative">
+        <div className="w-full aspect-video relative">
           <img
             src={imageUrl}
             alt={title}
