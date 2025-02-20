@@ -16,7 +16,8 @@ const CAMERA_GUIDE: Record<"house" | "tree" | "person", string[]> = {
     "✅ <span class='text-green-600 font-bold'>검은색</span>펜만 사용할거에요!",
     "✅ 그림을 그릴때는 시간을 재주세요!",
     "✅ 그림 실력을 검사하는 것이 아니에요!",
-    "✅ 즐거운 마음으로 그림을 그려 주세요!"
+    "✅ 즐거운 마음으로 그림을 그려 주세요!",
+    "✅ 아이가 상상력을 마음껏 펼칠 수 있게 해주세요!"
   ],
   tree: [
     "✅ 그림을 <span class='text-green-600 font-bold'>세로</span>로 그려주세요!",
@@ -24,7 +25,8 @@ const CAMERA_GUIDE: Record<"house" | "tree" | "person", string[]> = {
     "✅ <span class='text-green-600 font-bold'>검은색</span>펜만 사용할거에요!",
     "✅ 그림을 그릴때는 시간을 재주세요!",
     "✅ 그림 실력을 검사하는 것이 아니에요!",
-    "✅ 즐거운 마음으로 그림을 그려 주세요!"
+    "✅ 즐거운 마음으로 그림을 그려 주세요!",
+    "✅ 아이가 상상력을 마음껏 펼칠 수 있게 해주세요!"
   ],
   person: [
     "✅ 그림을 <span class='text-green-600 font-bold'>세로</span>로 그려주세요!",
@@ -32,7 +34,8 @@ const CAMERA_GUIDE: Record<"house" | "tree" | "person", string[]> = {
     "✅ <span class='text-green-600 font-bold'>검은색</span>펜만 사용할거에요!",
     "✅ 그림을 그릴때는 시간을 재주세요!",
     "✅ 그림 실력을 검사하는 것이 아니에요!",
-    "✅ 즐거운 마음으로 그림을 그려 주세요!"
+    "✅ 즐거운 마음으로 그림을 그려 주세요!",
+    "✅ 아이가 상상력을 마음껏 펼칠 수 있게 해주세요!"
   ]
 };
 

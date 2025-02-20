@@ -168,8 +168,8 @@ public class BigFiveTestService {
         analysis.append(getTraitAnalysis(conscientiousness, "계획적이고 신중한 성향", "즉흥적인 성향"));
         analysis.append("\n");
 
-        // 친화성 해석
-        analysis.append("친화성 (Agreeableness):\n");
+        // 우호성 해석
+        analysis.append("우호성 (Agreeableness):\n");
         analysis.append(getTraitAnalysis(agreeableness, "협력적이고 배려하는 성향", "경쟁적이고 독립적인 성향"));
         analysis.append("\n");
 

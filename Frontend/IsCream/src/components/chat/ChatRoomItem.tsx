@@ -3,7 +3,7 @@ import { useState, useEffect } from "react";
 interface ChatRoomProps {
   roomId: string;
   opponentName: string;
-  newMessageCount: number;
+  // newMessageCount: number;
   lastMessageTime: string;
   lastMessageUnread: string;
   onDelete: () => void;
@@ -62,7 +62,7 @@ const ChatRoomItem = ({
       onClick={onClick}
       className="flex items-center p-4 border-b hover:bg-gray-50 cursor-pointer"
     >
-      <div className="flex-1">
+      <div className="flex-1 min-w-0">
         <div className="font-medium">{opponentName}</div>
         <div className="text-sm text-gray-500 truncate">
           {lastMessageUnread}
@@ -93,7 +93,7 @@ const ChatRoomItem = ({
           </button>
 
           {showOptions && (
-            <div className="absolute right-0 bottom-full mb-1 bg-white shadow-lg rounded-lg py-2 z-20">
+            <div className="absolute top-2 right-0 mb-1 bg-white shadow-lg rounded-lg z-20">
               <button
                 onClick={(e) => {
                   e.stopPropagation();

@@ -6,13 +6,8 @@ import com.itextpdf.io.image.ImageDataFactory;
 import com.itextpdf.kernel.colors.DeviceRgb;
 import com.itextpdf.kernel.font.PdfFont;
 import com.itextpdf.kernel.font.PdfFontFactory;
-import com.itextpdf.kernel.geom.Rectangle;
 import com.itextpdf.kernel.pdf.PdfDocument;
-import com.itextpdf.kernel.pdf.PdfPage;
 import com.itextpdf.kernel.pdf.PdfWriter;
-import com.itextpdf.kernel.pdf.canvas.PdfCanvas;
-import com.itextpdf.kernel.pdf.extgstate.PdfExtGState;
-import com.itextpdf.kernel.pdf.xobject.PdfImageXObject;
 import com.itextpdf.layout.Document;
 import com.itextpdf.layout.borders.SolidBorder;
 import com.itextpdf.layout.element.Cell;
@@ -26,7 +21,6 @@ import com.itextpdf.layout.properties.VerticalAlignment;
 import com.ssafy.iscream.bigFiveTest.domain.BigFiveTest;
 import com.ssafy.iscream.bigFiveTest.repository.BigFiveTestRepository;
 import com.ssafy.iscream.children.domain.Child;
-import com.ssafy.iscream.htpTest.domain.HtpTest;
 import com.ssafy.iscream.s3.service.S3Service;
 import com.ssafy.iscream.user.domain.User;
 import lombok.RequiredArgsConstructor;
@@ -85,7 +79,7 @@ public class BigFiveTestPdfService {
             document.add(getSectionTitle("Big Five 성격 검사 결과"));
             document.add(getStyledTable(new String[][]{
                     {"성실성 (Conscientiousness)", bigFiveTest.getConscientiousness().toString()},
-                    {"친화성 (Agreeableness)", bigFiveTest.getAgreeableness().toString()},
+                    {"우호성 (Agreeableness)", bigFiveTest.getAgreeableness().toString()},
                     {"정서적 안정성 (Emotional Stability)", bigFiveTest.getEmotionalStability().toString()},
                     {"외향성 (Extraversion)", bigFiveTest.getExtraversion().toString()},
                     {"개방성 (Openness)", bigFiveTest.getOpenness().toString()}

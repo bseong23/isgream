@@ -95,8 +95,8 @@ const DetailView: React.FC<DetailViewProps> = ({
   }
 
   return (
-    <div className="">
-      <div className="relative top-0 flex">
+    <div className="h-auto">
+      <div className="relative h-auto top-0 flex">
         <button
           className={`px-8 py-3 ${
             activeTab === "htp"

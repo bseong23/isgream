@@ -10,7 +10,10 @@ const HeaderController = () => {
   }, []);
 
   // 특정 경로에서 헤더 숨기기
-  if (location.pathname === "/login" || location.pathname === "/error" || location.pathname === "/htp") {
+  if (location.pathname === "/login" 
+    || location.pathname === "/error" 
+    || location.pathname === "/htp"
+    || location.pathname === "/photo-capture") {
     return null;
   }
 
