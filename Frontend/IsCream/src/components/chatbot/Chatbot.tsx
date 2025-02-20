@@ -2,7 +2,7 @@ import React from "react";
 import { Send } from "lucide-react";
 import { useChatbot } from "../../hooks/chatbot/useChatbot";
 import chatbotImage from "../../assets/image/chatbot.png";
-import Spinner from "../Spinner";
+import Spinner from "../spinner";
 
 // 방방 뛰는 애니메이션을 위한 CSS 추가
 const bounceAnimation = `
