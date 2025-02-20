@@ -114,6 +114,12 @@ export const chatApi = {
   async connectChatroom(roomId: string, token: string): Promise<void> {
     return new Promise((resolve, reject) => {
       try {
+        if (stompClient?.connected) {
+            // 이미 연결되어 있으면 바로 resolve
+            resolve();
+            return;
+          }
+
         stompClient = new Client({
           brokerURL: "https://i12a407.p.ssafy.io/api/ws",
           // brokerURL: 'ws://localhost:8080/ws',
@@ -142,7 +148,9 @@ export const chatApi = {
         // 활성화 전에 연결이 완료되길 기다림
         stompClient.onConnect = () => {
           console.log("연결 완료");
-          resolve();
+          setTimeout(() => {
+            resolve();
+          }, 500); // 연결 후 약간의 지연 추가
         };
         stompClient.activate();
       } catch (error) {
