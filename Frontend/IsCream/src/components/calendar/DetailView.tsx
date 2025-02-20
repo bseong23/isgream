@@ -95,7 +95,7 @@ const DetailView: React.FC<DetailViewProps> = ({
   }
 
   return (
-    <div className="relative">
+    <div className="">
       <div className="relative top-0 flex">
         <button
           className={`px-8 py-3 ${
@@ -121,7 +121,7 @@ const DetailView: React.FC<DetailViewProps> = ({
 
       <div className="border border-[#E6E6E6] bg-white -mt-[1px] rounded-b-[15px] rounded-r-[15px]">
         {activeTab === "htp" && (
-          <div className="p-6 h-full overflow-y-auto">
+          <div className="p-6">
             {detail?.isHtp ? (
               <>
                 {detail.report &&
@@ -158,7 +158,7 @@ const DetailView: React.FC<DetailViewProps> = ({
         )}
 
         {activeTab === "memo" && (
-          <div className="p-6 h-full overflow-y-auto">
+          <div className="p-6 overflow-y-auto">
             <MemoEditor
               initialMemo={detail?.memoContent || ""}
               memoId={detail?.memoId}
