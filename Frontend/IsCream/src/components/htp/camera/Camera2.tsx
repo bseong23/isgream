@@ -102,7 +102,7 @@ const Camera2: React.FC<Camera2Props> = ({
             screenshotFormat="image/png"
             className="w-full h-full object-cover"
             videoConstraints={{
-              facingMode: "user",
+              facingMode: "environment",
               aspectRatio: 3 / 4
             }}
           />
