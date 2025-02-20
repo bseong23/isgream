@@ -2,7 +2,7 @@
   "compilerOptions": {
     "baseUrl": ".",
     "noImplicitAny": false,
-    "types": ["kakao.maps.d.ts"],
+    "types": ["kakao.maps.d.ts", "vite-plugin-pwa/client"],
     "paths": {
       "@/*": ["./src/*"]
     },

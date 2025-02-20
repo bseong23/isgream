@@ -19,7 +19,7 @@ const MainPage = () => {
       <AICard />
       <div className="w-full bg-white">
         <div className="mx-auto max-w-[706px]">
-          <div className="grid grid-cols-2 md:grid-cols-4 gap-2 md:gap-4 mt-4">
+          <div className="grid grid-cols-2 md:grid-cols-4 gap-2 md:gap-4 mt-2">
             <MainCard
               image={ParentingAttitude}
               title="양육태도 검사"
