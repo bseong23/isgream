@@ -86,15 +86,15 @@ const HTPSlider: React.FC<HTPSliderProps> = ({
       <div className="relative h-[calc(100%-4rem)]">
         <div className="h-full overflow-y-auto px-4 md:px-8 pt-12">
           <div className="flex flex-col items-center">
-            <div className="absolute top-0 left-0 right-0 flex items-center justify-between px-4 md:px-8 mb-4">
+            <div className="absolute top-0 left-0 right-0 flex items-center justify-between px-4 md:px-8 mb-4 bg-white">
+              
               <button
                 onClick={goToPrevSlide}
                 className="bg-white hover:bg-gray-100 rounded-full p-1 md:p-2 transition-all shadow-md"
               >
                 <ChevronLeft className="w-4 h-4 md:w-6 md:h-6" />
               </button>
-
-              <div className="mb-4 text-lg font-medium">
+              <div className="text-lg font-medium ">
                 {
                   typeToKorean[
                     slides[currentSlide].type as keyof typeof typeToKorean
@@ -109,6 +109,7 @@ const HTPSlider: React.FC<HTPSliderProps> = ({
                 <ChevronRight className="w-4 h-4 md:w-6 md:h-6" />
               </button>
             </div>
+
             <img
               src={slides[currentSlide].imageUrl}
               alt={`${
