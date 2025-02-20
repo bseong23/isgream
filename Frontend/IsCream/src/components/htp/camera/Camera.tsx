@@ -99,7 +99,11 @@ const Camera: React.FC<CameraProps> = ({
   };
 
   return (
-    <div className="fixed inset-0 flex flex-col mt-20 items-center bg-gray-50 px-4 py-6 md:px-8">
+    <div className="flex flex-col -mt-20 items-center bg-gray-50 px-4 py-6 md:px-8">
+      <div className="inline-flex items-center">
+        <span className="text-5xl my-5">집</span>
+        <span className="text-3xl my-5">🏠</span>
+      </div>
       {/* 카메라/이미지 영역 */}
       <div className="w-full max-w-4xl aspect-video bg-black rounded-2xl overflow-hidden shadow-lg mb-8">
         {!capturedImage ? (
