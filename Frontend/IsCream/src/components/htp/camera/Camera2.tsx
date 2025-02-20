@@ -28,6 +28,8 @@ const Camera2: React.FC<Camera2Props> = ({
   const [manualTime, setManualTime] = useState<string>("");
   const { mutate: uploadPhoto } = useUploadDrawing();
 
+  console.log(index);
+  
   const handleCapture = async () => {
     if (!webcamRef.current) return;
     const imageSrc = webcamRef.current.getScreenshot();
@@ -102,11 +104,20 @@ const Camera2: React.FC<Camera2Props> = ({
     <>
       <div className="min-h-screen bg-gray-50 p-4 overflow-y-auto ">
     {/* 제목 영역 */}
-    <div className="w-full max-w-xl mx-auto mb-4">
-      <div className="flex items-center justify-center">
-        <span className="text-5xl mr-2">집</span>
-        <span className="text-3xl">🏠</span>
-      </div>
+    <div className="flex justify-center p-2">
+    <div className="inline-flex items-center">
+      {index === 2 ? (
+        <>
+          <span className="text-5xl mr-2">나무</span>
+          <span className="text-3xl">🌳</span>
+        </>
+      ) : (
+        <>
+          <span className="text-5xl mr-2">사람</span>
+          <span className="text-3xl">🧑‍🤝‍🧑</span>
+        </>
+      )}
+    </div>
     </div>
 
     {/* 카메라 및 컨트롤 영역 */}
