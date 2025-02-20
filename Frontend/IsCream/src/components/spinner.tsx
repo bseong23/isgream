@@ -5,3 +5,5 @@ const Spinner = () => (
 );
 
 export default Spinner;
+
+// 수정
