@@ -3,7 +3,7 @@ import { useState, useEffect } from "react";
 interface ChatRoomProps {
   roomId: string;
   opponentName: string;
-  newMessageCount: number;
+  // newMessageCount: number;
   lastMessageTime: string;
   lastMessageUnread: string;
   onDelete: () => void;
