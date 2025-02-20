@@ -70,7 +70,11 @@ public class PostService {
             throw new DataException(ErrorCode.DATA_FORBIDDEN_UPDATE);
         }
 
-        postLikeService.removeLikeCount(postId); // Redis에 저장된 좋아요 정보 삭제
+        Integer count = postLikeService.getPostLikes(postId);
+
+        if (count > 0) {
+            postLikeService.removeLikeCount(postId); // Redis에 저장된 좋아요 정보 삭제
+        }
 
         postImageService.deleteImages(postId);
         postRepository.deleteById(postId);
