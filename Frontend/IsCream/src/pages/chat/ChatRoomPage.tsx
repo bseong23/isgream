@@ -58,7 +58,7 @@ const ChatRoomPage = () => {
     const unread = chatData.chats.filter(chat => {
       const isUnread = !chat.read;
       const isForCurrentUser = chat.receiver == currentUserId;
-      console.log("Message check:", {
+      console.log("1. Message check 이거 맞음?:", {
         messageId: chat.id,
         read: chat.read,
         receiver: chat.receiver,
@@ -322,17 +322,42 @@ const ChatRoomPage = () => {
             // 읽음 처리 신호 보내기
             chatApi.messageRead(message.id, currentUserId, roomId);
           }
+          // // 읽음 상태 업데이트 메시지인 경우
+          // if (message.type === 'ACK') {
+          //   setChatData(prevData => {
+          //     if (!prevData) return null;
+          //     return {
+          //       chats: prevData.chats.map(chat => {
+          //         if (chat.id === message.messageId) {
+          //           return { ...chat, read: true };
+          //         }
+          //         return chat;
+          //       })
+          //     };
+          //   });
+          //   return;
+          // }
+          
           // 읽음 상태 업데이트 메시지인 경우
-          if (message.type === 'ACK') {
+          if (message.type === 'ACK' || (message.messageId && message.sender)) {
+            console.log("Received ACK message:", message);
             setChatData(prevData => {
               if (!prevData) return null;
+              
+              const updatedChats = prevData.chats.map(chat => {
+                // messageId가 일치하거나, sender가 현재 사용자이고 receiver가 ACK를 보낸 사용자인 경우
+                if (
+                  chat.id === message.messageId || 
+                  (chat.sender === currentUserId && chat.receiver === message.sender)
+                ) {
+                  console.log("Updating read status for message:", chat.id);
+                  return { ...chat, read: true };
+                }
+                return chat;
+              });
+
               return {
-                chats: prevData.chats.map(chat => {
-                  if (chat.id === message.messageId) {
-                    return { ...chat, read: true };
-                  }
-                  return chat;
-                })
+                chats: updatedChats
               };
             });
             return;
@@ -398,6 +423,12 @@ const ChatRoomPage = () => {
         //   opponentName: opponentName
         // };
 
+        // 응답에 opponentName 추가
+        // const messageWithOpponentName = {
+        //   ...response,
+        //   opponentName: opponentName
+        // };
+        
         setShouldScrollToBottom(true);  // 새 메시지 전송시 스크롤
         setChatData(prevData => {
           if (!prevData) return { chats: [response] };
