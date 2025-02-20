@@ -3,7 +3,6 @@ import { useNavigate } from "react-router-dom";
 import houseImage from "../../../assets/image/house.png";
 import treeImage from "../../../assets/image/tree.png";
 import personImage from "../../../assets/image/person.png";
-import characterImage from "../../../assets/image/character2.png";
 
 interface CameraIntroProps {
   type: "house" | "tree" | "male" | "female";
@@ -89,11 +88,6 @@ const CameraIntro: React.FC<CameraIntroProps> = ({ type, onStart }) => {
         >
           촬영 시작하기
         </button>
-        <img
-          src={characterImage}
-          alt="캐릭터"
-          className="absolute right-[-10px] bottom-0 w-28 h-auto"
-        />
       </div>
     </div>
   );
