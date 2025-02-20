@@ -1,8 +1,8 @@
 import React from "react";
+import { useNavigate } from "react-router-dom";
 import houseImage from "../../../assets/image/house.png";
 import treeImage from "../../../assets/image/tree.png";
 import personImage from "../../../assets/image/person.png";
-// import characterImage from "../../../assets/image/character2.png";
 
 interface DrawingIntroProps {
   type: "house" | "tree" | "male" | "female";
@@ -37,7 +37,12 @@ const DRAWING_IMAGES: Record<"house" | "tree" | "person", string> = {
 };
 
 const DrawingIntro: React.FC<DrawingIntroProps> = ({ type, onStart }) => {
+  const navigate = useNavigate();
   const displayType = type === "male" || type === "female" ? "person" : type;
+
+  const handleGoBack = () => {
+    navigate(-1);
+  };
 
   return (
     <div className="flex flex-col items-center justify-center w-full bg-white px-4 py-1">
@@ -74,8 +79,15 @@ const DrawingIntro: React.FC<DrawingIntroProps> = ({ type, onStart }) => {
         </div>
       </div>
 
-      {/* 그림 시작 버튼 영역 */}
-      <div className="relative mt-8 md:mt-10 flex justify-center w-full max-w-xl md:max-w-2xl lg:max-w-3xl">
+      {/* 버튼 영역 */}
+      <div className="relative mt-8 md:mt-10 flex justify-center w-full max-w-xl md:max-w-2xl lg:max-w-3xl space-x-4">
+        <button
+          onClick={handleGoBack}
+          className="bg-gray-500 text-white px-8 py-4 rounded-xl text-xl md:text-2xl font-bold
+                     shadow-lg hover:bg-gray-600 transform hover:scale-105 transition-all duration-200"
+        >
+          뒤로가기
+        </button>
         <button
           onClick={onStart}
           className="bg-green-600 text-white px-8 py-4 rounded-xl text-xl md:text-2xl font-bold
@@ -83,12 +95,6 @@ const DrawingIntro: React.FC<DrawingIntroProps> = ({ type, onStart }) => {
         >
           그림 시작하기
         </button>
-        {/* <img
-          src={characterImage}
-          alt="캐릭터"
-          className="absolute right-0 bottom-0 w-28 md:w-32 lg:w-36 h-auto
-                     transform translate-x-1/2 hover:scale-110 transition-transform duration-200"
-        /> */}
       </div>
     </div>
   );
