@@ -115,7 +115,7 @@ export default function KakaoMap() {
       {/* 🔹 지도 */}
       <div
         ref={mapRef}
-        className="w-full h-[500px] rounded-[15px]"
+        className="w-full h-[300px] md:h-[500px] rounded-[15px]"
         data-testid="map-container"
       />
 
