@@ -6,14 +6,13 @@ import { DrawingType, UploadDrawingResponse } from "../../../types/htp";
 import { createUploadFormData } from "../../../utils/common/formDataHelper";
 import { useNavigate } from "react-router-dom";
 
-// 오디오 URL 상수 (순서 중요)
 const AUDIO_URLS = [
-  "https://a407-20250124.s3.ap-northeast-2.amazonaws.com/audio/htp_2.mp3", // 2번 첫 오디오
-  "https://a407-20250124.s3.ap-northeast-2.amazonaws.com/audio/htp_2-1.mp3", // 2번 두 번째 오디오
-  "https://a407-20250124.s3.ap-northeast-2.amazonaws.com/audio/htp_3.mp3", // 3번 첫 오디오
-  "https://a407-20250124.s3.ap-northeast-2.amazonaws.com/audio/htp_3-1.mp3", // 3번 두 번째 오디오
-  "https://a407-20250124.s3.ap-northeast-2.amazonaws.com/audio/htp_4.mp3", // 4번 첫 오디오
-  "https://a407-20250124.s3.ap-northeast-2.amazonaws.com/audio/htp_4-1.mp3" // 4번 두 번째 오디오
+  "https://a407-20250124.s3.ap-northeast-2.amazonaws.com/audio/htp_2.mp3",
+  "https://a407-20250124.s3.ap-northeast-2.amazonaws.com/audio/htp_2-1.mp3",
+  "https://a407-20250124.s3.ap-northeast-2.amazonaws.com/audio/htp_3.mp3",
+  "https://a407-20250124.s3.ap-northeast-2.amazonaws.com/audio/htp_3-1.mp3",
+  "https://a407-20250124.s3.ap-northeast-2.amazonaws.com/audio/htp_4.mp3",
+  "https://a407-20250124.s3.ap-northeast-2.amazonaws.com/audio/htp_4-1.mp3"
 ];
 
 interface Canvas2Props {
@@ -38,43 +37,44 @@ const Canvas2: React.FC<Canvas2Props> = ({
   const audioRef = useRef<HTMLAudioElement>(new Audio());
   const [startTime, setStartTime] = useState<number | null>(null);
   const { mutate: uploadDrawing } = useUploadDrawing();
+  const [isSaving, setIsSaving] = useState(false);
+  const [isNavigating, setIsNavigating] = useState(false);
+  const [isAudioPlaying, setIsAudioPlaying] = useState(false);
 
-  // 오디오 재생 함수
-  const playAudio = (isEntryAudio: boolean): Promise<void> => {
-    return new Promise((resolve) => {
-      const audioIndex = (index - 2) * 2 + (isEntryAudio ? 0 : 1);
+  console.log(isAudioPlaying);
 
-      console.log(`index: ${index}, audioIndex: ${audioIndex}`);
-      console.log(`선택된 오디오 URL: ${AUDIO_URLS[audioIndex]}`);
+  const playAudio = (isEntryAudio: boolean): void => {
+    const audioIndex = (index - 2) * 2 + (isEntryAudio ? 0 : 1);
+    setIsAudioPlaying(true);
 
-      audioRef.current.src = AUDIO_URLS[audioIndex];
+    console.log(`index: ${index}, audioIndex: ${audioIndex}`);
+    console.log(`선택된 오디오 URL: ${AUDIO_URLS[audioIndex]}`);
 
-      // 오디오 재생 완료 이벤트 리스너 추가
-      const onEnded = () => {
-        audioRef.current.removeEventListener("ended", onEnded);
-        resolve();
-      };
+    audioRef.current.src = AUDIO_URLS[audioIndex];
 
-      // 에러 핸들러 추가
-      const onError = (error: any) => {
-        console.error("오디오 재생 실패:", error);
-        resolve(); // 재생 실패해도 계속 진행
-      };
+    const onEnded = () => {
+      audioRef.current.removeEventListener("ended", onEnded);
+      audioRef.current.removeEventListener("error", onError);
+      setIsAudioPlaying(false);
+    };
 
-      audioRef.current.addEventListener("ended", onEnded);
-      audioRef.current.addEventListener("error", onError);
+    const onError = (error: any) => {
+      console.error("오디오 재생 실패:", error);
+      audioRef.current.removeEventListener("ended", onEnded);
+      audioRef.current.removeEventListener("error", onError);
+      setIsAudioPlaying(false);
+    };
 
-      audioRef.current.play().catch(onError);
-    });
+    audioRef.current.addEventListener("ended", onEnded);
+    audioRef.current.addEventListener("error", onError);
+
+    audioRef.current.play().catch(onError);
   };
 
   useEffect(() => {
     setStartTime(Date.now());
-
-    // 페이지 진입 시 첫 번째 오디오 재생
     playAudio(true);
 
-    // 컴포넌트 언마운트 시 오디오 정리
     return () => {
       audioRef.current.pause();
       audioRef.current.src = "";
@@ -82,65 +82,83 @@ const Canvas2: React.FC<Canvas2Props> = ({
   }, []);
 
   const handleGoBack = () => {
+    if (isNavigating || isSaving) return;
+    setIsNavigating(true);
     navigate("/ai-analysis");
   };
 
   const handleClear = () => {
+    if (isSaving) return;
     canvasRef.current?.clearCanvas();
   };
 
   const handleSave = async () => {
-    if (!canvasRef.current || !startTime) return;
+    if (!canvasRef.current || !startTime || isSaving) return;
 
-    // 검사 완료 시 두 번째 오디오 재생하고 완료 대기
-    await playAudio(false);
+    setIsSaving(true);
 
-    onSaveStart();
-
-    const timeTaken = ((Date.now() - startTime) / 1000).toFixed(2);
-    const dataUrl = await canvasRef.current.exportImage("png");
-    const response = await fetch(dataUrl);
-    const blob = await response.blob();
-    const file = new File([blob], `drawing_${type}_${index}.png`, {
-      type: "image/png"
-    });
-
-    const formData = createUploadFormData({
-      file,
-      time: timeTaken,
-      childId,
-      type,
-      index,
-      gender
-    });
-
-    console.log("📤 전송할 FormData:", formData);
-
-    uploadDrawing(formData, {
-      onSuccess: (apiResponse) => {
-        console.log("✅ 저장 성공! API 응답:", apiResponse);
-
-        if (!apiResponse || !apiResponse.data) {
-          console.error("❌ API 응답 데이터가 올바르지 않습니다!", apiResponse);
-          alert("분석 결과를 불러올 수 없습니다.");
-          return;
-        }
-
-        onSaveComplete({
-          data: {
-            result: apiResponse.data.result ?? "",
-            houseDrawingUrl: apiResponse.data.houseDrawingUrl ?? "",
-            treeDrawingUrl: apiResponse.data.treeDrawingUrl ?? "",
-            maleDrawingUrl: apiResponse.data.maleDrawingUrl ?? "",
-            femaleDrawingUrl: apiResponse.data.femaleDrawingUrl ?? ""
-          }
-        });
-      },
-      onError: (error) => {
-        console.error("❌ 저장 오류 발생:", error);
-        alert("저장 실패! 다시 시도해주세요.");
+    try {
+      // 마지막 단계(index가 4)일 때 오디오 재생 - 저장 요청과 병렬로 실행
+      if (index === 4) {
+        playAudio(false);
       }
-    });
+
+      onSaveStart();
+
+      const timeTaken = ((Date.now() - startTime) / 1000).toFixed(2);
+      const dataUrl = await canvasRef.current.exportImage("png");
+      const response = await fetch(dataUrl);
+      const blob = await response.blob();
+      const file = new File([blob], `drawing_${type}_${index}.png`, {
+        type: "image/png"
+      });
+
+      const formData = createUploadFormData({
+        file,
+        time: timeTaken,
+        childId,
+        type,
+        index,
+        gender
+      });
+
+      console.log("📤 전송할 FormData:", formData);
+
+      uploadDrawing(formData, {
+        onSuccess: (apiResponse) => {
+          console.log("✅ 저장 성공! API 응답:", apiResponse);
+
+          if (!apiResponse || !apiResponse.data) {
+            console.error(
+              "❌ API 응답 데이터가 올바르지 않습니다!",
+              apiResponse
+            );
+            alert("분석 결과를 불러올 수 없습니다.");
+            setIsSaving(false);
+            return;
+          }
+
+          onSaveComplete({
+            data: {
+              result: apiResponse.data.result ?? "",
+              houseDrawingUrl: apiResponse.data.houseDrawingUrl ?? "",
+              treeDrawingUrl: apiResponse.data.treeDrawingUrl ?? "",
+              maleDrawingUrl: apiResponse.data.maleDrawingUrl ?? "",
+              femaleDrawingUrl: apiResponse.data.femaleDrawingUrl ?? ""
+            }
+          });
+        },
+        onError: (error) => {
+          console.error("❌ 저장 오류 발생:", error);
+          alert("저장 실패! 다시 시도해주세요.");
+          setIsSaving(false);
+        }
+      });
+    } catch (error) {
+      console.error("❌ 저장 처리 중 오류 발생:", error);
+      alert("저장 처리 중 오류가 발생했습니다.");
+      setIsSaving(false);
+    }
   };
 
   return (
@@ -157,28 +175,37 @@ const Canvas2: React.FC<Canvas2Props> = ({
       <div className="w-full max-w-lg flex justify-between items-center mt-4 p-4">
         <button
           onClick={handleGoBack}
-          className="w-[30%] h-[50px] bg-blue-400 text-white font-semibold rounded-lg text-lg shadow-md"
+          disabled={isNavigating || isSaving}
+          className={`w-[30%] h-[50px] ${
+            isNavigating || isSaving ? "bg-gray-400" : "bg-blue-400"
+          } text-white font-semibold rounded-lg text-lg shadow-md`}
         >
           그만하기
         </button>
         <button
           onClick={handleClear}
-          className="w-[30%] h-[50px] bg-green-600 text-white font-semibold rounded-lg text-lg shadow-md"
+          disabled={isSaving}
+          className={`w-[30%] h-[50px] ${
+            isSaving ? "bg-gray-400" : "bg-green-600"
+          } text-white font-semibold rounded-lg text-lg shadow-md`}
         >
           다시 그리기
         </button>
         <button
           onClick={handleSave}
-          className="w-[30%] h-[50px] bg-green-600 text-white font-semibold rounded-lg text-lg shadow-md"
+          disabled={isSaving}
+          className={`w-[30%] h-[50px] ${
+            isSaving ? "bg-gray-400" : "bg-green-600"
+          } text-white font-semibold rounded-lg text-lg shadow-md`}
         >
-          검사 완료
+          {isSaving ? "저장 중..." : "검사 완료"}
         </button>
       </div>
 
       <img
         src={characterImage}
         alt="캐릭터"
-        className="absolute right-4 bottom-15 w-24 h-auto"
+        className="absolute right-4 bottom-15 max-w-[50px] h-auto"
       />
     </div>
   );
