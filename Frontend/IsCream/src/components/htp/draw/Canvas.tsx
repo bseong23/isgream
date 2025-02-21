@@ -35,32 +35,14 @@ const Canvas: React.FC<CanvasProps> = ({
   const { mutate: uploadDrawing } = useUploadDrawing();
   const [isSaving, setIsSaving] = useState(false);
   const [isNavigating, setIsNavigating] = useState(false);
-  const [isAudioPlaying, setIsAudioPlaying] = useState(false);
 
-  const playStartAudio = async (): Promise<void> => {
-    return new Promise((resolve) => {
-      if (audioRef.current) {
-        audioRef.current.src = AUDIO_URLS[0]; // 첫 번째 오디오만 사용
-        setIsAudioPlaying(true);
-
-        const onEnded = () => {
-          audioRef.current?.removeEventListener("ended", onEnded);
-          setIsAudioPlaying(false);
-          resolve();
-        };
-
-        audioRef.current.addEventListener("ended", onEnded);
-
-        audioRef.current.play().catch((error) => {
-          console.error("오디오 재생 실패:", error);
-          setIsAudioPlaying(false);
-          resolve();
-        });
-      } else {
-        setIsAudioPlaying(false);
-        resolve();
-      }
-    });
+  const playStartAudio = (): void => {
+    if (audioRef.current) {
+      audioRef.current.src = AUDIO_URLS[0];
+      audioRef.current.play().catch((error) => {
+        console.error("오디오 재생 실패:", error);
+      });
+    }
   };
 
   useEffect(() => {
@@ -77,18 +59,18 @@ const Canvas: React.FC<CanvasProps> = ({
   }, []);
 
   const handleGoBack = () => {
-    if (isNavigating || isSaving || isAudioPlaying) return;
+    if (isNavigating || isSaving) return;
     setIsNavigating(true);
     navigate("/ai-analysis");
   };
 
   const handleClear = () => {
-    if (isSaving || isAudioPlaying) return;
+    if (isSaving) return;
     canvasRef.current?.clearCanvas();
   };
 
   const handleSave = async () => {
-    if (!canvasRef.current || !startTime || isSaving || isAudioPlaying) return;
+    if (!canvasRef.current || !startTime || isSaving) return;
 
     setIsSaving(true);
 
@@ -171,29 +153,27 @@ const Canvas: React.FC<CanvasProps> = ({
           <div className="flex flex-col justify-between gap-2 w-full">
             <button
               onClick={handleSave}
-              disabled={isSaving || isAudioPlaying}
+              disabled={isSaving}
               className={`w-full h-[50px] ${
-                isSaving || isAudioPlaying ? "bg-gray-400" : "bg-green-600"
+                isSaving ? "bg-gray-400" : "bg-green-600"
               } text-white font-semibold cursor-pointer rounded-lg text-md shadow-md`}
             >
               {isSaving ? "저장 중..." : "검사 완료"}
             </button>
             <button
               onClick={handleClear}
-              disabled={isSaving || isAudioPlaying}
+              disabled={isSaving}
               className={`w-full h-[50px] ${
-                isSaving || isAudioPlaying ? "bg-gray-400" : "bg-green-600"
+                isSaving ? "bg-gray-400" : "bg-green-600"
               } text-white font-semibold cursor-pointer rounded-lg text-md shadow-md`}
             >
               다시 그리기
             </button>
             <button
               onClick={handleGoBack}
-              disabled={isNavigating || isSaving || isAudioPlaying}
+              disabled={isNavigating || isSaving}
               className={`w-full h-[50px] ${
-                isNavigating || isSaving || isAudioPlaying
-                  ? "bg-gray-400"
-                  : "bg-blue-400"
+                isNavigating || isSaving ? "bg-gray-400" : "bg-blue-400"
               } text-white font-semibold cursor-pointer rounded-lg text-md shadow-md`}
             >
               그만하기
