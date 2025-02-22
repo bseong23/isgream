@@ -41,6 +41,13 @@ const DetailContent: React.FC<DetailContentProps> = ({
     try {
       setIsCreatingChat(true);
 
+      const token = localStorage.getItem("accessToken");
+      if(!token){
+        alert('로그인이 필요합니다.');
+        navigate("/login");
+        return;
+      }
+
       const response = await chatApi.createChatroom(post.userId.toString());
       console.log("채팅방 생성하기 버튼 눌렀을 때의 응답: ",response);
       console.log("게시글에서의 receiver: ", post.userId);
