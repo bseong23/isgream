@@ -191,4 +191,9 @@ public class UserService {
         return user.getNickname();
     }
 
+    // 유저 유효성 검사
+    public Boolean checkUserValidity(Integer userId){
+        return userRepository.existsByIdAndStatus(userId, Status.ACTIVE);
+    }
+
 }
