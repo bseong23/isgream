@@ -74,11 +74,12 @@ public class ChatService {
         ChatMessage chatMessage = chatMessageRepository.findById(ackDto.getMessageId())
                 .orElse(null);
 
+        // 못 찾으면 예외처리
         if (chatMessage == null) {
             log.warn("❌ 메시지를 찾을 수 없음: {}", ackDto.getMessageId());
             return;
         }
-
+        // 읽음 처리 요청한 사용자 검증
         if (!chatMessage.getReceiver().equals(ackDto.getReaderId())) {
             log.info("❌ 읽음 요청한 사람 = 보낸사람 : {}", ackDto.getMessageId());
             return;
@@ -94,7 +95,7 @@ public class ChatService {
         chatMessage.readMessage();
         chatMessageRepository.save(chatMessage);
 
-        log.info("✅ 메시지 읽음 처리 완료: {}", ackDto.getMessageId());
+        log.info("✅ DB에서 메시지 읽음 처리 완료: {}", ackDto.getMessageId());
 
         // ✅ 보낸 사용자(A)에게 WebSocket을 통해 읽음 상태 전송
         String destination = "/sub/chat/room/" + chatMessage.getRoomId();
