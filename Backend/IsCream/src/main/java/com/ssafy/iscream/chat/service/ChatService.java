@@ -60,7 +60,6 @@ public class ChatService {
         chatMessage = chatMessageRepository.save(chatMessage);
 
         // ✅ 클라이언트에게 messageId 포함해서 전송
-        //chatMessageDto.setMessageId(chatMessage.getId());
         ChatMessageResDto chatMessageResDto = ChatMessageResDto.of(chatMessage);
         log.info("📤 Redis Pub/Sub 발행 (messageId 포함): {}", chatMessageResDto);
 
@@ -69,7 +68,6 @@ public class ChatService {
     }
 
     public void handleAck(MessageAckDto ackDto) {
-        //messagingTemplate.convertAndSend("/sub/chat/read-receipt/" + ackDto.getRoomId(), ackDto);
         log.info("🔍 ACK 처리 중: {}", ackDto);
 
         // ✅ 해당 메시지를 DB에서 찾아 읽음 처리
