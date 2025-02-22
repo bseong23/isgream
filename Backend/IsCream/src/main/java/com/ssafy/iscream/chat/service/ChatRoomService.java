@@ -78,7 +78,7 @@ public class ChatRoomService {
         if (chatRoom.getParticipantIds().isEmpty()) {
             log.info("🗑 채팅방 삭제됨: {}", roomId);
 
-            // 🔥  MongoDB에서 채팅방과 메시지 삭제
+            // MongoDB에서 채팅방과 메시지 삭제
             chatRoomRepository.delete(chatRoom);
             chatMessageRepository.deleteByRoomId(roomId);
             log.info("🗑 모든 메시지도 삭제됨: roomId={}", roomId);

@@ -37,11 +37,11 @@ public class ChatService {
 
     public void sendMessage(ChatMessageDto chatMessageDto) {
 
-        // ✅ roomId가 있으면 해당 ID로 채팅방 조회
+        // ✅ roomId가 존재하면 해당 ID로 채팅방 조회
         ChatRoom chatRoom = chatRoomRepository.findById(chatMessageDto.getRoomId())
                 .orElseThrow(() -> new IllegalArgumentException("🚨 존재하지 않는 채팅방: " + chatMessageDto.getRoomId()));
 
-        // ✅ participants 검증 (roomId가 있지만, 실제 참여자가 일치하지 않는다면 예외 발생)
+        // ✅ participants 검증 (roomId가 있지만, 실제 참여자들이 일치하지 않는다면 예외 발생)
         List<String> participants = chatRoom.getParticipantIds();
         if (!participants.contains(chatMessageDto.getSender()) || !participants.contains(chatMessageDto.getReceiver())) {
             throw new IllegalArgumentException("🚨 유효하지 않은 채팅방 ID 또는 참가자 불일치");
@@ -60,7 +60,6 @@ public class ChatService {
         chatMessage = chatMessageRepository.save(chatMessage);
 
         // ✅ 클라이언트에게 messageId 포함해서 전송
-        //chatMessageDto.setMessageId(chatMessage.getId());
         ChatMessageResDto chatMessageResDto = ChatMessageResDto.of(chatMessage);
         log.info("📤 Redis Pub/Sub 발행 (messageId 포함): {}", chatMessageResDto);
 
@@ -69,18 +68,18 @@ public class ChatService {
     }
 
     public void handleAck(MessageAckDto ackDto) {
-        //messagingTemplate.convertAndSend("/sub/chat/read-receipt/" + ackDto.getRoomId(), ackDto);
         log.info("🔍 ACK 처리 중: {}", ackDto);
 
         // ✅ 해당 메시지를 DB에서 찾아 읽음 처리
         ChatMessage chatMessage = chatMessageRepository.findById(ackDto.getMessageId())
                 .orElse(null);
 
+        // 못 찾으면 예외처리
         if (chatMessage == null) {
             log.warn("❌ 메시지를 찾을 수 없음: {}", ackDto.getMessageId());
             return;
         }
-
+        // 읽음 처리 요청한 사용자 검증
         if (!chatMessage.getReceiver().equals(ackDto.getReaderId())) {
             log.info("❌ 읽음 요청한 사람 = 보낸사람 : {}", ackDto.getMessageId());
             return;
@@ -96,7 +95,7 @@ public class ChatService {
         chatMessage.readMessage();
         chatMessageRepository.save(chatMessage);
 
-        log.info("✅ 메시지 읽음 처리 완료: {}", ackDto.getMessageId());
+        log.info("✅ DB에서 메시지 읽음 처리 완료: {}", ackDto.getMessageId());
 
         // ✅ 보낸 사용자(A)에게 WebSocket을 통해 읽음 상태 전송
         String destination = "/sub/chat/room/" + chatMessage.getRoomId();
