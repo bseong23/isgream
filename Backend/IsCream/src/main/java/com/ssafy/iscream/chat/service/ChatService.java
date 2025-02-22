@@ -37,11 +37,11 @@ public class ChatService {
 
     public void sendMessage(ChatMessageDto chatMessageDto) {
 
-        // ✅ roomId가 있으면 해당 ID로 채팅방 조회
+        // ✅ roomId가 존재하면 해당 ID로 채팅방 조회
         ChatRoom chatRoom = chatRoomRepository.findById(chatMessageDto.getRoomId())
                 .orElseThrow(() -> new IllegalArgumentException("🚨 존재하지 않는 채팅방: " + chatMessageDto.getRoomId()));
 
-        // ✅ participants 검증 (roomId가 있지만, 실제 참여자가 일치하지 않는다면 예외 발생)
+        // ✅ participants 검증 (roomId가 있지만, 실제 참여자들이 일치하지 않는다면 예외 발생)
         List<String> participants = chatRoom.getParticipantIds();
         if (!participants.contains(chatMessageDto.getSender()) || !participants.contains(chatMessageDto.getReceiver())) {
             throw new IllegalArgumentException("🚨 유효하지 않은 채팅방 ID 또는 참가자 불일치");
