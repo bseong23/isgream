@@ -52,8 +52,7 @@ export const chatApi = {
   async getChatList(): Promise<GetChatListResponse> {
     try {
       const response = await api.get("/chatrooms");
-      console.log("ChapPage.txs 여기까지 오니?");
-      console.log("채팅방목록: ", response);
+      console.log("chat.ts 채팅방목록: ", response);
       if (response.data.code === "S0000") {
         return response.data;
       }
@@ -67,9 +66,14 @@ export const chatApi = {
   // 채팅방 생성하기
   async createChatroom(receiverId: string): Promise<CreateChatroomResponse> {
     try {
+      console.log("chat.ts 상대방 id: ", receiverId);
+      
       const response = await api.post(
         `/chatrooms/create?receiverId=${receiverId}`
       );
+
+      console.log("chat.ts 응답: ", response);
+      
       if (response.data.code === "S0000") {
         return response.data;
       }
