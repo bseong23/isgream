@@ -82,7 +82,7 @@ const BoardMain = () => {
 
   return (
     <div className="max-w-[706px] mx-auto bg-white">
-      <div className="mb-4">
+      <div>
         <SearchBar
           onSearch={handleSearch}
           placeholder="검색어를 입력해주세요"

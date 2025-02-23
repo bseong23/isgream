@@ -39,9 +39,9 @@ const PostItem = ({ post }: PostItemProps) => {
       onClick={handleClick}
     >
       <div className="flex gap-4 items-center flex-1">
-        <div className="flex flex-col gap-3 flex-1">
+        <div className="flex flex-col gap-3 flex-1 min-w-0">
           <h3
-            className={`font-medium text-gray-900 truncate ${
+            className={`font-medium text-gray-900 truncate overflow-hidden ${
               isMobile ? "text-xl" : "text-2xl"
             }`}
           >
@@ -80,7 +80,7 @@ const PostItem = ({ post }: PostItemProps) => {
                 </span>
               </div>
             </div>
-            <div className="w-45">
+            <div className="w-45 inline-block overflow-hidden text-ellipsis whitespace-nowrap">
               <span className="mx-3"> | </span>
               <span>{createdAt}</span>
               <span className="mx-3"> | </span>
