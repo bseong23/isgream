@@ -9,13 +9,13 @@ interface DecodedToken {
 }
 
 const PUBLIC_PATHS = [
-  "/", 
-  "/login", 
-  "/signup", 
-  "/board", 
+  "/",
+  "/login",
+  "/signup",
+  "/board",
   "/board/detail",
-  "/users/find-password",  // 추가
-  "/reset-password"        // 비밀번호 재설정 페이지도 추가
+  "/users/find-password", // 추가
+  "/reset-password" // 비밀번호 재설정 페이지도 추가
 ];
 
 const MAX_RETRY_COUNT = 3;
