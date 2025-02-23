@@ -135,19 +135,27 @@ export const chatApi = {
             Authorization: `Bearer ${token}`,
             "accept-version": "1.1,1.0"
           },
+
+          // heartbeat 비활성화
+          heartbeatIncoming: 0,
+          heartbeatOutgoing: 0,
+
           debug: (str) => {
             console.log("STOMP Debug:", str);
           },
           reconnectDelay: 0,  // 자동 재연결 비활성화
           maxWebSocketChunkSize: 8 * 1024,  // 청크 사이즈 제한
           forceBinaryWSFrames: true,  // 바이너리 프레임 강제
-          
+
           onConnect: () => {
             console.log("웹소켓 연결 성공");
             resolve();
           },
           onDisconnect: () => {
             console.log("웹소켓 연결 해제");
+            // disconnect  시에도 cleanup
+            stompClient = null;
+            currentSubscription = null;
           },
           onStompError: (frame) => {
             console.error("Stomp 에러:", frame);
@@ -156,12 +164,12 @@ export const chatApi = {
         });
 
         // 활성화 전에 연결이 완료되길 기다림
-        stompClient.onConnect = () => {
-          console.log("연결 완료");
-          setTimeout(() => {
-            resolve();
-          }, 500); // 연결 후 약간의 지연 추가
-        };
+        // stompClient.onConnect = () => {
+        //   console.log("연결 완료");
+        //   setTimeout(() => {
+        //     resolve();
+        //   }, 500); // 연결 후 약간의 지연 추가
+        // };
         stompClient.activate();
       } catch (error) {
         reject(error);
@@ -176,8 +184,18 @@ export const chatApi = {
       try {
         if (stompClient) {
           // 모든 구독 해제
-          stompClient.unsubscribe();
+          if (currentSubscription) {
+            currentSubscription.unsubscribe();
+            currentSubscription = null;
+          }
           
+          // 연결 종료 전에 heartbeat 비활성화
+          stompClient.heartbeatIncoming = 0;
+          stompClient.heartbeatOutgoing = 0;
+
+          // 즉시 연결 종료
+          stompClient.deactivate();
+
           // 강제로 연결 종료
           stompClient.forceDisconnect();
           

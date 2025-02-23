@@ -314,10 +314,22 @@ const ChatRoomPage = () => {
     
     // [추가된 부분 2/2] Cleanup function
     return () => {
+      console.log('채팅방 cleanup 시작');
       disconnectWebSocket();
     };
+  }, [roomId]);
 
-  }, [roomId, navigate]);
+    // 페이지 이동 감지하여 연결 종료
+    useEffect(() => {
+      const handleBeforeUnload = () => {
+        disconnectWebSocket();
+      };
+  
+      window.addEventListener('beforeunload', handleBeforeUnload);
+      return () => {
+        window.removeEventListener('beforeunload', handleBeforeUnload);
+      };
+    }, []);
 
   const handleSendMessage = async () => {
     if (!newMessage.trim() || !isConnected || !roomId || !currentUserId) return;
