@@ -55,9 +55,12 @@ const Calendar: React.FC<CalendarProps> = ({ className }) => {
   };
 
   if (!selectedChild) {
-    return <div>선택된 자녀가 없습니다.</div>;
+    return (
+      <div className="w-full my-40 flex items-center justify-center text-gray-500">
+        선택된 자녀가 없습니다.
+      </div>
+    );
   }
-
   // fetchCalendar를 DetailViewProps에 맞는 타입으로 변환
   const typedFetchCalendar = async (
     yearMonth: string

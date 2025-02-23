@@ -12,7 +12,13 @@ interface UseFCMReturn {
 }
 
 export const useFCM = (): UseFCMReturn => {
+  const isAuthenticated = () => {
+    return !!localStorage.getItem("accessToken");
+  };
+
   const saveToken = useCallback(async (token: string) => {
+    if (!isAuthenticated()) return;
+
     try {
       await notificationAPI.saveToken(token);
     } catch (error) {
@@ -22,8 +28,9 @@ export const useFCM = (): UseFCMReturn => {
   }, []);
 
   useEffect(() => {
+    if (!isAuthenticated()) return;
+
     const messageHandler = async (event: MessageEvent) => {
-      // 타입 가드 추가
       if (event.data && event.data.type === "TOKEN_REFRESH") {
         try {
           await saveToken(event.data.token);
@@ -36,31 +43,36 @@ export const useFCM = (): UseFCMReturn => {
 
     navigator.serviceWorker.addEventListener("message", messageHandler);
 
-    // 클린업 함수로 이벤트 리스너 제거
     return () => {
       navigator.serviceWorker.removeEventListener("message", messageHandler);
     };
   }, [saveToken]);
 
-  const initializeFCM = useCallback(async (): Promise<void> => {
-    try {
-      // 서비스워커 등록
-      await registerServiceWorker();
+  const initializeFCM = useCallback(async () => {
+    if (!isAuthenticated()) return;
 
-      // 알림 권한 요청
+    let intervalId: number | undefined;
+
+    try {
+      await registerServiceWorker();
       const permission = await Notification.requestPermission();
 
       if (permission === "granted") {
         const token = await requestNotificationPermission();
 
         if (token) {
-          // 토큰을 서버에 저장
           await saveToken(token);
           console.log("FCM 토큰 서버 저장 성공:", token);
 
-          // 주기적인 토큰 갱신 로직 추가
-          const tokenRefreshInterval = setInterval(
+          intervalId = window.setInterval(
             async () => {
+              if (!isAuthenticated()) {
+                if (intervalId) {
+                  window.clearInterval(intervalId);
+                }
+                return;
+              }
+
               try {
                 const refreshedToken = await requestNotificationPermission();
                 if (refreshedToken) {
@@ -71,10 +83,7 @@ export const useFCM = (): UseFCMReturn => {
               }
             },
             60 * 60 * 1000
-          ); // 1시간마다 갱신
-
-          // 컴포넌트 언마운트 시 인터벌 정리
-          clearInterval(tokenRefreshInterval);
+          );
         }
       } else {
         console.warn("알림 권한이 거부되었습니다.");
@@ -82,9 +91,13 @@ export const useFCM = (): UseFCMReturn => {
     } catch (error) {
       console.error("FCM 초기화 실패:", error);
     }
+
+    // 이 부분 제거 (Promise<void>를 반환해야 하므로 cleanup 함수를 반환하면 안됨)
   }, [saveToken]);
 
   const deleteToken = useCallback(async () => {
+    if (!isAuthenticated()) return;
+
     try {
       await notificationAPI.deleteToken();
     } catch (error) {

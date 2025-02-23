@@ -1,9 +1,9 @@
+// components/chat/ChatRoomItem.tsx
 import { useState, useEffect } from "react";
 
 interface ChatRoomProps {
   roomId: string;
   opponentName: string;
-  // newMessageCount: number;
   lastMessageTime: string;
   lastMessageUnread: string;
   onDelete: () => void;
@@ -12,7 +12,6 @@ interface ChatRoomProps {
 
 const ChatRoomItem = ({
   opponentName,
-  // newMessageCount,
   lastMessageTime,
   lastMessageUnread,
   onDelete,
@@ -20,7 +19,6 @@ const ChatRoomItem = ({
 }: ChatRoomProps) => {
   const [showOptions, setShowOptions] = useState(false);
 
-  // 외부 클릭 감지를 위한 이벤트 리스너
   useEffect(() => {
     const handleClickOutside = () => {
       setShowOptions(false);
@@ -73,11 +71,6 @@ const ChatRoomItem = ({
         <div className="text-xs text-gray-400 mb-1">
           {formatRelativeTime(lastMessageTime)}
         </div>
-        {/* {newMessageCount > 0 && (
-          <div className="bg-red-500 text-white text-xs rounded-full w-5 h-5 flex items-center justify-center">
-            {newMessageCount}
-          </div>
-        )} */}
       </div>
 
       {opponentName && (

@@ -385,45 +385,42 @@ const ChatRoomPage = () => {
             <span className="text-gray-500">메시지를 불러오는 중...</span>
           </div>
         )}
-        {chatData?.chats
-          .slice()
-          .reverse()
-          .map((chat) => (
-            <div
-              key={chat.id}
-              className={`flex ${chat.sender == currentUserId ? "justify-end" : "justify-start"}`}
-            >
-              {chat.sender == currentUserId ? (
-                <div className="flex flex-col items-end">
-                  <div className="flex">
-                    {/* {!chat.read && (
-                      <span className="text-xs text-gray-500 mb-1 mr-2 flex items-end">
-                        1
-                      </span>
-                    )} */}
-                    <div className="p-3 rounded-lg bg-white text-black border border-gray-500 w-full max-w-[70vw] break-words">
-                      {chat.content}
-                    </div>
-                  </div>
-                  <div className="text-xs text-gray-500 mb-1 px-1">
-                    {formatMessageTime(chat.timestamp)}
-                  </div>
-                </div>
-              ) : (
-                <div className="flex flex-col">
-                  <div className="text-base text-gray-600 mb-1">
-                    {opponentName}
-                  </div>
-                  <div className="p-3 rounded-lg bg-green-500 text-white w-full max-w-[70vw] break-words">
+        {chatData?.chats.slice().map((chat) => (
+          <div
+            key={chat.id}
+            className={`flex ${chat.sender == currentUserId ? "justify-end" : "justify-start"}`}
+          >
+            {chat.sender == currentUserId ? (
+              <div className="flex flex-col items-end">
+                <div className="flex">
+                  {!chat.read && (
+                    <span className="text-xs text-gray-500 mb-1 mr-2 flex items-end">
+                      1
+                    </span>
+                  )}
+                  <div className="p-3 rounded-lg bg-white text-black border border-gray-500 w-full max-w-[70vw] break-words">
                     {chat.content}
                   </div>
-                  <div className="text-xs text-gray-500 mt-1 px-1">
-                    {formatMessageTime(chat.timestamp)}
-                  </div>
                 </div>
-              )}
-            </div>
-          ))}
+                <div className="text-xs text-gray-500 mb-1 px-1">
+                  {formatMessageTime(chat.timestamp)}
+                </div>
+              </div>
+            ) : (
+              <div className="flex flex-col">
+                <div className="text-base text-gray-600 mb-1">
+                  {opponentName}
+                </div>
+                <div className="p-3 rounded-lg bg-green-500 text-white w-full max-w-[70vw] break-words">
+                  {chat.content}
+                </div>
+                <div className="text-xs text-gray-500 mt-1 px-1">
+                  {formatMessageTime(chat.timestamp)}
+                </div>
+              </div>
+            )}
+          </div>
+        ))}
         <div ref={messagesEndRef} />
       </div>
       <div className="w-full bg-white fixed bottom-15">
