@@ -1,5 +1,5 @@
 import { useEffect, useState, useRef } from "react";
-import { useParams, useNavigate, useLocation } from "react-router-dom";
+import { useParams, useLocation } from "react-router-dom";
 import { chatApi } from "../../api/chat";
 
 interface ChatRoomData {
@@ -23,7 +23,6 @@ const ChatRoomPage = () => {
   const receiver = location.state?.roomData?.receiver;
   const opponentName = location.state?.roomData?.opponentName;
 
-  const navigate = useNavigate();
   const [newMessage, setNewMessage] = useState("");
   const [chatData, setChatData] = useState<ChatRoomData | null>(null);
   const [isConnected, setIsConnected] = useState(false);
