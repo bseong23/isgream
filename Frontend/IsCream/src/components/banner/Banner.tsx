@@ -1,10 +1,15 @@
 import React, { useState, useEffect, useCallback } from "react";
-import { Link } from "react-router-dom";
+import { Link, useNavigate } from "react-router-dom";
 import Banner1 from "../../assets/image/banner1.png";
 import Banner2 from "../../assets/image/banner2.png";
 import Banner3 from "../../assets/image/banner3.png";
 // import Banner4 from "../../assets/image/banner4.png";
 import Banner5 from "../../assets/image/banner5.png";
+
+interface BannerProps {
+  requireChild?: boolean;
+  haveChild?: boolean;
+}
 
 interface SlideType {
   image: string;
@@ -12,7 +17,21 @@ interface SlideType {
   isVertical?: boolean;
 }
 
-const Banner = () => {
+const Banner: React.FC<BannerProps> = ({ requireChild = true, haveChild = false }) => {
+  const navigate = useNavigate();
+
+  const handleClick = (e: React.MouseEvent, to: string) => {
+    // AI 분석이나 양육태도, Big5 검사는 자녀가 필요한 서비스
+    const requiresChild = ['/ai-analysis', '/big5-test'].includes(to);
+    
+    if (requiresChild && requireChild && !haveChild) {
+      e.preventDefault();
+      alert("자녀 등록 후 이용 가능한 서비스입니다.");
+      navigate("/mypage");
+      return;
+    }
+  };
+
   const originalSlides: SlideType[] = [
     { image: Banner1, to: "/ai-analysis", isVertical: true },
     { image: Banner2, to: "/ai-analysis", isVertical: true },
@@ -146,6 +165,7 @@ const Banner = () => {
                 to={slide.to}
                 className="min-w-full h-full relative bg-white flex items-center justify-center"
                 style={getSlideStyle(index)}
+                onClick={(e) => handleClick(e, slide.to)}
               >
                 <div className="relative w-auto h-full flex items-center justify-center">
                   <img

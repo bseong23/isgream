@@ -1,11 +1,27 @@
-import { Link } from "react-router-dom";
+import { Link, useNavigate } from "react-router-dom";
 import AIRobot from "../../assets/image/그림검사.png";
 
-const AICard = () => {
+interface AICardProps {
+  requireChild?: boolean;
+  haveChild?: boolean;
+}
+
+const AICard = ({ requireChild = true, haveChild = false }: AICardProps) => {
+  const navigate = useNavigate();
+
+  const handleClick = (e: React.MouseEvent) => {
+    if (requireChild && !haveChild) {
+      e.preventDefault();
+      alert("자녀 등록 후 이용 가능한 서비스입니다.");
+      navigate("/mypage");
+      return;
+    }
+  };
+
   return (
     <div className="w-full bg-white mt-4">
       <div className="mx-auto max-w-[706px] relative">
-        <Link to="/ai-analysis" className="no-underline group">
+        <Link to="/ai-analysis" className="no-underline group" onClick={handleClick}>
           {/* 고정된 높이와 최소 높이를 설정하고, 오버플로우 관리 */}
           <div className="relative w-full border border-[#009E28] rounded-[20px] bg-white hover:border-3 hover:bg-gray-50 hover:shadow-xl transition-all duration-200 p-6">
             <div className="flex items-center">
