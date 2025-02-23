@@ -1,5 +1,5 @@
 import { useEffect, useState, useRef } from "react";
-import { useParams, useNavigate, useLocation } from "react-router-dom";
+import { useParams, useLocation } from "react-router-dom";
 import { chatApi } from "../../api/chat";
 
 interface ChatRoomData {
@@ -23,7 +23,6 @@ const ChatRoomPage = () => {
   const receiver = location.state?.roomData?.receiver;
   const opponentName = location.state?.roomData?.opponentName;
 
-  const navigate = useNavigate();
   const [newMessage, setNewMessage] = useState("");
   const [chatData, setChatData] = useState<ChatRoomData | null>(null);
   const [isConnected, setIsConnected] = useState(false);
@@ -190,6 +189,18 @@ const ChatRoomPage = () => {
       document.removeEventListener("visibilitychange", handleVisibilityChange);
     };
   }, [chatData?.chats, currentUserId, roomId]);
+    
+    // [추가된 부분 1/2] 웹소켓 연결 해제 함수
+    const disconnectWebSocket = async () => {
+      try {
+        console.log('채팅방 나가기 - 연결 해제 중...');
+        await chatApi.disconnectChatroom();
+        setIsConnected(false);
+      } catch (error) {
+        console.error('웹소켓 연결 해제 중 오류:', error);
+      }
+    };
+
 
   useEffect(() => {
     const initializeChatRoom = async () => {
@@ -299,7 +310,25 @@ const ChatRoomPage = () => {
     };
 
     initializeChatRoom();
-  }, [roomId, navigate]);
+    
+    // [추가된 부분 2/2] Cleanup function
+    return () => {
+      console.log('채팅방 cleanup 시작');
+      disconnectWebSocket();
+    };
+  }, [roomId]);
+
+    // 페이지 이동 감지하여 연결 종료
+    useEffect(() => {
+      const handleBeforeUnload = () => {
+        disconnectWebSocket();
+      };
+  
+      window.addEventListener('beforeunload', handleBeforeUnload);
+      return () => {
+        window.removeEventListener('beforeunload', handleBeforeUnload);
+      };
+    }, []);
 
   const handleSendMessage = async () => {
     if (!newMessage.trim() || !isConnected || !roomId || !currentUserId) return;
@@ -367,6 +396,8 @@ const ChatRoomPage = () => {
       minute: "2-digit"
     });
   };
+
+
 
   return (
     <div className="flex flex-col bg-white">

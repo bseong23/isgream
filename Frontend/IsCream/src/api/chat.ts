@@ -66,13 +66,13 @@ export const chatApi = {
   // 채팅방 생성하기
   async createChatroom(receiverId: string): Promise<CreateChatroomResponse> {
     try {
-      console.log("chat.ts 상대방 id: ", receiverId);
+    //   console.log("chat.ts 상대방 id: ", receiverId);
       
       const response = await api.post(
         `/chatrooms/create?receiverId=${receiverId}`
       );
 
-      console.log("chat.ts 응답: ", response);
+    //   console.log("chat.ts 응답: ", response);
       
       if (response.data.code === "S0000") {
         return response.data;
@@ -107,7 +107,7 @@ export const chatApi = {
     try {
       const response = await api.get(`/chat/${roomId}/messages?page=${page}`);
       if (response.data.code === "S0000") {
-        console.log("채팅방 입장 성공");
+        // console.log("채팅방 입장 성공");
         return response.data;
       }
       throw new Error(response.data.massage || "채팅방 입장 실패");
@@ -135,16 +135,27 @@ export const chatApi = {
             Authorization: `Bearer ${token}`,
             "accept-version": "1.1,1.0"
           },
+
+          // heartbeat 비활성화
+          heartbeatIncoming: 0,
+          heartbeatOutgoing: 0,
+
           debug: (str) => {
             console.log("STOMP Debug:", str);
           },
-          reconnectDelay: 5000,
+          reconnectDelay: 0,  // 자동 재연결 비활성화
+          maxWebSocketChunkSize: 8 * 1024,  // 청크 사이즈 제한
+          forceBinaryWSFrames: true,  // 바이너리 프레임 강제
+
           onConnect: () => {
             console.log("웹소켓 연결 성공");
             resolve();
           },
           onDisconnect: () => {
             console.log("웹소켓 연결 해제");
+            // disconnect  시에도 cleanup
+            stompClient = null;
+            currentSubscription = null;
           },
           onStompError: (frame) => {
             console.error("Stomp 에러:", frame);
@@ -153,15 +164,52 @@ export const chatApi = {
         });
 
         // 활성화 전에 연결이 완료되길 기다림
-        stompClient.onConnect = () => {
-          console.log("연결 완료");
-          setTimeout(() => {
-            resolve();
-          }, 500); // 연결 후 약간의 지연 추가
-        };
+        // stompClient.onConnect = () => {
+        //   console.log("연결 완료");
+        //   setTimeout(() => {
+        //     resolve();
+        //   }, 500); // 연결 후 약간의 지연 추가
+        // };
         stompClient.activate();
       } catch (error) {
         reject(error);
+      }
+    });
+  },
+
+
+  // 웹소켓 연결 해제
+  async disconnectChatroom(): Promise<void> {
+    return new Promise((resolve) => {
+      try {
+        if (stompClient) {
+          // 모든 구독 해제
+          if (currentSubscription) {
+            currentSubscription.unsubscribe();
+            currentSubscription = null;
+          }
+          
+          // 연결 종료 전에 heartbeat 비활성화
+          stompClient.heartbeatIncoming = 0;
+          stompClient.heartbeatOutgoing = 0;
+
+          // 즉시 연결 종료
+          stompClient.deactivate();
+
+          // 강제로 연결 종료
+          stompClient.forceDisconnect();
+          
+          // cleanup
+          stompClient.deactivate();
+          stompClient = null;
+          currentSubscription = null;
+          
+          console.log('웹소켓 연결 완전히 종료됨');
+        }
+        resolve();
+      } catch (error) {
+        console.error('웹소켓 연결 해제 중 오류:', error);
+        resolve(); // 에러가 발생해도 Promise는 resolve
       }
     });
   },
