@@ -1,5 +1,3 @@
-// 문제없이 돌아가던 서버에 배포한 버전
-
 import { useEffect, useState, useRef } from "react";
 import { useParams, useNavigate, useLocation } from "react-router-dom";
 import { chatApi } from "../../api/chat";
@@ -106,13 +104,8 @@ const ChatRoomPage = () => {
         const previousHeight = container?.scrollHeight || 0;
         const previousScrollTop = container?.scrollTop || 0;
 
-        // 스크롤 하단에서 100px 이내인 경우에만 자동 스크롤
-        setShouldScrollToBottom(
-          container
-            ? container.scrollHeight - container.scrollTop <=
-                container.clientHeight + 100
-            : true
-        );
+        // 스크롤 상단에서 100px 이내인 경우에만 자동 스크롤
+        setShouldScrollToBottom(container ? container.scrollTop <= 100 : true);
 
         setChatData((prevData) => {
           if (!prevData) return { chats: messagesWithOpponentName };
@@ -120,8 +113,6 @@ const ChatRoomPage = () => {
             chats: [...messagesWithOpponentName, ...prevData.chats]
           };
         });
-
-        console.log("챗데이터: ", chatData);
 
         // 스크롤 위치 복원
         if (container) {
@@ -149,11 +140,8 @@ const ChatRoomPage = () => {
       loadMoreMessages();
     }
 
-    // 스크롤이 하단에 가까워지면 자동 스크롤 활성화
-    setShouldScrollToBottom(
-      container.scrollHeight - container.scrollTop <=
-        container.clientHeight + 100
-    );
+    // 스크롤이 상단에 가까워지면 자동 스크롤 활성화
+    setShouldScrollToBottom(container.scrollTop <= 100);
   };
 
   useEffect(() => {
@@ -225,10 +213,17 @@ const ChatRoomPage = () => {
         //1. 채팅방 입장
         const response = await chatApi.openChatroom(roomId, page);
         if (response.data && response.data.length > 0) {
-          const messagesWithOpponentName = response.data.map((message) => ({
+          // 타임스탬프 기준으로 오름차순 정렬
+          const sortedMessages = response.data.sort(
+            (a, b) =>
+              new Date(a.timestamp).getTime() - new Date(b.timestamp).getTime()
+          );
+
+          const messagesWithOpponentName = sortedMessages.map((message) => ({
             ...message,
             opponentName: opponentName
           }));
+
           setChatData({ chats: messagesWithOpponentName });
 
           // 초기 로드 시 읽음 처리
@@ -303,7 +298,7 @@ const ChatRoomPage = () => {
             }
 
             return {
-              chats: [messageWithOpponentName, ...prevData.chats]
+              chats: [...prevData.chats, messageWithOpponentName]
             };
           });
         });
@@ -356,7 +351,7 @@ const ChatRoomPage = () => {
 
         return {
           ...prevData,
-          chats: [response, ...prevData.chats]
+          chats: [...prevData.chats, response]
         };
       });
 
@@ -405,7 +400,7 @@ const ChatRoomPage = () => {
             <span className="text-gray-500">메시지를 불러오는 중...</span>
           </div>
         )}
-        {chatData?.chats.slice().map((chat) => (
+        {chatData?.chats.map((chat) => (
           <div
             key={chat.id}
             className={`flex ${chat.sender == currentUserId ? "justify-end" : "justify-start"}`}
@@ -413,11 +408,11 @@ const ChatRoomPage = () => {
             {chat.sender == currentUserId ? (
               <div className="flex flex-col items-end">
                 <div className="flex">
-                  {!chat.read && (
+                  {/* {!chat.read && (
                     <span className="text-xs text-gray-500 mb-1 mr-2 flex items-end">
                       1
                     </span>
-                  )}
+                  )} */}
                   <div className="p-3 rounded-lg bg-white text-black border border-gray-500 w-full max-w-[70vw] break-words">
                     {chat.content}
                   </div>
@@ -451,7 +446,7 @@ const ChatRoomPage = () => {
             onChange={(e) => setNewMessage(e.target.value)}
             onKeyPress={handleKeyPress}
             placeholder="메시지를 입력하세요"
-            className="flex-1 border border-gray-500 rounded-lg p-2 mr-2 focus:outline-none focus:border-black focus:ring-1 focus:ring-black"
+            className="flex-1 border border-gray-500 rounded-lg p-2 mr-2 focus:outline-none focus:borderblack focus:ring-1 focus:ring-black"
           />
           <button
             onClick={handleSendMessage}

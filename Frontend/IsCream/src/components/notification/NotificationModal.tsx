@@ -33,9 +33,10 @@ const NotificationModal: React.FC<NotificationModalProps> = ({
           navigate(`/board/detail/${notification.postId}`);
           break;
       }
-    } else if (notification.chatId) {
-      // 채팅방으로 이동 추가
-      navigate(`/chat/room/${notification.chatId}`);
+    } else if (notification.type === "NOTIFY_CHAT") {
+      // 여기에 채팅방으로 이동하는 추가 로직 필요
+      // 예를 들어, 채팅 목록 페이지로 이동하거나 다른 처리 필요
+      navigate("/chat");
     }
 
     onClose();
