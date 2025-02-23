@@ -9,6 +9,7 @@ interface DetailCommentsProps {
   onSubmit: (commentData: CommentRequest) => void;
   onEdit: (commentId: number, content: string) => void;
   onDelete: (commentId: number) => void;
+  onChat: (userId: string) => void;
   isCommentFormVisible: boolean;
   isAuthenticated: boolean;
   currentUserId?: string;
@@ -21,12 +22,12 @@ const DetailComments = ({
   onSubmit,
   onEdit,
   onDelete,
+  onChat,
   isCommentFormVisible,
   isAuthenticated,
   currentUserId,
   userImageUrl
 }: DetailCommentsProps) => {
-  console.log("작성자: ", currentUserId);
   
   const [replyingTo, setReplyingTo] = useState<number | null>(null);
   const [expandedComments, setExpandedComments] = useState<number[]>([]);
@@ -82,6 +83,7 @@ const DetailComments = ({
                   currentUserId={currentUserId}
                   onEdit={() => setEditingCommentId(comment.commentId)}
                   onDelete={onDelete}
+                  onChat={onChat}
                   onReply={() => setReplyingTo(comment.commentId)}
                   onToggleReplies={
                     replies.length > 0
@@ -112,6 +114,7 @@ const DetailComments = ({
                         comment={reply}
                         currentUserId={currentUserId}
                         onEdit={() => setEditingCommentId(reply.commentId)}
+                        // onChat={}
                         onDelete={onDelete}
                         isReply
                       />

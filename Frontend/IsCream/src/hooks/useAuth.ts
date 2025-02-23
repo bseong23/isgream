@@ -31,6 +31,26 @@ export const useAuth = (): AuthHook => {
   const { deleteToken } = useFCM();
   const isAuthenticated = !!localStorage.getItem("accessToken");
 
+    // 토큰에서 사용자 정보 추출하는 함수
+    const getUserFromToken = (): User | undefined => {
+      const token = localStorage.getItem("accessToken");
+      if (!token) return undefined;
+  
+      try {
+        const base64Payload = token.split('.')[1];
+        const payload = atob(base64Payload);
+        const parsedPayload = JSON.parse(payload);
+        
+        return {
+          id: parsedPayload.userId?.toString(),
+          name: parsedPayload.name
+        };
+      } catch (error) {
+        console.error("토큰 파싱 오류:", error);
+        return undefined;
+      }
+    };
+
   const login = async (loginData: LoginRequest): Promise<LoginResponse> => {
     const response = await api.post<LoginResponse>("/users/login", loginData);
 
@@ -88,6 +108,7 @@ export const useAuth = (): AuthHook => {
 
   return {
     isAuthenticated,
+    user: getUserFromToken(),
     login,
     logout,
     signUp

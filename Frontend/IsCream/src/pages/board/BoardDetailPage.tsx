@@ -11,6 +11,7 @@ import { useLikePost } from "../../hooks/board/useLikePost";
 import { useCreateComment } from "../../hooks/board/useCreateComment";
 import { useDeleteComment } from "../../hooks/board/useDeleteComment";
 import { useUpdateComment } from "../../hooks/board/useUpdateComment";
+import { useChatComment } from "../../hooks/board/useChatComment";
 import type { PostDetail, CommentRequest } from "../../types/board";
 import Bear from "../../assets/image/챗봇_곰.png";
 // import { AxiosError } from "axios";
@@ -24,13 +25,10 @@ const BoardDetailPage = () => {
   const createCommentMutation = useCreateComment();
   const deleteCommentMutation = useDeleteComment();
   const updateCommentMutation = useUpdateComment();
+  const chatCommentMutation = useChatComment();
 
-  console.log("댓글정보: ",commentsData);
-  
-  // console.log("작가아이디 있는지 확인 ", postData);
-  
   const [isCommentFormVisible, setIsCommentFormVisible] =
-    useState<boolean>(false);
+  useState<boolean>(false);
   const { isAuthenticated, user } = useAuth();
   const navigate = useNavigate();
 
@@ -78,12 +76,10 @@ const BoardDetailPage = () => {
       navigate("/login");
       return;
     }
-    console.log(commentData);
 
     // commentData를 그대로 사용 (추가 변환 없이)
     createCommentMutation.mutate(commentData, {
       onError: () => {
-        // console.log(error.respones);
         const errorMessage = "댓글 작성에 실패했습니다.";
         alert(errorMessage);
       }
@@ -126,6 +122,22 @@ const BoardDetailPage = () => {
     });
   };
 
+  const handelCommentChat = (userId: string ) => {
+    if (!isAuthenticated) {
+      alert("로그인이 필요합니다.");
+      return;
+    }
+
+    chatCommentMutation.mutate(userId.toString(), {
+      
+      onError: (error) => {
+        console.error("채팅방 생성 중 오류 발생:", error);
+        alert("채팅방 생성에 실패했습니다.");
+      }
+    });
+
+  };
+
   if (isLoading) {
     return (
       <div className="max-w-[706px] mx-auto bg-white p-4">
@@ -166,6 +178,7 @@ const BoardDetailPage = () => {
           comments={comments}
           onSubmit={handleCommentSubmit}
           onEdit={handleCommentEdit}
+          onChat={handelCommentChat}
           onDelete={handleCommentDelete}
           isCommentFormVisible={isCommentFormVisible}
           isAuthenticated={isAuthenticated}

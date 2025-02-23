@@ -12,6 +12,7 @@ export interface Author {
   id: string;
   nickname: string;
   imageUrl: string;
+  userId: string;
 }
 
 export interface Post {
