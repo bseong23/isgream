@@ -5,7 +5,13 @@ import { ChatMessage } from "../../types/chatbot";
 export const useChatbot = () => {
   const [isOpen, setIsOpen] = useState(false);
   const [query, setQuery] = useState("");
-  const [messages, setMessages] = useState<ChatMessage[]>([]);
+  const [messages, setMessages] = useState<ChatMessage[]>([
+    {
+      id: "bot-init",
+      content: "아이 상담에 관한 내용을 말해주세요!",
+      sender: "bot"
+    }
+  ]);
   const [isLoading, setIsLoading] = useState(false);
   const [error, setError] = useState<string | null>(null);
 
@@ -47,7 +53,20 @@ export const useChatbot = () => {
     }
   };
 
-  const toggleChatbot = () => setIsOpen(!isOpen);
+  const toggleChatbot = () => {
+    setIsOpen((prev) => {
+      if (!prev && messages.length === 0) {
+        setMessages([
+          {
+            id: "bot-init",
+            content: "아이 상담에 관한 내용을 말해주세요!",
+            sender: "bot"
+          }
+        ]);
+      }
+      return !prev;
+    });
+  };
 
   return {
     isOpen,

@@ -54,10 +54,19 @@ export const useAuth = (): AuthHook => {
 
   const logout = async (): Promise<LogoutResponse> => {
     try {
-      await deleteToken(); // FCM 토큰 삭제
+      // 1. 먼저 로그아웃 API 호출
       const response = await api.post<LogoutResponse>("/users/logout");
 
       if (response.data.code === ERROR_CODES.SUCCESS) {
+        // 2. 로그아웃이 성공하면 FCM 토큰 삭제 시도
+        try {
+          await deleteToken();
+        } catch (fcmError) {
+          console.error("FCM 토큰 삭제 실패:", fcmError);
+          // FCM 토큰 삭제 실패는 크리티컬하지 않으므로 무시
+        }
+
+        // 3. 나머지 정리 작업
         localStorage.removeItem("accessToken");
         delete api.defaults.headers.common["access"];
 
