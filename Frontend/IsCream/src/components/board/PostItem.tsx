@@ -39,10 +39,10 @@ const PostItem = ({ post }: PostItemProps) => {
       onClick={handleClick}
     >
       <div className="flex gap-4 items-center flex-1">
-        <div className="flex flex-col gap-3 flex-1">
+        <div className="flex flex-col gap-3 flex-1 min-w-0">
           <h3
             className={`font-medium text-gray-900 truncate overflow-hidden ${
-              isMobile ? "text-xl max-w-[200px]" : "text-2xl max-w-[400px]"
+              isMobile ? "text-xl" : "text-2xl"
             }`}
           >
             {title}
