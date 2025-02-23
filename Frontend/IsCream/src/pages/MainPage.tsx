@@ -30,16 +30,6 @@ const MainPage = () => {
     fetchChildren();
   }, []);
 
-    // MainCard 컴포넌트에 조건부 이동 로직 추가
-    const handleCardClick = (path: string) => {
-      if (!haveChild) {
-        alert("자녀 등록 후 이용 가능한 서비스입니다.");
-        // 자녀 등록 페이지로 이동하거나 다른 처리
-        return false;
-      }
-      return true;
-    };
-
   return (
     <>
       <div>
