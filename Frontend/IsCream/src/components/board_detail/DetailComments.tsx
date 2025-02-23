@@ -28,10 +28,6 @@ const DetailComments = ({
   currentUserId,
   userImageUrl
 }: DetailCommentsProps) => {
-  // console.log("접속자: ", currentUserId);
-  // console.log("댓글정보: ", comments);
-  console.log("삭제: ",onDelete);
-  
   
   const [replyingTo, setReplyingTo] = useState<number | null>(null);
   const [expandedComments, setExpandedComments] = useState<number[]>([]);

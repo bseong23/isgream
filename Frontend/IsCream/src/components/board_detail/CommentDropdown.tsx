@@ -14,8 +14,6 @@ const CommentDropdown = ({
 
   // 안전한 방식으로 author 체크
   const isAuthor = currentUserId == comment.author.userId;
-  console.log(comment.author.userId, isAuthor);
-    
 
   useEffect(() => {
     const handleClickOutside = (event: MouseEvent) => {

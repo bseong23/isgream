@@ -20,8 +20,6 @@ const CommentItem = ({
   const [isDropdownOpen, setIsDropdownOpen] = useState<boolean>(false);
   const [editContent, setEditContent] = useState(comment.content);
 
-  console.log("currentuseId : ", currentUserId, "comment : ", comment.author.userId);
-  
   const handleEditSubmit = () => {
     if (onEdit && editContent.trim()) {
       onEdit(comment.commentId, editContent.trim());

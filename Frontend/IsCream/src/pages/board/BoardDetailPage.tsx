@@ -27,19 +27,10 @@ const BoardDetailPage = () => {
   const updateCommentMutation = useUpdateComment();
   const chatCommentMutation = useChatComment();
 
-  // console.log("게시글 정보: ", postData?.data.data?.userId);
-  
-  // console.log("댓글정보: ",commentsData);
-  
-  // console.log("작가아이디 있는지 확인 ", postData);
-  
-  
   const [isCommentFormVisible, setIsCommentFormVisible] =
   useState<boolean>(false);
   const { isAuthenticated, user } = useAuth();
   const navigate = useNavigate();
-
-  console.log("유저: ", user);
 
   const handleDelete = () => {
     if (!postId) return;
@@ -85,12 +76,10 @@ const BoardDetailPage = () => {
       navigate("/login");
       return;
     }
-    console.log(commentData);
 
     // commentData를 그대로 사용 (추가 변환 없이)
     createCommentMutation.mutate(commentData, {
       onError: () => {
-        // console.log(error.respones);
         const errorMessage = "댓글 작성에 실패했습니다.";
         alert(errorMessage);
       }
@@ -139,7 +128,6 @@ const BoardDetailPage = () => {
       return;
     }
 
-    console.log("userId------------------------------------: ", userId);
     chatCommentMutation.mutate(userId.toString(), {
       
       onError: (error) => {
