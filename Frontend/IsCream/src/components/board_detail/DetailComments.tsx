@@ -26,6 +26,8 @@ const DetailComments = ({
   currentUserId,
   userImageUrl
 }: DetailCommentsProps) => {
+  console.log("작성자: ", currentUserId);
+  
   const [replyingTo, setReplyingTo] = useState<number | null>(null);
   const [expandedComments, setExpandedComments] = useState<number[]>([]);
   const [editingCommentId, setEditingCommentId] = useState<number | null>(null);
