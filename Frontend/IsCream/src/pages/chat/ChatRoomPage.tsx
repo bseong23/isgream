@@ -117,7 +117,7 @@ const ChatRoomPage = () => {
         setChatData((prevData) => {
           if (!prevData) return { chats: messagesWithOpponentName };
           return {
-            chats: [...messagesWithOpponentName, ...prevData.chats]
+            chats: [...prevData.chats, ...messagesWithOpponentName]
           };
         });
 
@@ -291,7 +291,7 @@ const ChatRoomPage = () => {
             }
 
             return {
-              chats: [messageWithOpponentName, ...prevData.chats]
+              chats: [...prevData.chats, messageWithOpponentName]
             };
           });
         });
@@ -338,7 +338,7 @@ const ChatRoomPage = () => {
 
         return {
           ...prevData,
-          chats: [response, ...prevData.chats]
+          chats: [...prevData.chats, response]
         };
       });
 
@@ -385,9 +385,9 @@ const ChatRoomPage = () => {
             <span className="text-gray-500">메시지를 불러오는 중...</span>
           </div>
         )}
-        {chatData?.chats.slice().map((chat) => (
+        {chatData?.chats.map((chat, index) => (
           <div
-            key={chat.id}
+            key={`${chat.id}-${index}`}
             className={`flex ${chat.sender == currentUserId ? "justify-end" : "justify-start"}`}
           >
             {chat.sender == currentUserId ? (
