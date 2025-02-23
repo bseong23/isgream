@@ -20,6 +20,8 @@ const CommentItem = ({
   const [isDropdownOpen, setIsDropdownOpen] = useState<boolean>(false);
   const [editContent, setEditContent] = useState(comment.content);
 
+  console.log("currentuseId : ", currentUserId, "comment : ", comment.author.userId);
+  
   const handleEditSubmit = () => {
     if (onEdit && editContent.trim()) {
       onEdit(comment.commentId, editContent.trim());
@@ -60,20 +62,20 @@ const CommentItem = ({
                 !editContent.trim() || editContent.trim() === comment.content
               }
               className={`
-    px-3 
-    py-1 
-    text-sm 
-    rounded-[15px] 
-    ${
-      editContent.trim()
-        ? "bg-green-600 text-white"
-        : "bg-gray-300 text-gray-500 cursor-not-allowed"
-    }
-    min-w-[60px] 
-    flex 
-    items-center 
-    justify-center
-  `}
+                px-3 
+                py-1 
+                text-sm 
+                rounded-[15px] 
+                ${
+                  editContent.trim()
+                    ? "bg-green-600 text-white"
+                    : "bg-gray-300 text-gray-500 cursor-not-allowed"
+                }
+                min-w-[60px] 
+                flex 
+                items-center 
+                justify-center
+              `}
             >
               저장
             </button>
@@ -81,16 +83,16 @@ const CommentItem = ({
               type="button"
               onClick={() => onEdit?.(comment.commentId, comment.content)}
               className="
-    text-sm 
-    text-gray-500 
-    hover:text-gray-700 
-    py-1 
-    px-2 
-    min-w-[60px] 
-    flex 
-    items-center 
-    justify-center
-  "
+                text-sm 
+                text-gray-500 
+                hover:text-gray-700 
+                py-1 
+                px-2 
+                min-w-[60px] 
+                flex 
+                items-center 
+                justify-center
+              "
             >
               취소
             </button>
@@ -116,7 +118,7 @@ const CommentItem = ({
           </div>
           <div className="ml-2 flex-1">
             <div className="flex items-center space-x-2">
-              <span className="text-sm font-medium">
+              <span className="text-sm font-medium truncate max-w-[80px] inline-block">
                 {comment.author.nickname}
               </span>
               <span className="text-xs text-gray-500">
@@ -153,7 +155,7 @@ const CommentItem = ({
             currentUserId={currentUserId}
             onEdit={() => onEdit?.(comment.commentId, comment.content)}
             onDelete={() => onDelete?.(comment.commentId)}
-            onChat={() => onChat?.(comment.author.id)}
+            onChat={() => onChat?.(comment.author.userId)}
             isOpen={isDropdownOpen}
             onToggle={() => setIsDropdownOpen(!isDropdownOpen)}
           />

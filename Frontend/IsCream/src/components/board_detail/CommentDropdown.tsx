@@ -13,8 +13,9 @@ const CommentDropdown = ({
   const dropdownRef = useRef<HTMLDivElement>(null);
 
   // 안전한 방식으로 author 체크
-  const isAuthor =
-    comment?.author?.id && currentUserId === comment.author.id.toString();
+  const isAuthor = currentUserId == comment.author.userId;
+  console.log(comment.author.userId, isAuthor);
+    
 
   useEffect(() => {
     const handleClickOutside = (event: MouseEvent) => {
@@ -60,7 +61,7 @@ const CommentDropdown = ({
         }`}
         role="menu"
       >
-        {!isAuthor ? (
+        {isAuthor ? (
           <>
             <button
               onClick={() => {
@@ -86,7 +87,7 @@ const CommentDropdown = ({
         ) : (
           <button
             onClick={() => {
-              onChat?.(comment.author.id);
+              onChat?.(comment.author.userId);
               onToggle();
             }}
             className="w-full px-4 py-2 text-left text-sm hover:bg-gray-100 rounded-lg transition-colors duration-200"

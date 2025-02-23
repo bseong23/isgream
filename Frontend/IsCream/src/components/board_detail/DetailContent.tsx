@@ -30,7 +30,7 @@ const DetailContent: React.FC<DetailContentProps> = ({
   const [currentUserId, setCurrentUserId] = useState<number | null>(null);
   const navigate = useNavigate();
 
-  console.log("post.author.id", post);
+  console.log("post.author.id", post.author.userId);
 
   // 컴포넌트 마운트 시 토큰에서 사용자 ID 추출
   useEffect(() => {
