@@ -202,6 +202,18 @@ const ChatRoomPage = () => {
       document.removeEventListener("visibilitychange", handleVisibilityChange);
     };
   }, [chatData?.chats, currentUserId, roomId]);
+    
+    // [추가된 부분 1/2] 웹소켓 연결 해제 함수
+    const disconnectWebSocket = async () => {
+      try {
+        console.log('채팅방 나가기 - 연결 해제 중...');
+        await chatApi.disconnectChatroom();
+        setIsConnected(false);
+      } catch (error) {
+        console.error('웹소켓 연결 해제 중 오류:', error);
+      }
+    };
+
 
   useEffect(() => {
     const initializeChatRoom = async () => {
@@ -304,6 +316,12 @@ const ChatRoomPage = () => {
     };
 
     initializeChatRoom();
+    
+    // [추가된 부분 2/2] Cleanup function
+    return () => {
+      disconnectWebSocket();
+    };
+
   }, [roomId, navigate]);
 
   const handleSendMessage = async () => {
@@ -372,6 +390,8 @@ const ChatRoomPage = () => {
       minute: "2-digit"
     });
   };
+
+
 
   return (
     <div className="flex flex-col bg-white">
