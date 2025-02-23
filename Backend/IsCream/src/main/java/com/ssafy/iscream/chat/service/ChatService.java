@@ -55,7 +55,8 @@ public class ChatService {
                 .timestamp(LocalDateTime.now())
                 .isRead(false)
                 .build();
-
+        chatRoom.updateLastMessageTimestamp(chatMessage.getTimestamp());
+        chatRoomRepository.save(chatRoom);
         // ✅ MongoDB에 메시지 저장 후, messageId 가져오기
         chatMessage = chatMessageRepository.save(chatMessage);
 
