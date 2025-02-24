@@ -198,7 +198,7 @@ export default function HTPResultPage({
             <h2 className="text-2xl md:text-3xl font-semibold text-black mb-4">
               심리 분석 리포트
             </h2>
-            <p className="text-gray-700 leading-relaxed whitespace-pre-line">
+            <p className="text-gray-700 leading-relaxed whitespace-pre-line text-3xl">
               {parsedResults[currentIndex].analysis}
             </p>
           </div>

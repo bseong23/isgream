@@ -72,7 +72,7 @@ const Header = ({ onChildSelect }: HeaderProps) => {
           <div className="relative">
             <button
               onClick={() => setIsOpen(!isOpen)}
-              className="flex items-center gap-2 text-[15px] font-medium text-gray-900 px-3 py-2 rounded-md hover:bg-gray-50"
+              className="flex items-center gap-2 text-[20px] font-medium text-gray-900 px-3 py-2 rounded-md hover:bg-gray-50"
             >
               {loading
                 ? "로딩 중..."
@@ -97,7 +97,7 @@ const Header = ({ onChildSelect }: HeaderProps) => {
                   children.map((child: Child) => (
                     <button
                       key={child.childId}
-                      className="w-full px-4 py-2 text-left text-[14px] hover:bg-gray-50"
+                      className="w-full px-4 py-2 text-left text-[16px] hover:bg-gray-50"
                       onClick={() => {
                         handleChildSelect(child);
                         setIsOpen(false);

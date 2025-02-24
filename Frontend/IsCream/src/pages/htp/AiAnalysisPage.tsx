@@ -8,7 +8,7 @@ const HTPAnalysisPage: React.FC = () => {
   const navigate = useNavigate();
 
   return (
-    <div className="w-full max-w-[706px] mx-auto">
+    <div className="w-full max-w-[706px] mx-auto text-xl">
       {/* PATExamCard 컴포넌트 사용 (버튼 숨김) */}
       <PATExamCard
         title="HTP-그림으로 보는 심리검사"
