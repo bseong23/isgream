@@ -79,7 +79,7 @@ const HTPSlider: React.FC<HTPSliderProps> = ({
 
   return (
     <div className="relative">
-      <h3 className="font-medium mb-6 text-lg md:text-xl px-4 md:px-0">
+      <h3 className="font-medium mb-6 text-lx md:text-2xl px-4 md:px-0">
         {date.year}년 {date.month}월 {date.day}일의 HTP 검사
       </h3>
 
@@ -123,7 +123,7 @@ const HTPSlider: React.FC<HTPSliderProps> = ({
               {slides[currentSlide].report.map((paragraph, idx) => (
                 <p
                   key={idx}
-                  className="text-gray-600 mb-2 text-base md:text-lg lg:text-2xl whitespace-pre-line"
+                  className="text-gray-600 mb-2 text-2xl md:text-lg lg:text-2xl whitespace-pre-line"
                 >
                   {paragraph}
                 </p>
