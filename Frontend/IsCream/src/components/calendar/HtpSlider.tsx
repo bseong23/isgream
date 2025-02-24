@@ -123,7 +123,7 @@ const HTPSlider: React.FC<HTPSliderProps> = ({
               {slides[currentSlide].report.map((paragraph, idx) => (
                 <p
                   key={idx}
-                  className="text-gray-600 mb-2 text-2xl md:text-lg lg:text-2xl whitespace-pre-line"
+                  className="text-gray-600 mb-2 text-3xl md:text-lg lg:text-2xl whitespace-pre-line"
                 >
                   {paragraph}
                 </p>
