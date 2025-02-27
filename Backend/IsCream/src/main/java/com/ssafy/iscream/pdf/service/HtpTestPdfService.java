@@ -50,7 +50,11 @@ public class HtpTestPdfService {
             pdfDocument.addNewPage();
 
             document.add(getTitle("HTP 검사 보고서"));
-
+            document.add(new Paragraph("검사 날짜: " + htpTest.getTestDate().toString())
+                    .setFontSize(12)
+                    .setFontColor(TEXT_COLOR)
+                    .setTextAlignment(TextAlignment.RIGHT)
+                    .setMarginTop(3).setMarginBottom(3));
             document.add(getSectionTitle("부모 정보"));
             document.add(getStyledTable(new String[][]{
                     {"이름", user.getUsername()},
