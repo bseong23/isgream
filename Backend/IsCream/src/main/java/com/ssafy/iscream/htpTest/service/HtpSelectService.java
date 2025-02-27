@@ -46,7 +46,7 @@ public class HtpSelectService {
         return new HtpTestDetailDto(htpTest);
     }
 
-    public List<String> getHtpTestFileUrl(List<Integer> childIds) {
-        return htpTestRepository.findHtpFileUrlsByChildIds(childIds);
+    public List<String> getHtpTestFileUrl(Integer childId) {
+        return htpTestRepository.findHtpFileUrlsByChildIds(childId);
     }
 }
