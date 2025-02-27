@@ -137,9 +137,10 @@ public class BigFiveTestService {
     }
 
     // childIds 해당하는 pdf url 목록 조회
-    public List<String> getBigFiveTestPdfUrl(List<Integer> childIds) {
-        return bigFiveTestRepository.findPdfUrlByChildIdIn(childIds);
+    public List<String> getBigFiveTestPdfUrl(Integer childId) {
+        return bigFiveTestRepository.findPdfUrlByChildIdIn(childId);
     }
+
     private void updateAnalysis(Integer testId) {
         // 테스트 결과 가져오기
         BigFiveTest bigFiveTest = bigFiveTestRepository.findById(testId)

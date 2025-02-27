@@ -63,20 +63,6 @@ public class ChildrenService {
 
         childOriginal.updateChild(childrenUpdateReq.getNickname(), childrenUpdateReq.getBirthDate(),
                 Gender.valueOf(childrenUpdateReq.getGender()));
-
-//        childRepository.save(childOriginal);
-    }
-
-    @Transactional
-    public void deleteChildren(Integer userId, Integer childrenId) {
-        Child childOriginal = childRepository.findById(childrenId)
-                .orElseThrow(() -> new DataException(ErrorCode.DATA_NOT_FOUND));
-
-        if (!userId.equals(childOriginal.getUserId())) {
-            throw new DataException(ErrorCode.DATA_FORBIDDEN_ACCESS);
-        }
-
-        childOriginal.deleteChild(); // 자녀 정보 삭제 (삭제 상태로 변경)
     }
 
     public Child getById(Integer childId) {
@@ -92,12 +78,7 @@ public class ChildrenService {
     }
 
     // 자녀 삭제
-    public void deleteChild(List<Integer> childIds) {
-        childRepository.deleteAllById(childIds);
-    }
-
-    // 삭제할 자녀 리스트 가져오기
-    public List<Integer> getDeleteChildId() {
-        return childRepository.findChildIdsByStatus(Status.DELETED);
+    public void deleteChild(Integer childId) {
+        childRepository.deleteById(childId);
     }
 }

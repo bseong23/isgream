@@ -14,8 +14,8 @@ public interface BigFiveTestRepository extends JpaRepository<BigFiveTest, Intege
     @Query("SELECT b FROM BigFiveTest b WHERE b.childId = :childId ORDER BY b.testDate DESC, b.testId DESC LIMIT 1")
     BigFiveTest findFirstByChildIdOrderByTestDateDesc(@Param("childId") Integer childId);
 
-    @Query("SELECT b.pdfUrl FROM BigFiveTest b WHERE b.childId IN :childIds")
-    List<String> findPdfUrlByChildIdIn(List<Integer> childIds);
+    @Query("SELECT b.pdfUrl FROM BigFiveTest b WHERE b.childId = :childId AND b.pdfUrl IS NOT NULL")
+    List<String> findPdfUrlByChildIdIn(@Param("childId") Integer childId);
 
     @Query("SELECT b FROM BigFiveTest b " +
             "WHERE b.userId = :userId " +
